@@ -64,9 +64,7 @@ type DecimalIssueMessages = DeepLiteralToPrimitive<
 type ParseDecimal<Value extends number> =
   IsLiteral<Value, number> extends false
     ? FailureResult<"compile-time parsing only works for static literals">
-    : `${Value}` extends "Infinity" | "-Infinity" | "NaN"
-      ? FailureResult<typeof DEFAULT_ISSUE_MESSAGES.notFinite>
-      : SuccessResult<Decimal>;
+    : SuccessResult<Decimal>;
 
 /**
  * Factory function object for the {@link Decimal} refined type. See
