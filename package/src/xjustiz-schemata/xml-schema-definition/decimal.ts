@@ -18,6 +18,10 @@ declare const TAG: unique symbol;
  *
  * Represents the mathematical concept of decimal numbers (real numbers that
  * can be represented by decimal numerals).
+ * See the related {@link decimal | refined type factory} for construction.
+ */
+/*
+ * Internal notes
  *
  * **Lexical Space vs. JavaScript Primitives:**
  *
@@ -31,7 +35,6 @@ declare const TAG: unique symbol;
  * Any JavaScript numeric literal notation passed to the constructor is evaluated
  * by the JavaScript runtime into an IEEE 754 finite number prior to validation.
  *
- * See the related {@link decimal | refined type factory} for construction.
  */
 export type Decimal = number & {
   readonly [TAG]: "Use the `decimal` factory to construct valid instances";
@@ -70,17 +73,9 @@ type ParseDecimal<Value extends number> =
  * {@link RefinedTypeFactory} for further details, usage examples, and
  * customization.
  *
- * Support for compile-time parsing. Various JavaScript numeric literal syntaxes
- * (plain decimal, exponent, hexadecimal, octal, and binary) are supported because
- * the JavaScript engine evaluates them into finite `number` primitives prior to
- * validation.
- *
- * Note that in XML lexical space, `xs:decimal` permits strictly plain decimal
- * notation matching `(\+|-)?([0-9]+(\.[0-9]*)?|\.[0-9]+)`.
- *
- * Compile-time parsing is limited by non-finite values such as `Infinity`,
- * `-Infinity`, and `NaN`, which resolve to undetermined results at compile time
- * and fail at runtime.
+ * Supports compile-time parsing for numeric literal types. Inputs that
+ * TypeScript widens to `number` remain undetermined until runtime, where
+ * non-finite values fail validation.
  *
  * @example
  * ```typescript
