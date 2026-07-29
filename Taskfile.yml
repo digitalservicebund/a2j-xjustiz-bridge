@@ -76,6 +76,7 @@ tasks:
       - check:lint
       - check:spell-and-style
       - check:link-validity
+      - check:license
 
   fix:
     desc: fix issues that can be automatically resolved like for formatting (supports list of files as argument)
@@ -193,6 +194,11 @@ tasks:
         echo $output
         exit 1
       fi
+
+  check:license:
+    desc: audit licenses for npm packages using Trivy
+    deps: [setup:development-environment]
+    cmd: trivy fs --scanners license --exit-code 1 --include-dev-deps --severity HIGH,CRITICAL .
 
   test:
     desc: run executable test suites to dynamically test business logic etc.
