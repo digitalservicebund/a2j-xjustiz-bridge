@@ -1,4 +1,4 @@
-# $schema: https://json-schema.org/draft-07/schema
+# $schema: https://taskfile.dev/schema.json
 # See documentation for patterns and more (./documentation/tool-usage/task.md)
 version: 3.0
 output: prefixed
@@ -197,7 +197,7 @@ tasks:
   test:
     desc: run executable test suites to dynamically test business logic etc.
     deps: [setup:runtime-dependencies]
-    soruces: ["./package/**/*"]
+    sources: ["./package/**/*"]
     dir: ./package
     cmd: pnpm exec vitest
 
