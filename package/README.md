@@ -128,11 +128,10 @@ also strip down plenty of not relevant aspects for the targeted use case.
 
 After all, a message is a structured XML document following a schema
 specification. The data fields at the leaves of such a document are called
-scalars. Scalars come in various different kinds and shapes, from plain
-enumerations to smart refined types. Using message orchestrators, scalars get
-composed into full messages. The orchestrator ensure structural invariants,
-control unique identifier constraints, and allow for secure references within
-the document.
+scalars. Scalars come in various different kinds and shapes, from enumerations
+to smart refined types. Using message orchestrators, scalars get composed into
+full messages. The orchestrators ensure structural invariants, control unique
+identifier constraints, and allow for secure references within the document.
 
 ### Refined Types and Input Validation
 

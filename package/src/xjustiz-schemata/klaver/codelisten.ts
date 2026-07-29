@@ -1,7 +1,14 @@
-export enum Anspruchsart {
-  Zahlung = "001",
-}
+import {
+  type InferCodeliste,
+  defineCodeliste,
+} from "~/xjustiz-schemata/shared-kernel/codelisten";
 
-export enum Antrag {
-  AntragAufVersaeumnisurteil = "001",
-}
+export type Anspruchsart = InferCodeliste<typeof Anspruchsart>;
+export const Anspruchsart = defineCodeliste({
+  Zahlung: "001",
+});
+
+export type Antrag = InferCodeliste<typeof Anspruchsart>;
+export const Antrag = defineCodeliste({
+  AntragAufVersaeumnisurteil: "001",
+});
