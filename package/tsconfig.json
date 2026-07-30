@@ -6,12 +6,16 @@
     "moduleResolution": "Bundler",
     /*
      * **ATTENTION:**
-     * We try to be as runtime environment agnostic as possible. Try to avoid
-     * adding any new entries here. Rather declare global dependencies inside the
-     * global.d.ts file and communicate them clearly as requirements to users of
-     * the library.
+     * We try to be as runtime environment agnostic as possible. Any requirement
+     * MUST be communicated to the user in the documentation!
+     *
+     * For gloabl type declarations, add new entries with great care. The
+     * baseline is based on the A2J Platform. Extensions should picked explicitly
+     * without adding the full libraries. Like don't just add `ESNext` or `DOM`.
+     * For the global object, do not add any entry, but explicitly declare them
+     * in the `global.d.ts` file.
      */
-    "lib": ["ES2024"],
+    "lib": ["ES2024", "ESNext.Temporal"],
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "strict": true,

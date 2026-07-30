@@ -34,7 +34,7 @@ The library comes with rich IntelliSense support. Contextual hover hints,
 autocompletion, and the compiler itself provide guidance directly in the editor.
 
 <details>
-  <summary>To further improve the experience, glossaries, explaining the ubiquitous language, can be setup to become automatically accessible from within a code editor.</summary>
+  <summary>To further improve the experience, glossaries that explain the ubiquitous language can be set up to become automatically accessible from within a code editor.</summary>
 
 Glossaries are written in a format consumable by
 [Contextive](https://contextive.tech). Installing the extension for an editor,
@@ -65,6 +65,7 @@ available on the global context object (`globalThis`):
 
 - `Intl.Segmenter` (for Unicode segmentation)
 - `crypto.randomUUID` (for unique identifier generation, UUID v4 expected)
+- `Temporal` (for calendar based scalars)
 
 ## A Word on Type Security
 
