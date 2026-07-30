@@ -252,8 +252,14 @@ type IssueMessages = Record<PropertyKey, string | ((...args: any) => string)>; /
 export type IsLiteral<MaybeLiteral, Base> =
   IsAny<MaybeLiteral> extends true
     ? false
-    : Base extends MaybeLiteral
+    : IsAny<Base> extends true
       ? false
-      : true;
+      : [MaybeLiteral] extends [never]
+        ? false
+        : [MaybeLiteral] extends [Base]
+          ? [Base] extends [MaybeLiteral]
+            ? false
+            : true
+          : false;
 
 const VENDOR = "a2j-xjustiz-converter" as const;

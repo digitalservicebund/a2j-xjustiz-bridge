@@ -40,7 +40,6 @@ export type DatatypeB = string & {
 function parseDatatypeB(
   issueMessages: DatatypeBIssueMessages = DEFAULT_ISSUE_MESSAGES,
 ) {
-  // oxlint-disable-next-line no-unsafe-type-assertion -- necessary "trick" for compile-time parsing
   return function parse(input: string): Result<DatatypeB> {
     const composedUnicodeInput = input.normalize("NFC");
 
