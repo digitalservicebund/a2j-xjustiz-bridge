@@ -6,6 +6,9 @@ import {
   type WithScope,
   withScope,
 } from "~/xjustiz-schemata/shared-kernel/scoping";
+import {
+  type Beteiligung, // oxlint-disable-line no-unused-vars -- reference by TSDoc
+} from "~/xjustiz-schemata/grunddatensatz/composites";
 import { type Rollenbezeichnung } from "~/xjustiz-schemata/grunddatensatz/codelisten";
 
 declare const TAG: unique symbol;
@@ -23,16 +26,16 @@ declare const TAG: unique symbol;
  * that identities are handled securely and correctly.
  *
  * A {@link Rollennummer} can be associated with a {@link Rollenbezeichnung}
- * based on their shared context of a Rolle for a Beteiligung. When an instance
- * is generated, it will be automatically associated based on the related
- * {@link Rollenbezeichnung} of the Rolle.
+ * based on their shared context of a Rolle for a {@link Beteiligung}. When an
+ * instance is generated, it will be automatically associated based on the
+ * related {@link Rollenbezeichnung} of the Rolle.
  * The associated {@link Rollenbezeichnung} is used for type restrictions. For
  * example, when referencing a {@link Beteiligung} by one of their
  * {@link Rollennummer}n, there might be limitations applied in regards which
- * kind of roles (read: Bezeichnung) that Beteiligung is allowed to have. Like
- * for the relationship between a layer and plaintiff. An association with the
- * raw {@link Rollenbezeichnung} type means no restrictions/specification — all
- * are allowed.
+ * kind of roles (read: Bezeichnung) that {@link Beteiligung} is allowed to have.
+ * Like for the relationship between a layer and plaintiff. An association with
+ * the raw {@link Rollenbezeichnung} type means no restrictions/specification —
+ * all are allowed.
  */
 /*
  * In the XJustiz standard, this is a plain DatatypeC only. So it can be
