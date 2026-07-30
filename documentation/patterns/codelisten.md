@@ -51,13 +51,13 @@ An example looks like this:
 `Geschlecht.ts`:
 
 ```typescript
-type Geschlecht = InferCodeliste<typeof Codeliste>
+type Geschlecht = InferCodeliste<typeof Codeliste>;
 
 const Geschlecht = defineCodeliste({
   Maennlich: "1",
   Weiblich: "2",
   Divers: "3",
-})
+});
 
 const weiblich: { readonly code: "2" } = Geschlecht.Weiblich;
 ```
