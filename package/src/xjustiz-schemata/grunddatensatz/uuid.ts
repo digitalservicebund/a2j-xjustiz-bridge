@@ -34,7 +34,13 @@ if (import.meta.vitest) {
 
   describe("UUID", () => {
     describe("generator", () => {
-      // Let's be honest: This is really just to avoid any worst case issues.
+      /*
+       * Test cases uses loops to repeatably exercise the generator and test for
+       * the same property. This is a bit part of the nature when testing such
+       * impure functions. But that means these test cases are just a best effort
+       * and might find flaws over time when runs have accumulated enough.
+       */
+
       it("produces unique identifiers for a meaningful sequence length", () => {
         withScope((scope) => {
           const nextUUID = createUuidGenerator(scope);
