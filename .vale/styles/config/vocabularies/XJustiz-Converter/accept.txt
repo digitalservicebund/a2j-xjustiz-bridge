@@ -109,3 +109,7 @@ syntax(es)?
 Gerichtsverzeichnis
 Trivy
 Syft
+Grype
+CVE(s?)
+SBOM(s?)
+remains
