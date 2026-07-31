@@ -198,7 +198,16 @@ tasks:
   check:license:
     desc: audit licenses for npm packages using Trivy
     deps: [setup:development-environment]
+    env:
+      TRIVY_CACHE_DIR: ./.task/cache/trivy
     cmd: trivy fs --scanners license --exit-code 1 --include-dev-deps --severity HIGH,CRITICAL .
+
+  check:vulnerability:
+    desc: scan the codebase for vulnerabilities using Trivy
+    deps: [setup:development-environment]
+    env:
+      TRIVY_CACHE_DIR: ./.task/cache/trivy
+    cmd: trivy fs --scanners vuln --exit-code 1 --include-dev-deps --severity HIGH,CRITICAL .
 
   test:
     desc: run executable test suites to dynamically test business logic etc.
@@ -258,6 +267,7 @@ tasks:
         msg: "no list of files must be provided as command-line argument"
     cmds:
       - task: check:link-validity
+      - task: check:vulnerability
 
 vars:
   # For tools that are not capable to properly discover files, respecting

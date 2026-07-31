@@ -19,10 +19,21 @@ jobs:
           devbox-version: 0.17.1
           sha256-checksum: 02f4810a06b7386368912d4dbf71d8ba3dbbc80b743c11dbf36e9dc30eb73433 # v0.17.1 linux amd64
 
+      - name: get current date
+        id: date
+        shell: bash
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
       - name: load cache for link validation checks
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ./.lycheecache
           key: v1
+      - name: load cache for vulnerability audit database
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ./.task/cache/trivy
+          key: cache-trivy-${{ steps.date.outputs.date }}-v1
+          restore-keys: cache-trivy-
 
       - run: devbox run task --verbose verify:codebase-health
