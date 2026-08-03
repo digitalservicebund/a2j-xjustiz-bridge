@@ -20,7 +20,7 @@ import { type Decimal } from "~/xjustiz-schemata/xml-schema-definition/decimal";
 import { type Rollennummer } from "~/xjustiz-schemata/grunddatensatz/rollennummer";
 import { type UUID } from "~/xjustiz-schemata/grunddatensatz/uuid";
 
-export type Nachrichtenkopf = {
+export type Nachrichtenkopf<NachrichtenScope> = {
   xjustizVersion: "3.6.2";
   /*
    * This property is missing in the JSON schema definition, but included in
@@ -29,7 +29,7 @@ export type Nachrichtenkopf = {
   erstellungszeitpunkt: DateTime;
   absender: {
     informationen: Kommunikationspartner;
-    eigeneNachrichtenID: UUID<unknown>; // Never referenced
+    eigeneNachrichtenID: UUID<NachrichtenScope>;
   };
   empfaenger: {
     informationen: Kommunikationspartner;
@@ -42,7 +42,7 @@ export type Nachrichtenkopf = {
 
 export type Grunddaten<NachrichtenScope> = {
   verfahrensdaten?: {
-    beteiligung?: Beteiligung<NachrichtenScope>[];
+    beteiligung?: (Beteiligung<NachrichtenScope> | undefined)[];
   };
 };
 
@@ -57,13 +57,18 @@ export type Herstellerinformation = {
 };
 
 export type Beteiligung<NachrichtenScope> = {
-  rolle?: {
-    rollennummer?: Rollennummer<NachrichtenScope>;
-    rollenbezeichnung?: Rollenbezeichnung;
-    geschaeftszeichen?: DatatypeC;
-    referenz?: RefRollennummer<NachrichtenScope>[];
-  }[];
+  rolle?: Rolle<NachrichtenScope>[];
   beteiligter: Beteiligter;
+};
+
+export type Rolle<
+  NachrichtenScope,
+  ZugehoerigeRollenbezeichnung extends Rollenbezeichnung = Rollenbezeichnung,
+> = {
+  rollennummer?: Rollennummer<NachrichtenScope, ZugehoerigeRollenbezeichnung>;
+  rollenbezeichnung: ZugehoerigeRollenbezeichnung;
+  geschaeftszeichen?: DatatypeC;
+  referenz?: RefRollennummer<NachrichtenScope>[];
 };
 
 export type Beteiligter = {
@@ -121,8 +126,11 @@ export type Bankverbindung = {
   iban: DatatypeC;
 };
 
-export type RefRollennummer<NachrichtenScope> = {
-  refRollennummer: Rollennummer<NachrichtenScope>;
+export type RefRollennummer<
+  NachrichtenScope,
+  ZugehoerigeRollenbezeichnung extends Rollenbezeichnung = Rollenbezeichnung,
+> = {
+  refRollennummer: Rollennummer<NachrichtenScope, ZugehoerigeRollenbezeichnung>;
 };
 
 export type Geldbetrag = {
