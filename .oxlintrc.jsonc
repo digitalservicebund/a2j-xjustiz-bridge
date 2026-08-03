@@ -54,11 +54,13 @@
     "eslint/no-restricted-imports": [
       "error",
       {
-        "patterns": [{
-          "group": ["~/nachricht/*"],
-          "message": "Don't import from package entrypoints (barrel re-exports). Use direct dependencies to internal modules."  
-        }] 
-      }
-    ]
+        "patterns": [
+          {
+            "group": ["~/nachricht/*"],
+            "message": "Don't import from package entrypoints (barrel re-exports). Use direct dependencies to internal modules.",
+          },
+        ],
+      },
+    ],
   },
 }
