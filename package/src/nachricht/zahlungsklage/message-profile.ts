@@ -9,7 +9,7 @@ import {
   type Zinsen,
 } from "~/xjustiz-schemata/grunddatensatz/composites";
 import {
-  type Gericht,
+  type Gerichte,
   type Rollenbezeichnung,
 } from "~/xjustiz-schemata/grunddatensatz/codelisten";
 import { type Anspruchsart } from "~/xjustiz-schemata/klaver/codelisten";
@@ -55,7 +55,7 @@ type NachrichtenkopfFuerZahlungsklage<NachrichtenScope> = {
   };
   empfaenger: {
     informationen: {
-      auswahlKommunikationspartner: { gericht: Gericht };
+      auswahlKommunikationspartner: { gericht: Gerichte };
     };
   };
   auswahlAktenzeichen: {
@@ -237,7 +237,7 @@ if (import.meta.vitest) {
       "~/xjustiz-schemata/grunddatensatz/rollennummer"
     );
     const {
-      Gericht,
+      Gerichte,
       Geschlecht,
       Kanzleiform,
       Rollenbezeichnung,
@@ -458,7 +458,7 @@ if (import.meta.vitest) {
             empfaenger: {
               informationen: {
                 auswahlKommunikationspartner: {
-                  gericht: Gericht.BundesamtFuerJustiz,
+                  gericht: Gerichte["Bundesamt für Justiz"],
                 },
               },
             },

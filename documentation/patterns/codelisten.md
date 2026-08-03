@@ -36,7 +36,10 @@ formatted for compliance. Fields like Wert are usually concise, but can still
 contain whitespaces, dashes, and other symbols not allowed as member name. After
 all, the name must only be just clear enough. [Design
 principles](../../DESIGN_PRINCIPLES.md#german-domain-language) for the German
-language in code apply — like transliterations.
+language in code apply — like transliterations. However, there might be
+exceptions where such formatting is harmful. In such cases plain strings can be
+used as keys. Though, this can affect users negatively, because they have to use
+the bracket notation then (`SomeCodelist["some name"]`).
 
 While the codes for many Codelisten look like numbers, they are technically
 strings. This can't be simplified, because there are codes like `"012"`, which

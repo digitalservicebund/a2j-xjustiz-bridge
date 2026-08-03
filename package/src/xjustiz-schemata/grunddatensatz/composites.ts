@@ -4,7 +4,7 @@ import {
   type Double,
 } from "~/xjustiz-schemata/xml-schema-definition/scalars";
 import {
-  type Gericht,
+  type Gerichte,
   type Geschlecht,
   type Kanzleiform,
   type Rollenbezeichnung,
@@ -47,7 +47,7 @@ export type Grunddaten<NachrichtenScope> = {
 };
 
 export type Kommunikationspartner = {
-  auswahlKommunikationspartner: { gericht: Gericht } | { sonstige: DatatypeD };
+  auswahlKommunikationspartner: { gericht: Gerichte } | { sonstige: DatatypeD };
 };
 
 export type Herstellerinformation = {
