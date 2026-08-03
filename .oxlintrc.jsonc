@@ -51,5 +51,14 @@
       "error",
       { "ignoreInferredTypes": true },
     ], // Else it becomes painful in functional chains like .map().filter()
+    "eslint/no-restricted-imports": [
+      "error",
+      {
+        "patterns": [{
+          "group": ["~/nachricht/*"],
+          "message": "Don't import from package entrypoints (barrel re-exports). Use direct dependencies to internal modules."  
+        }] 
+      }
+    ]
   },
 }

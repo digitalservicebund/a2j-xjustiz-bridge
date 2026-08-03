@@ -4,7 +4,7 @@ import {
   type Zinsen,
 } from "~/xjustiz-schemata/grunddatensatz/composites";
 import { type Anspruchsart } from "~/xjustiz-schemata/klaver/codelisten";
-import { type DatatypeE } from "~/nachricht/zahlungsklage";
+import { type DatatypeE } from "~/xjustiz-schemata/din-91379/datatypeE";
 import { type FortlaufendeNummer } from "~/xjustiz-schemata/klaver/fortlaufende-nummer";
 
 export type Antrag<NachrichtenScope> = {
