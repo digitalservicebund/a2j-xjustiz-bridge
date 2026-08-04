@@ -23,11 +23,17 @@ jobs:
           path: ./package/node_modules
           key: runtime-dependencies-${{ hashFiles('./package/pnpm-lock.yaml') }}-v1
 
+      - name: get current date
+        id: date
+        shell: bash
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
       - name: load cache for link validation checks
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ./.lycheecache
-          key: v1
+          key: cache-lychee-${{ steps.date.outputs.date }}-v1
+          restore-keys: cache-lychee-
 
       - name: load the cache for spelling and style checks
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5

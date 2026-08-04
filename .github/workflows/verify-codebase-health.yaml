@@ -28,7 +28,9 @@ jobs:
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ./.lycheecache
-          key: v1
+          key: cache-lychee-${{ steps.date.outputs.date }}-v1
+          restore-keys: cache-lychee-
+
       - name: load cache for vulnerability audit database
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
