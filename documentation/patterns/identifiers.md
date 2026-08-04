@@ -33,7 +33,10 @@ To securely construct valid XJustiz-Nachrichten, it requires to have distinct
 identity types per kind of entity. In result, entities that share the same
 identifier type in the standard, get separate types based on that type in the
 XJustiz-Converter. This helps to avoid any unintended confusions and possible
-incorrect references.
+incorrect references. However, there are certain exceptions. Like the
+`FortlaufendeNummer`, that has a continuously incrementing counter as generator,
+shared by multiple entities. Such exceptions must use the technique to [further
+enrich the identifier type](#enriching-identifier-types).
 
 ### Scoped New-Type
 
@@ -101,6 +104,58 @@ The naming convention for the function that creates a new generator
 `create<IdentifierTypeName>Generator`. An instance of a generator should be called
 `next<IdentifierTypeName>`. This should maintain readability and can be quickly
 recalled when seeing the pattern.
+
+### Enriching Identifier Types
+
+Some identifiers have some custom behavior and need to carry more information to
+fully control identity constrains. Such can be the need to allow for further
+restrictions of references. This is usually the case by a complementary property
+on the same identified entity. For example, references to Beteiligungen by
+a `Rollennummer` might need to be restricted based on the associated
+`Rollenbezeichnung`, to control certain relationships between Beteiligungen. Or
+similar, the `FortlaufendeNummer` can't be separated into multiple identifier
+types, as it requires an overall incrementing counter cross all entities.
+However, references via `FortlaufendeNummer` require certain restrictions based
+on the related entity.
+
+The basic mechanism to enrich an identifier type is to add an extra generic
+parameter. Entities identified by it, must specify the matching parameter.
+Generating an identifier is then enforced to adhere to this parametrization.
+References on the other hand use the same parameter to restrict themselves.
+
+```typescript
+type ArtVonUnterscheidungsmerkmal = "A" | "B" | "C";
+
+/**
+ * Identifier for entities of important kind. Instances are only unique within
+ * the XJustiz-Nachricht they are included in.
+ *
+ * Some helpful documentation about the restriction by the generic parameter.
+ */
+export type SomeIdentifier<
+  NachrichtenScope,
+  Unterscheidungsmerkmal extends ArtVonUnterscheidungsmerkmal
+> = number & {
+  readonly [TAG]: "Identifiers can not be constructed manually.";
+  readonly unterscheidungsmerkmal: Unterscheidungsmerkmal;
+} & WithScope<NachrichtenScope>;
+
+export function createSomeIdentifierGenerator<NachrichtenScope>(
+  _scope: WithScope<NachrichtenScope>,
+) {
+  let nextIdentifier = 1;
+
+  return <Unterscheidungsmerkmal extends ArtVonUnterscheidungsmerkmal>(
+    _differentiator: Unterscheidungsmerkmal
+  ) =>
+    // oxlint-disable-next-line no-unsafe-type-assertion -- explicit cast for branding
+    nextIdentifier++ as SomeIdentifier<
+      NachrichtenScope,
+      Unterscheidungsmerkmal
+    >;
+  }
+}
+```
 
 ### Accessibility & Responsibility
 

@@ -18,20 +18,31 @@ declare const TAG: unique symbol;
  * automatic identifier generation for the correct scope. This helps to ensure
  * that identities are handled securely and correctly.
  */
-export type FortlaufendeNummer<NachrichtenScope> = PositiveInteger & {
+export type FortlaufendeNummer<
+  NachrichtenScope,
+  Bezugselement extends ArtVonBezugselement,
+> = PositiveInteger & {
   readonly [TAG]: "Identifiers can not be constructed manually. Use the provided context to produce entities with automatic identifier generation.";
+  readonly bezugselement: Bezugselement;
 } & WithScope<NachrichtenScope>;
+
+type ArtVonBezugselement = "Anspruch" | "Zinsanspruch";
 
 export function createFortlaufendeNummerGenerator<NachrichtenScope>(
   _scope: WithScope<NachrichtenScope>,
-): () => FortlaufendeNummer<NachrichtenScope> {
+) {
   let nextFortlaufendeNummer = positiveInteger(1).value;
 
-  return () => {
+  return <Bezugselement extends ArtVonBezugselement>(
+    _bezugselement: Bezugselement,
+  ) => {
     const currentFortlaufendeNummer = nextFortlaufendeNummer;
     nextFortlaufendeNummer = increment(nextFortlaufendeNummer);
     // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
-    return currentFortlaufendeNummer as unknown as FortlaufendeNummer<NachrichtenScope>;
+    return currentFortlaufendeNummer as unknown as FortlaufendeNummer<
+      NachrichtenScope,
+      Bezugselement
+    >;
   };
 }
 
@@ -49,7 +60,7 @@ if (import.meta.vitest) {
           const nextFortlaufendeNummer =
             createFortlaufendeNummerGenerator(scope);
 
-          expect(nextFortlaufendeNummer()).toStrictEqual(1);
+          expect(nextFortlaufendeNummer("Anspruch")).toStrictEqual(1);
         });
       });
 
@@ -57,10 +68,11 @@ if (import.meta.vitest) {
         withScope((scope) => {
           const nextFortlaufendeNummer =
             createFortlaufendeNummerGenerator(scope);
-          let fortlaufendeNummer = nextFortlaufendeNummer();
+          let fortlaufendeNummer = nextFortlaufendeNummer("Anspruch");
 
           repeat(100, () => {
-            const followingFortlaufendeNummer = nextFortlaufendeNummer();
+            const followingFortlaufendeNummer =
+              nextFortlaufendeNummer("Anspruch");
             expect(followingFortlaufendeNummer).toStrictEqual(
               fortlaufendeNummer + 1,
             );
@@ -76,7 +88,7 @@ if (import.meta.vitest) {
           const generatedFortlaufendeNummern = new Set<number>();
 
           repeat(100, () => {
-            const fortlaufendeNummer = nextFortlaufendeNummer();
+            const fortlaufendeNummer = nextFortlaufendeNummer("Anspruch");
             expect(generatedFortlaufendeNummern.has(fortlaufendeNummer)).toBe(
               false,
             );

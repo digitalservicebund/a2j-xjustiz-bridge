@@ -180,7 +180,7 @@ type AntraegeFuerZahlungsklage<NachrichtenScope> = {
     inhalt: DatatypeE;
     anspruch: [
       {
-        fortlaufendeNummer: FortlaufendeNummer<NachrichtenScope>;
+        fortlaufendeNummer: FortlaufendeNummer<NachrichtenScope, "Anspruch">;
         anspruchsteller: RefRollennummer<
           NachrichtenScope,
           typeof Rollenbezeichnung.Klaeger
@@ -200,7 +200,11 @@ type AntraegeFuerZahlungsklage<NachrichtenScope> = {
         inhalt: DatatypeE;
         zinsanspruch: [
           {
-            refFortlaufendeNummer: FortlaufendeNummer<NachrichtenScope>;
+            fortlaufendeNummer?: undefined;
+            refFortlaufendeNummer: FortlaufendeNummer<
+              NachrichtenScope,
+              "Anspruch"
+            >;
             zinsen: [Zinsen];
           },
         ];
@@ -408,7 +412,7 @@ if (import.meta.vitest) {
           inhalt: datatypeE("Lorem ipsum").value,
           anspruch: [
             {
-              fortlaufendeNummer: nextFortlaufendeNummer(),
+              fortlaufendeNummer: nextFortlaufendeNummer("Anspruch"),
               anspruchsteller: {
                 refRollennummer: klaeger.rolle[0].rollennummer,
               },

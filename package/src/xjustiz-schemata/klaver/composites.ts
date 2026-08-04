@@ -15,14 +15,15 @@ export type Antrag<NachrichtenScope> = {
   nebebenantraegeZinsen?: {
     inhalt: DatatypeE;
     zinsanspruch?: {
-      refFortlaufendeNummer?: FortlaufendeNummer<NachrichtenScope>;
+      fortlaufendeNummer?: FortlaufendeNummer<NachrichtenScope, "Zinsanspruch">;
+      refFortlaufendeNummer?: FortlaufendeNummer<NachrichtenScope, "Anspruch">;
       zinsen: Zinsen[];
     }[];
   };
 };
 
 export type Anspruch<NachrichtenScope> = {
-  fortlaufendeNummer?: FortlaufendeNummer<NachrichtenScope>;
+  fortlaufendeNummer?: FortlaufendeNummer<NachrichtenScope, "Anspruch">;
   anspruchsteller?: RefRollennummer<NachrichtenScope>;
   anspruchsgegner?: RefRollennummer<NachrichtenScope>;
   anspruchsart?: Anspruchsart;
