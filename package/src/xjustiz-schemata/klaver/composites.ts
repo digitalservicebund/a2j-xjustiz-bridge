@@ -12,7 +12,7 @@ export type Antrag<NachrichtenScope> = {
     inhalt: DatatypeE;
     anspruch?: Anspruch<NachrichtenScope>[];
   };
-  nebebenantraegeZinsen?: {
+  nebenantraegeZinsen?: {
     inhalt: DatatypeE;
     zinsanspruch?: {
       fortlaufendeNummer?: FortlaufendeNummer<NachrichtenScope, "Zinsanspruch">;
