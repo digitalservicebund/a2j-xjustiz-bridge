@@ -11,6 +11,7 @@ import {
   type ScopeToken,
   withScope,
 } from "~/xjustiz-schemata/shared-kernel/scoping";
+import { type VerifiedNachricht } from "~/verify-nachricht";
 
 /**
  * Message orchestrator to compose a Nachricht for a _Zahlungsklage_.
@@ -27,11 +28,11 @@ import {
 export function zahlungsklage(
   compose: <NachrichtenScope>(
     scope: ScopeToken<NachrichtenScope>,
-  ) => Zahlungsklage<NachrichtenScope>,
+  ) => VerifiedNachricht<Zahlungsklage<NachrichtenScope>>,
 ): string {
   return withScope((scope) => {
-    const message = compose(scope);
-    return JSON.stringify(message);
+    const nachricht = compose(scope);
+    return JSON.stringify(nachricht);
   });
 }
 
@@ -82,6 +83,7 @@ if (import.meta.vitest) {
     const { createFortlaufendeNummerGenerator } = await import(
       "~/xjustiz-schemata/klaver/fortlaufende-nummer"
     );
+    const { verifyNachricht } = await import("~/verify-nachricht");
 
     // oxlint-disable-next-line max-lines-per-function
     it("is possible to create a valid example message", () => {
@@ -289,7 +291,7 @@ if (import.meta.vitest) {
           );
           const vortragsID = uuid.next(eigeneNachrichtenID);
 
-          return {
+          return verifyNachricht({
             nachrichtenkopf: {
               xjustizVersion: "3.6.2",
               erstellungszeitpunkt: Temporal.Now.instant(),
@@ -398,7 +400,7 @@ if (import.meta.vitest) {
                 },
               },
             },
-          };
+          });
         },
       );
 

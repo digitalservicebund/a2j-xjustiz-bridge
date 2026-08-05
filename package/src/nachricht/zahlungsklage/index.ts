@@ -1,4 +1,5 @@
 export { zahlungsklage } from "./orchestrator";
+export { verifyNachricht } from "~/verify-nachricht";
 
 export {
   AntragCodeliste,
@@ -44,3 +45,5 @@ export {
   type Decimal,
   decimal,
 } from "~/xjustiz-schemata/xml-schema-definition/decimal";
+
+export { type ScopeToken } from "~/xjustiz-schemata/shared-kernel/scoping";
