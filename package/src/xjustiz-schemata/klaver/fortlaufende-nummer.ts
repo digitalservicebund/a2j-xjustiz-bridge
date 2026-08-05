@@ -28,9 +28,15 @@ export type FortlaufendeNummer<
 
 type ArtVonBezugselement = "Anspruch" | "Zinsanspruch";
 
+export type FortlaufendeNummerGenerator<NachrichtenScope> = <
+  Bezugselement extends ArtVonBezugselement,
+>(
+  bezugselement: Bezugselement,
+) => FortlaufendeNummer<NachrichtenScope, Bezugselement>;
+
 export function createFortlaufendeNummerGenerator<NachrichtenScope>(
   _scope: WithScope<NachrichtenScope>,
-) {
+): FortlaufendeNummerGenerator<NachrichtenScope> {
   let nextFortlaufendeNummer = positiveInteger(1).value;
 
   return <Bezugselement extends ArtVonBezugselement>(

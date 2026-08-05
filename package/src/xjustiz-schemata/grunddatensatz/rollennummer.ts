@@ -51,9 +51,15 @@ export type Rollennummer<
   readonly zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung;
 } & WithScope<NachrichtenScope>;
 
+export type RollennummerGenerator<NachrichtenScope> = <
+  ZugehoerigeRollenbezeichnung extends Rollenbezeichnung,
+>(
+  zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung,
+) => Rollennummer<NachrichtenScope, ZugehoerigeRollenbezeichnung>;
+
 export function createRollennummerGenerator<NachrichtenScope>(
   _scope: WithScope<NachrichtenScope>,
-) {
+): RollennummerGenerator<NachrichtenScope> {
   return <ZugehoerigeRollenbezeichnung extends Rollenbezeichnung>(
     _zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung,
   ) => {

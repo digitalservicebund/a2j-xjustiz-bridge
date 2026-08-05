@@ -78,9 +78,12 @@ meant to play well together with the [`withScope`](./scoping.md#unique-scopes)
 function, receiving a uniquely typed scope symbol as parameter.
 
 ```typescript
+export type SomeIdentifierGenerator<NachrichtenScope> =
+  () => SomeIdentifier<NachrichtenScope>;
+
 export function createSomeIdentifierGenerator<NachrichtenScope>(
   _scope: WithScope<NachrichtenScope>,
-): () => SomeIdentifier<NachrichtenScope> {
+): SomeIdentifierGenerator {
   let nextIdentifier = 1;
   // oxlint-disable-next-line no-unsafe-type-assertion -- explicit cast for branding
   return () => nextIdentifier++ as SomeIdentifier<NachrichtenScope>;
@@ -103,7 +106,10 @@ withScope((scope) => {
 The naming convention for the function that creates a new generator
 `create<IdentifierTypeName>Generator`. An instance of a generator should be called
 `next<IdentifierTypeName>`. This should maintain readability and can be quickly
-recalled when seeing the pattern.
+recalled when seeing the pattern. It is helpful to define a generator type, so
+it can be referenced upstream where generator instances are managed. This is
+especially the case for more complex generator signatures, like when having
+[enriched identifier types](#enriching-identifier-types).
 
 ### Enriching Identifier Types
 

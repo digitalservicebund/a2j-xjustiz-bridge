@@ -1,48 +1,39 @@
-import {
-  type DatatypeA,
-  datatypeA,
-} from "~/xjustiz-schemata/din-91379/datatypeA";
-import {
-  type DatatypeB,
-  datatypeB,
-} from "~/xjustiz-schemata/din-91379/datatypeB";
-import {
-  type DatatypeC,
-  datatypeC,
-} from "~/xjustiz-schemata/din-91379/datatypeC";
-import {
-  type DatatypeD,
-  datatypeD,
-} from "~/xjustiz-schemata/din-91379/datatypeD";
-import {
-  type DatatypeE,
-  datatypeE,
-} from "~/xjustiz-schemata/din-91379/datatypeE";
+export { zahlungsklage } from "./orchestrator";
 
-/**
- * Message orchestrator to compose a Nachricht for a _Zahlungsklage_.
- *
- * This message type is based on the XJustiz KLAVER module, using the generic
- * message type `nachricht.klaver.klageverfahren.3500001` with the
- * specialization of an `anderes Klageverfahren`.
- *
- * **ATTENTION:**
- * This is still under construction. It acts as exemplary entry point, without
- * producing a valid message.
- */
-export function zahlungsklage(name: DatatypeA, addresse: DatatypeB): string {
-  return `<nachricht.klaver.klageverfahren.3500001>Name: ${name}; Addresse: ${addresse}</<nachricht.klaver.klageverfahren.3500001>`;
-}
+export { Anspruchsart } from "~/xjustiz-schemata/klaver/codelisten";
+
+export {
+  Gerichte,
+  Geschlecht,
+  Kanzleiform,
+  Rollenbezeichnung,
+  Telekommunikationsart,
+  Waehrung,
+  Zinsmethode,
+} from "~/xjustiz-schemata/grunddatensatz/codelisten";
 
 export {
   type DatatypeA,
   datatypeA,
+} from "~/xjustiz-schemata/din-91379/datatypeA";
+export {
   type DatatypeB,
   datatypeB,
+} from "~/xjustiz-schemata/din-91379/datatypeB";
+export {
   type DatatypeC,
   datatypeC,
+} from "~/xjustiz-schemata/din-91379/datatypeC";
+export {
   type DatatypeD,
   datatypeD,
+} from "~/xjustiz-schemata/din-91379/datatypeD";
+export {
   type DatatypeE,
   datatypeE,
-};
+} from "~/xjustiz-schemata/din-91379/datatypeE";
+
+export {
+  type Decimal,
+  decimal,
+} from "~/xjustiz-schemata/xml-schema-definition/decimal";

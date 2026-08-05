@@ -21,9 +21,11 @@ export type UUID<NachrichtenScope> = string & {
   readonly [TAG]: "Identifiers can not be constructed manually. Use the provided context to produce entities with automatic identifier generation.";
 } & WithScope<NachrichtenScope>;
 
+export type UUIDGenerator<NachrichtenScope> = () => UUID<NachrichtenScope>;
+
 export function createUuidGenerator<NachrichtenScope>(
   _scope: WithScope<NachrichtenScope>,
-): () => UUID<NachrichtenScope> {
+): UUIDGenerator<NachrichtenScope> {
   return () =>
     // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
     globalThis.crypto.randomUUID() as UUID<NachrichtenScope>;
