@@ -1,3 +1,4 @@
+/* oxlint-disable max-lines -- Example message fixture is comprehensive */
 import {
   type AntraegeFuerZahlungsklage,
   type Beklagter,
@@ -95,7 +96,7 @@ if (import.meta.vitest) {
       Waehrung,
       Zinsmethode,
     } = await import("~/xjustiz-schemata/grunddatensatz/codelisten");
-    const { Anspruchsart } = await import(
+    const { AntragCodeliste, AnspruchsartCodeliste } = await import(
       "~/xjustiz-schemata/klaver/codelisten"
     );
 
@@ -251,13 +252,13 @@ if (import.meta.vitest) {
             anspruch: [
               {
                 fortlaufendeNummer: context.nextFortlaufendeNummer("Anspruch"),
-                anspruchsteller: {
-                  refRollennummer: klaeger.rolle[0].rollennummer,
-                },
-                anspruchsgegner: {
-                  refRollennummer: beklagter.rolle[0].rollennummer,
-                },
-                anspruchsart: Anspruchsart.Zahlung,
+                anspruchssteller: [
+                  { refRollennummer: klaeger.rolle[0].rollennummer },
+                ],
+                anspruchsgegner: [
+                  { refRollennummer: beklagter.rolle[0].rollennummer },
+                ],
+                anspruchsart: AnspruchsartCodeliste.Zahlung,
                 wertAnspruch: {
                   zahl: 5000,
                   auswahlWaehrung: {
@@ -268,7 +269,7 @@ if (import.meta.vitest) {
             ],
           } satisfies AntraegeFuerZahlungsklage<NachrichtenScope>["sachantraege"];
 
-          const nebebenantraegeZinsen = {
+          const nebenantraegeZinsen = {
             inhalt: datatypeE("Lorem ipsum").value,
             zinsanspruch: [
               {
@@ -283,7 +284,7 @@ if (import.meta.vitest) {
                 ],
               },
             ],
-          } satisfies AntraegeFuerZahlungsklage<NachrichtenScope>["nebebenantraegeZinsen"];
+          } satisfies AntraegeFuerZahlungsklage<NachrichtenScope>["nebenantraegeZinsen"];
 
           return {
             nachrichtenkopf: {
@@ -303,10 +304,10 @@ if (import.meta.vitest) {
                     gericht: Gerichte["Bundesamt für Justiz"],
                   },
                 },
+                auswahlAktenzeichen: { aktenzeichenNeu: true },
               },
-              auswahlAktenzeichen: { aktenzeichenNeu: true },
               herstellerinformation: {
-                herstellerDesProducts: datatypeD("Foo").value,
+                herstellerDesProdukts: datatypeD("Foo").value,
                 nameDesProdukts: datatypeD("Bar").value,
                 version: datatypeC("Baz").value,
               },
@@ -324,7 +325,75 @@ if (import.meta.vitest) {
             inhaltsdaten: {
               antraege: {
                 sachantraege,
-                nebebenantraegeZinsen,
+                nebenantraegeZinsen,
+                auswahlSonstigeAntraege: [
+                  {
+                    antragSonstige: {
+                      auswahlAntragSonstige: {
+                        sonstigerAntragTextform: datatypeE(
+                          "Die beklagte Partei traegt die aussergerichtlich angefallenen Anwaltskosten in Hoehe von 850.90 Euro.",
+                        ).value,
+                      },
+                      anspruch: [
+                        {
+                          fortlaufendeNummer:
+                            context.nextFortlaufendeNummer("Anspruch"),
+                          anspruchssteller: [
+                            {
+                              refRollennummer: klaeger.rolle[0].rollennummer,
+                            },
+                          ],
+                          anspruchsgegner: [
+                            {
+                              refRollennummer: beklagter.rolle[0].rollennummer,
+                            },
+                          ],
+                          anspruchsart: AnspruchsartCodeliste.Zahlung,
+                          wertAnspruch: {
+                            zahl: 850.9,
+                            auswahlWaehrung: {
+                              waehrung: Waehrung.Euro,
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    antragSonstige: {
+                      auswahlAntragSonstige: {
+                        antragWerteliste:
+                          AntragCodeliste.AntragAufVersaeumnisurteil,
+                      },
+                    },
+                  },
+                  {
+                    antragSonstige: {
+                      auswahlAntragSonstige: {
+                        sonstigerAntragTextform: datatypeE(
+                          "Weitere Antraege ...",
+                        ).value,
+                      },
+                    },
+                  },
+                ],
+              },
+              auswahlBegruendetheit: {
+                anderesKlageverfahren: {
+                  vortrag: [
+                    {
+                      schlagwort: datatypeC("Zahlungsanspruch").value,
+                      vortragsID: context.nextUUID(),
+                      ausfuehrungen: {
+                        inhalt: {
+                          tatsachenvortragSachverhaltsbeschreibung: datatypeC(
+                            "Der Zahlungsanspruch besteht aus dem zugrunde liegenden Vertrag.",
+                          ).value,
+                        },
+                      },
+                    },
+                  ],
+                },
               },
             },
           };

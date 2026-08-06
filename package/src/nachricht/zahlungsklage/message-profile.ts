@@ -1,4 +1,8 @@
 import {
+  type AnspruchsartCodeliste,
+  type AntragCodeliste,
+} from "~/xjustiz-schemata/klaver/codelisten";
+import {
   type Geldbetrag,
   type Herstellerinformation,
   type NatuerlichePerson,
@@ -11,7 +15,6 @@ import {
   type Gerichte,
   type Rollenbezeichnung,
 } from "~/xjustiz-schemata/grunddatensatz/codelisten";
-import { type Anspruchsart } from "~/xjustiz-schemata/klaver/codelisten";
 import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatypeC";
 import { type DatatypeD } from "~/xjustiz-schemata/din-91379/datatypeD";
 import { type DatatypeE } from "~/xjustiz-schemata/din-91379/datatypeE";
@@ -39,6 +42,8 @@ export type Zahlungsklage<NachrichtenScope> = {
   grunddaten: GrunddatenFuerZahlungsklage<NachrichtenScope>;
   inhaltsdaten: {
     antraege: AntraegeFuerZahlungsklage<NachrichtenScope>;
+    sonstigeProzessualeAusfuehrungen?: AusfuehrungenFuerZahlungsklage;
+    auswahlBegruendetheit: BegruendetheitFuerZahlungsklage<NachrichtenScope>;
   };
 };
 
@@ -55,9 +60,9 @@ export type NachrichtenkopfFuerZahlungsklage<NachrichtenScope> = {
     informationen: {
       auswahlKommunikationspartner: { gericht: Gerichte };
     };
-  };
-  auswahlAktenzeichen: {
-    aktenzeichenNeu: true;
+    auswahlAktenzeichen: {
+      aktenzeichenNeu: true;
+    };
   };
   herstellerinformation: Herstellerinformation;
 };
@@ -179,20 +184,18 @@ export type AntraegeFuerZahlungsklage<NachrichtenScope> = {
     anspruch: [
       {
         fortlaufendeNummer: FortlaufendeNummer<NachrichtenScope, "Anspruch">;
-        anspruchsteller: RefRollennummer<
-          NachrichtenScope,
-          typeof Rollenbezeichnung.Klaeger
-        >;
-        anspruchsgegner: RefRollennummer<
-          NachrichtenScope,
-          typeof Rollenbezeichnung.Beklagter
-        >;
-        anspruchsart: typeof Anspruchsart.Zahlung;
+        anspruchssteller: [
+          RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Klaeger>,
+        ];
+        anspruchsgegner: [
+          RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Beklagter>,
+        ];
+        anspruchsart: typeof AnspruchsartCodeliste.Zahlung;
         wertAnspruch: Geldbetrag;
       },
     ];
   };
-  nebebenantraegeZinsen:
+  nebenantraegeZinsen:
     | undefined
     | {
         inhalt: DatatypeE;
@@ -207,6 +210,68 @@ export type AntraegeFuerZahlungsklage<NachrichtenScope> = {
           },
         ];
       };
+  auswahlSonstigeAntraege?: SonstigerAntragFuerZahlungsklage<NachrichtenScope>[];
+};
+
+export type SonstigerAntragFuerZahlungsklage<NachrichtenScope> =
+  | AntragAufAnwaltskosten<NachrichtenScope>
+  | AntragAufVersaeumnisurteil
+  | WeitererAntrag;
+
+export type AntragAufAnwaltskosten<NachrichtenScope> = {
+  antragSonstige: {
+    auswahlAntragSonstige: { sonstigerAntragTextform: DatatypeE };
+    anspruch: [AnspruchFuerZahlungsklage<NachrichtenScope>];
+  };
+};
+
+export type AntragAufVersaeumnisurteil = {
+  antragSonstige: {
+    auswahlAntragSonstige: {
+      antragWerteliste: typeof AntragCodeliste.AntragAufVersaeumnisurteil;
+    };
+  };
+};
+
+export type WeitererAntrag = {
+  antragSonstige: {
+    auswahlAntragSonstige: { sonstigerAntragTextform: DatatypeE };
+  };
+};
+
+type AnspruchFuerZahlungsklage<NachrichtenScope> = {
+  fortlaufendeNummer: FortlaufendeNummer<NachrichtenScope, "Anspruch">;
+  anspruchssteller: [
+    RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Klaeger>,
+  ];
+  anspruchsgegner: [
+    RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Beklagter>,
+  ];
+  anspruchsart: typeof AnspruchsartCodeliste.Zahlung;
+  wertAnspruch: Geldbetrag;
+};
+
+export type AusfuehrungenFuerZahlungsklage = {
+  inhalt: {
+    tatsachenvortragSachverhaltsbeschreibung: DatatypeC;
+    rechtlicheWuerdigung?: DatatypeC;
+  };
+};
+
+export type BegruendetheitFuerZahlungsklage<NachrichtenScope> = {
+  anderesKlageverfahren: {
+    vortrag: [
+      VortragZurBegruendetheitFuerZahlungsklage<NachrichtenScope>,
+      ...VortragZurBegruendetheitFuerZahlungsklage<NachrichtenScope>[],
+    ];
+  };
+};
+
+export type VortragZurBegruendetheitFuerZahlungsklage<NachrichtenScope> = {
+  schlagwort: DatatypeC;
+  vortragsID: UUID<NachrichtenScope>;
+  ausfuehrungen: AusfuehrungenFuerZahlungsklage;
+  fremdeVortragsID?: UUID<NachrichtenScope>[];
 };
 
 if (import.meta.vitest) {
