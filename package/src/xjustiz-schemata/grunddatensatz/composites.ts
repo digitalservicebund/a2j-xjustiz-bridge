@@ -33,9 +33,9 @@ export type Nachrichtenkopf<NachrichtenScope> = {
   };
   empfaenger: {
     informationen: Kommunikationspartner;
-  };
-  auswahlAktenzeichen: {
-    aktenzeichenNeu: true;
+    auswahlAktenzeichen: {
+      aktenzeichenNeu: true;
+    };
   };
   herstellerinformation: Herstellerinformation;
 };
@@ -52,7 +52,7 @@ export type Kommunikationspartner = {
 
 export type Herstellerinformation = {
   nameDesProdukts: DatatypeD;
-  herstellerDesProducts: DatatypeD;
+  herstellerDesProdukts: DatatypeD;
   version: DatatypeC;
 };
 
