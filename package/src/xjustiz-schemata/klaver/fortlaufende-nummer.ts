@@ -3,7 +3,11 @@ import {
   increment,
   positiveInteger,
 } from "~/xjustiz-schemata/xml-schema-definition/positive-integer";
-import { type WithScope } from "~/xjustiz-schemata/shared-kernel/scoping";
+import {
+  type ScopeToken,
+  type WithScope,
+  scopedSingleton,
+} from "~/xjustiz-schemata/shared-kernel/scoping";
 
 declare const TAG: unique symbol;
 
@@ -35,22 +39,28 @@ export type FortlaufendeNummerGenerator<NachrichtenScope> = <
 ) => FortlaufendeNummer<NachrichtenScope, Bezugselement>;
 
 export function createFortlaufendeNummerGenerator<NachrichtenScope>(
-  _scope: WithScope<NachrichtenScope>,
+  scope: ScopeToken<NachrichtenScope>,
 ): FortlaufendeNummerGenerator<NachrichtenScope> {
-  let nextFortlaufendeNummer = positiveInteger(1).value;
+  return scopedSingleton(scope, FORTLAUFENDE_NUMMER_GENERATOR_KEY, () => {
+    let nextFortlaufendeNummer = positiveInteger(1).value;
 
-  return <Bezugselement extends ArtVonBezugselement>(
-    _bezugselement: Bezugselement,
-  ) => {
-    const currentFortlaufendeNummer = nextFortlaufendeNummer;
-    nextFortlaufendeNummer = increment(nextFortlaufendeNummer);
-    // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
-    return currentFortlaufendeNummer as unknown as FortlaufendeNummer<
-      NachrichtenScope,
-      Bezugselement
-    >;
-  };
+    return <Bezugselement extends ArtVonBezugselement>(
+      _bezugselement: Bezugselement,
+    ) => {
+      const currentFortlaufendeNummer = nextFortlaufendeNummer;
+      nextFortlaufendeNummer = increment(nextFortlaufendeNummer);
+      // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
+      return currentFortlaufendeNummer as unknown as FortlaufendeNummer<
+        NachrichtenScope,
+        Bezugselement
+      >;
+    };
+  });
 }
+
+const FORTLAUFENDE_NUMMER_GENERATOR_KEY = Symbol(
+  "fortlaufende-nummer-generator",
+);
 
 if (import.meta.vitest) {
   const { describe, it, expect } = import.meta.vitest;

@@ -15,13 +15,13 @@ import {
   createRollennummerGenerator,
 } from "~/xjustiz-schemata/grunddatensatz/rollennummer";
 import {
+  type ScopeToken,
+  withScope,
+} from "~/xjustiz-schemata/shared-kernel/scoping";
+import {
   type UUIDGenerator,
   createUuidGenerator,
 } from "~/xjustiz-schemata/grunddatensatz/uuid";
-import {
-  type WithScope,
-  withScope,
-} from "~/xjustiz-schemata/shared-kernel/scoping";
 
 /**
  * Message orchestrator to compose a Nachricht for a _Zahlungsklage_.
@@ -54,7 +54,7 @@ type Context<NachrichtenScope> = {
 };
 
 function createContext<NachrichtenScope>(
-  scope: WithScope<NachrichtenScope>,
+  scope: ScopeToken<NachrichtenScope>,
 ): Context<NachrichtenScope> {
   return {
     nextFortlaufendeNummer: createFortlaufendeNummerGenerator(scope),

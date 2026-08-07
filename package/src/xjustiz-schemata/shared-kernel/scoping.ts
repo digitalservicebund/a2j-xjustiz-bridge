@@ -7,8 +7,6 @@ import { type Invariant } from "~/metatypes";
  * inspecting reference usages in the codebase.
  */
 
-declare const TAG: unique symbol;
-
 /**
  * Auxiliary type that can be used to tag a main type, allowing it to become
  * scoped. This makes the main type generic over a scope, ensuring that
@@ -30,9 +28,9 @@ declare const TAG: unique symbol;
  * firstDocument.identifier = secondDocument.identifier // compiler error
  * ```
  */
-export type WithScope<Scope> = {
-  readonly [TAG]: ScopeGuard<Scope>;
-};
+export type WithScope<Scope> = { readonly [TAG]: ScopeGuard<Scope> };
+
+declare const TAG: unique symbol;
 
 /**
  * Produces a unique scope type that is passed securely to a scoped execution
@@ -57,7 +55,7 @@ export type WithScope<Scope> = {
  * });
  *
  * declare function produceSomethingScoped<Scope>(
- *   _scope: WithScope<Scope>
+ *   _scope: ScopeToken<Scope>
  * ): SomethingScoped<Scope>;
  * ```
  * **ATTENTION:**
@@ -67,15 +65,103 @@ export type WithScope<Scope> = {
  * pattern documentation for details — linked at the top of this module.
  */
 export function withScope<ScopeFreeOutput>(
-  scopedBlock: <UniqueScope>(scope: WithScope<UniqueScope>) => ScopeFreeOutput,
+  scopedBlock: <UniqueScope>(scope: ScopeToken<UniqueScope>) => ScopeFreeOutput,
 ): ScopeFreeOutput {
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- explicit assertion for branding
   const scope = Symbol(
     "unique scope representative (don't actually use at runtime, compile-time construct)",
-  ) as unknown as WithScope<unknown>;
+  ) as ScopeToken<unknown>;
 
   return scopedBlock(scope);
 }
+
+/**
+ * Runtime carrier of a scope as unique symbol, branded with the scope.
+ *
+ * It is provided as argument to a scoped block when using {@link withScope}. It
+ * can be passed around as the carrier of the unique runtime and type-level scope.
+ * It is also used to access the singleton instances of the scope via
+ * {@link scopedSingleton}.
+ *
+ * **ATTENTION:**
+ * Don't use this to make a type scoped itself. Strictly use {@link WithScope}
+ * instead. The token is based on a symbol. Intersections with other primitive
+ * types silently result into `never`.
+ */
+export type ScopeToken<Scope> = symbol & WithScope<Scope>;
+
+/**
+ * Returns one instance of `createSingleton` for the given `scope` and `key`.
+ *
+ * Anything constructed only ever once per scope should go through here. For
+ * example, identifier generators. Calling the function multiple times with the
+ * same `scope` and `key` yields the same instance - the scoped singleton.
+ * Instances live as long as the scope. They become inaccessible once the scope
+ * ends and will be automatically garbage collected.
+ *
+ * **ATTENTION:**
+ * A `key` must be a constant value that doesn't change during the lifetime of
+ * a scope. A common approach is to use a module-level constant.
+ *
+ * ```typescript
+ * withScope((scope) => {
+ *   const cache = getCache(scope);
+ *   cache.foo = "new value";
+ *   const sameCache = getCache(scope);
+ *   assert(sameCache.foo === "new value");
+ *   assert(Object.is(cache, sameCache));
+ * })
+ *
+ * withScope((scope) => {
+ *   const cache = getCache(scope);
+ *   assert(cache.foo === "bar");
+ * })
+ *
+ * function getCache<Scope>(scope: ScopeToken<Scope>) {
+ *   return scopedSingleton(scope, CACHE_KEY, () => ({ foo: "bar" }));
+ * }
+ *
+ * const CACHE_KEY = Symbol('my-singleton-cache-of-scope');
+ * ```
+ */
+export function scopedSingleton<Scope, Singleton extends NonNullable<unknown>>(
+  scope: ScopeToken<Scope>,
+  key: symbol,
+  createSingleton: () => Singleton,
+): Singleton {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+  const registryOfScope = getOrInsertDefault(
+    SINGLETON_REGISTRY_PER_SCOPE,
+    scope,
+    () => new Map(),
+  ) as Map<symbol, Singleton>;
+
+  return getOrInsertDefault(registryOfScope, key, createSingleton);
+}
+
+function getOrInsertDefault<
+  Key extends symbol,
+  Value extends NonNullable<unknown>,
+>(
+  map: Readonly<Map<Key, Value> | WeakMap<Key, Value>>,
+  key: Key,
+  getDefault: () => Value,
+) {
+  const value = map.get(key);
+
+  if (value !== undefined) {
+    return value;
+  }
+
+  const defaultValue = getDefault();
+  map.set(key, defaultValue);
+  return defaultValue;
+}
+
+const SINGLETON_REGISTRY_PER_SCOPE = new WeakMap<
+  symbol,
+  Map<symbol, unknown>
+>();
 
 /**
  * The guard of a scope ensures that `ScopeGuard<ScopeOne>` and
@@ -87,6 +173,7 @@ type ScopeGuard<Scope> = Invariant<Scope>;
 if (import.meta.vitest) {
   const { describe, it, expect, vi } = import.meta.vitest;
 
+  // oxlint-disable-next-line max-lines-per-function
   describe("scoping", () => {
     describe("with scope", () => {
       it("calls the given callable", () => {
@@ -101,10 +188,10 @@ if (import.meta.vitest) {
       it("provides a unique scope per call", () => {
         type SomethingScoped<Scope> = string & WithScope<Scope>;
 
-        withScope(<OuterScope>(_outerScope: WithScope<OuterScope>) => {
+        withScope(<OuterScope>(_outerScope: ScopeToken<OuterScope>) => {
           const valueInOuterScope = "value" as SomethingScoped<OuterScope>; // oxlint-disable-line
 
-          withScope(<InnerScope>(_innerScope: WithScope<InnerScope>) => {
+          withScope(<InnerScope>(_innerScope: ScopeToken<InnerScope>) => {
             // @ts-expect-error -- type testing on a level unsupported by Vitest
             valueInOuterScope satisfies SomethingScoped<InnerScope>;
           });
@@ -116,9 +203,54 @@ if (import.meta.vitest) {
 
         withScope(
           // @ts-expect-error -- type testing on a level unsupported by Vitest
-          <Scope>(_scope: WithScope<Scope>): OutputWithScope<Scope> => "foo",
+          <Scope>(_scope: ScopeToken<Scope>): OutputWithScope<Scope> => "foo",
         );
       });
+    });
+
+    describe("scoped singleton", () => {
+      it("returns the same instance when called multiple times", () => {
+        withScope((scope) => {
+          expect(getCache(scope)).toBe(getCache(scope));
+        });
+      });
+
+      it("returns a new instance for a different scope", () => {
+        withScope((scope) => {
+          const cache = getCache(scope);
+          cache.foo = "new value";
+        });
+
+        withScope((scope) => {
+          const cache = getCache(scope);
+          expect(cache.foo).not.toEqual("new value");
+        });
+      });
+
+      it("allows for multiple singletons", () => {
+        const FIRST_KEY = Symbol("first-test-key");
+        const SECOND_KEY = Symbol("second-test-key");
+
+        withScope((scope) => {
+          const firstSingleton = scopedSingleton(scope, FIRST_KEY, () => ({
+            foo: "bar",
+          }));
+
+          const secondSingleton = scopedSingleton(scope, SECOND_KEY, () => ({
+            foo: "bar",
+          }));
+
+          expect(firstSingleton).not.toBe(secondSingleton);
+          expect(firstSingleton).toStrictEqual({ foo: "bar" });
+          expect(secondSingleton).toStrictEqual({ foo: "bar" });
+        });
+      });
+
+      function getCache<Scope>(scope: ScopeToken<Scope>) {
+        return scopedSingleton(scope, CACHE_KEY, () => ({ foo: "bar" }));
+      }
+
+      const CACHE_KEY = Symbol("test-key");
     });
   });
 }

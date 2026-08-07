@@ -20,10 +20,17 @@ identifiers of the same kind between different scopes (read:
 XJustiz-Nachrichten). Like passing an identifier for a participant that is
 defined in a different Nachricht.
 
+In addition certain things must have a single instance per scope. Most prominent
+example are identifier generators that produce a unique sequence should only
+every exist once per scope. Therefore, it is necessary to protect the
+construction as scoped singletons — enforcing safe usage.
+
 ## Solution
 
 Types that represent identifiers get tagged with an auxiliary type for scoping.
-In addition, a utility function provides the context for unique scope injection.
+In addition, a utility function provides the context for unique scope injection
+with a token. This token can also be used to access the singleton registry of
+a scope.
 
 ### Auxiliary Type
 
@@ -70,20 +77,19 @@ scoped values like for identifier types can never be mixed. Neither by accident,
 nor intentionally.
 
 The solution is a rank-2 generic function that provides an opaque generic scope
-to a scoped execution block. In result, every invocation of this utility
+token to a scoped execution block. In result, every invocation of this utility
 function produces a truly unique scope type that is impossible to name. The
 implementation itself is basically just the function signature itself:
 
 ```typescript
 declare function withScope<ScopeFreeOutput>(
-  scopedBlock: <UniqueScope>(scope: WithScope<UniqueScope>) => ScopeFreeOutput,
+  scopedBlock: <UniqueScope>(scope: ScopeToken<UniqueScope>) => ScopeFreeOutput,
 ): ScopeFreeOutput;
 ```
 
-The scope is primarily a compile-time concept. At runtime, a unique `Symbol` is
-created for every invocation. While being unique, is doesn't provide the same
-strong safety properties as the scope type does. It should practically not be
-used at runtime.
+The unique scope type is carried by a token value, based on a unique runtime
+symbol. The token can be passed around for anything that generically depends on
+a scope — including for [scoped singletons](#scoped-singletons).
 
 Because scopes are guarded to be invariant, this is so strong, that it is not
 possible to leak any value generic to the scope outside this function call. Not
@@ -103,4 +109,29 @@ const output = withScope((scope) => {
   const entity = { identifier, foo: "bar", baz: true };
   return JSON.stringify(entity);
 });
+```
+
+### Scoped Singletons
+
+Scoped singletons solve the problem that certain things must exist only ever
+once in a scope. The scope token can be used as to access a registry of
+singletons that lives only as long as the scope. Each singleton is identified by
+it's own unique key. The combination of scope token and singleton key is unique
+and always provides the same singleton instance. The instance will be created on
+first access.
+
+```typescript
+withScope((scope) => {
+  const cache = getCache(scope);
+  cache.foo = "new value";
+  const sameCache = getCache(scope);
+  assert(sameCache.foo === "new value");
+  assert(Object.is(cache, sameCache));
+});
+
+function getCache<Scope>(scope: ScopeToken<Scope>) {
+  return scopedSingleton(scope, CACHE_KEY, () => ({ foo: "bar" }));
+}
+
+const CACHE_KEY = Symbol("my-singleton-cache-of-scope");
 ```

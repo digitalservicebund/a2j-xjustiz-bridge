@@ -3,7 +3,9 @@ import {
   datatypeC,
 } from "~/xjustiz-schemata/din-91379/datatypeC";
 import {
+  type ScopeToken,
   type WithScope,
+  scopedSingleton,
   withScope,
 } from "~/xjustiz-schemata/shared-kernel/scoping";
 import {
@@ -58,25 +60,34 @@ export type RollennummerGenerator<NachrichtenScope> = <
 ) => Rollennummer<NachrichtenScope, ZugehoerigeRollenbezeichnung>;
 
 export function createRollennummerGenerator<NachrichtenScope>(
-  _scope: WithScope<NachrichtenScope>,
+  scope: ScopeToken<NachrichtenScope>,
 ): RollennummerGenerator<NachrichtenScope> {
-  return <ZugehoerigeRollenbezeichnung extends Rollenbezeichnung>(
-    _zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung,
-  ) => {
-    const uuid = datatypeC(globalThis.crypto.randomUUID());
+  return scopedSingleton(
+    scope,
+    ROLLENNUMMER_GENERATOR_KEY,
+    () =>
+      <ZugehoerigeRollenbezeichnung extends Rollenbezeichnung>(
+        _zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung,
+      ) => {
+        const uuid = datatypeC(globalThis.crypto.randomUUID());
 
-    if (uuid.issues) {
-      // No control over runtime environment provided cryptography. SHOULD never happen!
-      throw new TypeError("Generated UUID is unexpectedly no valid Datatype C");
-    } else {
-      // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
-      return uuid.value as Rollennummer<
-        NachrichtenScope,
-        ZugehoerigeRollenbezeichnung
-      >;
-    }
-  };
+        if (uuid.issues) {
+          // No control over runtime environment provided cryptography. SHOULD never happen!
+          throw new TypeError(
+            "Generated UUID is unexpectedly no valid Datatype C",
+          );
+        } else {
+          // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
+          return uuid.value as Rollennummer<
+            NachrichtenScope,
+            ZugehoerigeRollenbezeichnung
+          >;
+        }
+      },
+  );
 }
+
+const ROLLENNUMMER_GENERATOR_KEY = Symbol("rollennummer-generator");
 
 if (import.meta.vitest) {
   const { describe, it, expect } = import.meta.vitest;

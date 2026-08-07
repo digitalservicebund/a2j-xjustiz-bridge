@@ -49,7 +49,12 @@
     "typescript/consistent-type-definitions": ["error", "type"],
     "typescript/prefer-readonly-parameter-types": [
       "error",
-      { "ignoreInferredTypes": true },
+      {
+        "ignoreInferredTypes": true,
+        "allow": [
+          { "from": "file", "name": "ScopeToken" }, // False positive causing issues.
+        ],
+      },
     ], // Else it becomes painful in functional chains like .map().filter()
     "eslint/no-restricted-imports": [
       "error",

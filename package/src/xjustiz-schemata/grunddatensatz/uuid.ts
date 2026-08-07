@@ -1,5 +1,7 @@
 import {
+  type ScopeToken,
   type WithScope,
+  scopedSingleton,
   withScope,
 } from "~/xjustiz-schemata/shared-kernel/scoping";
 
@@ -24,12 +26,18 @@ export type UUID<NachrichtenScope> = string & {
 export type UUIDGenerator<NachrichtenScope> = () => UUID<NachrichtenScope>;
 
 export function createUuidGenerator<NachrichtenScope>(
-  _scope: WithScope<NachrichtenScope>,
+  scope: ScopeToken<NachrichtenScope>,
 ): UUIDGenerator<NachrichtenScope> {
-  return () =>
-    // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
-    globalThis.crypto.randomUUID() as UUID<NachrichtenScope>;
+  return scopedSingleton(
+    scope,
+    UUID_GENERATOR_KEY,
+    () => () =>
+      // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
+      globalThis.crypto.randomUUID() as UUID<NachrichtenScope>,
+  );
 }
+
+const UUID_GENERATOR_KEY = Symbol("uuid-generator");
 
 if (import.meta.vitest) {
   const { describe, it, expect } = import.meta.vitest;
