@@ -24,12 +24,12 @@ Example:
 uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 ```
 
-## Manual Cash Versioning
+## Manual Cache Versioning
 
-All keys for our caches must be suffixed with a version number. The base
-key should be composed by all relevant metadata to increase the likelihood of
-a cache hit. The suffix is only for manual bumps for rare occasions, when
-a cache hit causes issues. The standard format looks like this:
+All keys for our caches must be suffixed with a version number. The base key
+should be composed by all relevant metadata to increase the likelihood of a
+cache hit. The suffix is only for manual bumps for rare occasions, when a cache
+hit causes issues. The standard format looks like this:
 
 ```yaml
 key: some-name-${{ with.important }}-${{ information }}-v1
@@ -40,3 +40,15 @@ In case of a rare occasion, the suffix will be incremented. Here from `-v1` to
 
 There might be scenarios of pure manual cache management. In such case only the
 manual increment will be used as key, here it would be `v1`.
+
+## Restore Keys for Dependency Caches
+
+A `restore-keys` prefix allows GitHub Actions to fall back to the most recent
+compatible cache:
+
+```yaml
+key: runtime-dependencies-${{ hashFiles('./package/pnpm-lock.yaml') }}-v1
+restore-keys: runtime-dependencies-
+```
+
+The prefix must only match caches with the same content and purpose.
