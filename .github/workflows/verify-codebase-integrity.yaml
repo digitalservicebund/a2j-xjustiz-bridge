@@ -22,6 +22,7 @@ jobs:
         with:
           path: ./package/node_modules
           key: runtime-dependencies-${{ hashFiles('./package/pnpm-lock.yaml') }}-v1
+          restore-keys: runtime-dependencies-
 
       - name: get current date
         id: date
