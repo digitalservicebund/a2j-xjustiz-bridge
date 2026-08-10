@@ -21,7 +21,7 @@ jobs:
         with:
           enable-cache: true
           devbox-version: 0.17.5
-          sha256-checksum: eb2d8fb34266ba3befc294d7d6f56e2cd4da2cacb7a0cf52db5b8092575544f8 #devbox_0.17.5_linux_amd64.tar.gz
+          sha256-checksum: 520abeaca5fb8e8175bea2acdaac4109e87768ac25ad8da5ad2e6eace5a6060b #devbox_0.17.5_linux_amd64.tar.gz
 
       - name: load cache for runtime dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
