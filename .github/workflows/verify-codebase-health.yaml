@@ -17,7 +17,7 @@ jobs:
         with:
           enable-cache: true
           devbox-version: 0.17.5
-          sha256-checksum: 02f4810a06b7386368912d4dbf71d8ba3dbbc80b743c11dbf36e9dc30eb73433 # v0.17.1 linux amd64
+          sha256-checksum: eb2d8fb34266ba3befc294d7d6f56e2cd4da2cacb7a0cf52db5b8092575544f8 #devbox_0.17.5_linux_amd64.tar.gz
 
       - name: get current date
         id: date
