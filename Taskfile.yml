@@ -127,7 +127,7 @@ tasks:
   check:lint:typescript:
     desc: check TypeScript files for semantic rules (supports list of files as argument)
     internal: true
-    deps: [setup:development-environment]
+    deps: [setup:runtime-dependencies]
     vars:
       FILES: '{{ .CLI_ARGS_LIST | join "\n" }}'
       FILTERED_FILES: '{{ regexFindAll "(?m)^.*\\.(ts|tsx)$" .FILES -1 | join " " }}'
@@ -137,7 +137,7 @@ tasks:
   fix:lint:typescript:
     desc: apply automated fixes for linting issues for TypeScript files where possible (supports list of files as argument)
     internal: true
-    deps: [setup:development-environment]
+    deps: [setup:runtime-dependencies]
     vars:
       FILES: '{{ .CLI_ARGS_LIST | join "\n" }}'
       FILTERED_FILES: '{{ regexFindAll "(?m)^.*\\.(ts|tsx)$" .FILES -1 | join " " }}'
