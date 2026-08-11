@@ -14,17 +14,32 @@ declare const TAG: unique symbol;
  * Produced values depend on the global {@link crypto} generator and are expected
  * to be of version 4 — general purpose and fully random.
  *
- * The generation of identifiers is protected. The provided context of a message
- * orchestrator provides the necessary capabilities to produce entities with
- * automatic identifier generation for the correct scope. This helps to ensure
- * that identities are handled securely and correctly.
+ * UUIDs can be produced with an instance of the related generator, obtained by
+ * the {@link createUuidGenerator} factory.
  */
 export type UUID<NachrichtenScope> = string & {
-  readonly [TAG]: "Identifiers can not be constructed manually. Use the provided context to produce entities with automatic identifier generation.";
+  readonly [TAG]: "Use a generator instance to produce values, obtained by the `createUuidGenerator` factory.";
 } & WithScope<NachrichtenScope>;
 
 export type UUIDGenerator<NachrichtenScope> = () => UUID<NachrichtenScope>;
 
+/**
+ * Factory to obtain an identifier generator to produce {@link UUID} values.
+ *
+ * Generators are automatically scoped singletons. Multiple factory calls for the
+ * same scope result in the exact same generator instance.
+ *
+ * @example
+ * ```typescript
+ * withScope((scope) => {
+ *   const nextUUID = createUuidGenerator(scope);
+ *   const absender = {
+ *     eigeneNachrichtenID: nextUUID(),
+ *     // ...
+ *   }
+ * })
+ * ```
+ */
 export function createUuidGenerator<NachrichtenScope>(
   scope: ScopeToken<NachrichtenScope>,
 ): UUIDGenerator<NachrichtenScope> {

@@ -113,3 +113,5 @@ Grype
 CVE(s?)
 SBOM(s?)
 remains
+Rollennummer(n?)
+UUIDs

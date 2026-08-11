@@ -22,10 +22,8 @@ declare const TAG: unique symbol;
  * {@link crypto} generator and are expected to be of version 4 — general purpose
  * and fully random.
  *
- * The generation of identifiers is protected. The provided context of a message
- * orchestrator provides the necessary capabilities to produce entities with
- * automatic identifier generation for the correct scope. This helps to ensure
- * that identities are handled securely and correctly.
+ * Rollennummern can be produced with an instance of the related generator,
+ * obtained by the {@link createRollennummerGenerator} factory.
  *
  * A {@link Rollennummer} can be associated with a {@link Rollenbezeichnung}
  * based on their shared context of a Rolle for a {@link Beteiligung}. When an
@@ -49,7 +47,7 @@ export type Rollennummer<
   NachrichtenScope,
   ZugehoerigeRollenbezeichnung extends Rollenbezeichnung = Rollenbezeichnung,
 > = DatatypeC & {
-  readonly [TAG]: "Identifiers can not be constructed manually. Use the provided context to produce entities with automatic identifier generation.";
+  readonly [TAG]: "Use a generator instance to produce values, obtained by the `createRollennummerGenerator` factory.";
   readonly zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung;
 } & WithScope<NachrichtenScope>;
 
@@ -59,6 +57,26 @@ export type RollennummerGenerator<NachrichtenScope> = <
   zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung,
 ) => Rollennummer<NachrichtenScope, ZugehoerigeRollenbezeichnung>;
 
+/**
+ * Factory to obtain an identifier generator to produce {@link Rollennummer}
+ * values. Generating a {@link Rollennummer} requires to provide the zugehörige
+ * {@link Rollenbezeichnung}.
+ *
+ * Generators are automatically scoped singletons. Multiple factory calls for the
+ * same scope result in the exact same generator instance.
+ *
+ * @example
+ * ```typescript
+ * withScope((scope) => {
+ *   const nextRollennummer = createRollennummerGenerator(scope);
+ *   const rolle = {
+ *     rollennummer: nextRollennummer(Rollenbezeichnung.Klaeger),
+ *     rollenbezeichnung: Rollenbezeichnung.Klaeger,
+ *     // ...
+ *   }
+ * })
+ * ```
+ */
 export function createRollennummerGenerator<NachrichtenScope>(
   scope: ScopeToken<NachrichtenScope>,
 ): RollennummerGenerator<NachrichtenScope> {

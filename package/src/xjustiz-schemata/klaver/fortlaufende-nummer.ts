@@ -17,20 +17,23 @@ declare const TAG: unique symbol;
  * be used for cross references. It is used to identify entities like Fristen or
  * (Zins)Ansprüche.
  *
- * The generation of identifiers is protected. The provided context of a message
- * orchestrator provides the necessary capabilities to produce entities with
- * automatic identifier generation for the correct scope. This helps to ensure
- * that identities are handled securely and correctly.
+ * Fortlaufende Nummern can be produced with an instance of the related
+ * generator, obtained by the {@link createFortlaufendeNummerGenerator} factory.
+ *
+ * A Fortlaufende Nummer must be associated with a `Bezugselement` it relates to.
+ * It is used for type restrictions within composites, especially to correctly
+ * specify requirements for references. This closes an ambiguous gap in the
+ * XJustiz standard.
  */
 export type FortlaufendeNummer<
   NachrichtenScope,
   Bezugselement extends ArtVonBezugselement,
 > = PositiveInteger & {
-  readonly [TAG]: "Identifiers can not be constructed manually. Use the provided context to produce entities with automatic identifier generation.";
+  readonly [TAG]: "Use a generator instance to produce values, obtained by the `createFortlaufendeNummerGenerator` factory.";
   readonly bezugselement: Bezugselement;
 } & WithScope<NachrichtenScope>;
 
-type ArtVonBezugselement = "Anspruch" | "Zinsanspruch";
+export type ArtVonBezugselement = "Anspruch" | "Zinsanspruch";
 
 export type FortlaufendeNummerGenerator<NachrichtenScope> = <
   Bezugselement extends ArtVonBezugselement,
@@ -38,6 +41,25 @@ export type FortlaufendeNummerGenerator<NachrichtenScope> = <
   bezugselement: Bezugselement,
 ) => FortlaufendeNummer<NachrichtenScope, Bezugselement>;
 
+/**
+ * Factory to obtain an identifier generator to produce
+ * {@link FortlaufendeNummer} values. Generating a {@link FortlaufendeNummer}
+ * requires to provide the {@link ArtVonBezugselement}.
+ *
+ * Generators are automatically scoped singletons. Multiple factory calls for the
+ * same scope result in the exact same generator instance.
+ *
+ * @example
+ * ```typescript
+ * withScope((scope) => {
+ *   const nextFortlaufendeNummer = createFortlaufendeNummerGenerator(scope);
+ *   const anspruch = {
+ *     fortlaufendeNummer: nextFortlaufendeNummer("Anspruch"),
+ *     // ...
+ *   }
+ * })
+ * ```
+ */
 export function createFortlaufendeNummerGenerator<NachrichtenScope>(
   scope: ScopeToken<NachrichtenScope>,
 ): FortlaufendeNummerGenerator<NachrichtenScope> {

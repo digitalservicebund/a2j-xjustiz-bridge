@@ -1,4 +1,3 @@
-/* oxlint-disable max-lines -- Example message fixture is comprehensive */
 import {
   type AntraegeFuerZahlungsklage,
   type Beklagter,
@@ -8,21 +7,9 @@ import {
   type Zahlungsklage,
 } from "~/nachricht/zahlungsklage/message-profile";
 import {
-  type FortlaufendeNummerGenerator,
-  createFortlaufendeNummerGenerator,
-} from "~/xjustiz-schemata/klaver/fortlaufende-nummer";
-import {
-  type RollennummerGenerator,
-  createRollennummerGenerator,
-} from "~/xjustiz-schemata/grunddatensatz/rollennummer";
-import {
   type ScopeToken,
   withScope,
 } from "~/xjustiz-schemata/shared-kernel/scoping";
-import {
-  type UUIDGenerator,
-  createUuidGenerator,
-} from "~/xjustiz-schemata/grunddatensatz/uuid";
 
 /**
  * Message orchestrator to compose a Nachricht for a _Zahlungsklage_.
@@ -38,30 +25,13 @@ import {
  */
 export function zahlungsklage(
   compose: <NachrichtenScope>(
-    context: Context<NachrichtenScope>,
+    scope: ScopeToken<NachrichtenScope>,
   ) => Zahlungsklage<NachrichtenScope>,
 ): string {
   return withScope((scope) => {
-    const context = createContext(scope);
-    const message = compose(context);
+    const message = compose(scope);
     return JSON.stringify(message);
   });
-}
-
-type Context<NachrichtenScope> = {
-  readonly nextFortlaufendeNummer: FortlaufendeNummerGenerator<NachrichtenScope>;
-  readonly nextUUID: UUIDGenerator<NachrichtenScope>;
-  readonly nextRollennummer: RollennummerGenerator<NachrichtenScope>;
-};
-
-function createContext<NachrichtenScope>(
-  scope: ScopeToken<NachrichtenScope>,
-): Context<NachrichtenScope> {
-  return {
-    nextFortlaufendeNummer: createFortlaufendeNummerGenerator(scope),
-    nextUUID: createUuidGenerator(scope),
-    nextRollennummer: createRollennummerGenerator(scope),
-  };
 }
 
 if (import.meta.vitest) {
@@ -87,6 +57,12 @@ if (import.meta.vitest) {
     const { datatypeE } = await import(
       "~/xjustiz-schemata/din-91379/datatypeE"
     );
+    const { createUuidGenerator } = await import(
+      "~/xjustiz-schemata/grunddatensatz/uuid"
+    );
+    const { createRollennummerGenerator } = await import(
+      "~/xjustiz-schemata/grunddatensatz/rollennummer"
+    );
     const {
       Gerichte,
       Geschlecht,
@@ -99,18 +75,21 @@ if (import.meta.vitest) {
     const { AntragCodeliste, Anspruchsart } = await import(
       "~/xjustiz-schemata/klaver/codelisten"
     );
+    const { createFortlaufendeNummerGenerator } = await import(
+      "~/xjustiz-schemata/klaver/fortlaufende-nummer"
+    );
 
     // oxlint-disable-next-line max-lines-per-function
     it("is possible to create a valid example message", () => {
       const message = zahlungsklage(
         // oxlint-disable-next-line max-lines-per-function
-        <NachrichtenScope>(context: Context<NachrichtenScope>) => {
+        <NachrichtenScope>(scope: ScopeToken<NachrichtenScope>) => {
+          const nextRollennummer = createRollennummerGenerator(scope);
+
           const klaeger = {
             rolle: [
               {
-                rollennummer: context.nextRollennummer(
-                  Rollenbezeichnung.Klaeger,
-                ),
+                rollennummer: nextRollennummer(Rollenbezeichnung.Klaeger),
                 rollenbezeichnung: Rollenbezeichnung.Klaeger,
               },
             ],
@@ -204,9 +183,7 @@ if (import.meta.vitest) {
           const beklagter = {
             rolle: [
               {
-                rollennummer: context.nextRollennummer(
-                  Rollenbezeichnung.Beklagter,
-                ),
+                rollennummer: nextRollennummer(Rollenbezeichnung.Beklagter),
                 rollenbezeichnung: Rollenbezeichnung.Beklagter,
               },
             ],
@@ -247,11 +224,14 @@ if (import.meta.vitest) {
             },
           } satisfies Prozessbevollmaechtiger<NachrichtenScope>;
 
+          const nextFortlaufendeNummer =
+            createFortlaufendeNummerGenerator(scope);
+
           const sachantraege = {
             inhalt: datatypeE("Lorem ipsum").value,
             anspruch: [
               {
-                fortlaufendeNummer: context.nextFortlaufendeNummer("Anspruch"),
+                fortlaufendeNummer: nextFortlaufendeNummer("Anspruch"),
                 anspruchssteller: [
                   { refRollennummer: klaeger.rolle[0].rollennummer },
                 ],
@@ -286,6 +266,8 @@ if (import.meta.vitest) {
             ],
           } satisfies AntraegeFuerZahlungsklage<NachrichtenScope>["nebenantraegeZinsen"];
 
+          const nextUUID = createUuidGenerator(scope);
+
           return {
             nachrichtenkopf: {
               xjustizVersion: "3.6.2",
@@ -296,7 +278,7 @@ if (import.meta.vitest) {
                     sonstige: datatypeD("Herr Dr. Max Mustermann").value,
                   },
                 },
-                eigeneNachrichtenID: context.nextUUID(),
+                eigeneNachrichtenID: nextUUID(),
               },
               empfaenger: {
                 informationen: {
@@ -337,7 +319,7 @@ if (import.meta.vitest) {
                       anspruch: [
                         {
                           fortlaufendeNummer:
-                            context.nextFortlaufendeNummer("Anspruch"),
+                            nextFortlaufendeNummer("Anspruch"),
                           anspruchssteller: [
                             {
                               refRollennummer: klaeger.rolle[0].rollennummer,
@@ -383,7 +365,7 @@ if (import.meta.vitest) {
                   vortrag: [
                     {
                       schlagwort: datatypeC("Zahlungsanspruch").value,
-                      vortragsID: context.nextUUID(),
+                      vortragsID: nextUUID(),
                       ausfuehrungen: {
                         inhalt: {
                           tatsachenvortragSachverhaltsbeschreibung: datatypeC(

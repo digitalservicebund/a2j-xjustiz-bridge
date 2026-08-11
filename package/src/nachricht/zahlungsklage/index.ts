@@ -5,6 +5,10 @@ export {
   Anspruchsart,
 } from "~/xjustiz-schemata/klaver/codelisten";
 
+export { createFortlaufendeNummerGenerator } from "~/xjustiz-schemata/klaver/fortlaufende-nummer";
+export { createUuidGenerator } from "~/xjustiz-schemata/grunddatensatz/uuid";
+export { createRollennummerGenerator } from "~/xjustiz-schemata/grunddatensatz/rollennummer";
+
 export {
   Gerichte,
   Geschlecht,

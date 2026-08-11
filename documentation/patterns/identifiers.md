@@ -61,39 +61,56 @@ declare const TAG: unique symbol;
 /**
  * Identifier for entities of important kind. Instances are only unique within
  * the XJustiz-Nachricht they are included in.
+ *
+ * Some identifiers can be produced with an instance of the related generator,
+ * obtained by the {@link createSomeIdentifierGenerator} factory.
  */
 export type SomeIdentifier<NachrichtenScope> = number & {
-  readonly [TAG]: "Identifiers can not be constructed manually.";
+  readonly [TAG]: "Use a generator instance to produce values, obtained by the `createSomeIdentifierGenerator` factory.";
 } & WithScope<NachrichtenScope>;
 ```
 
 ### Generators
 
-Each module of an identifier also exposes a function that can construct new
-generator instances. An instance must produce unique identifiers for the scope
-they are related to. Generators fall under the class of smart constructors in
-the context of branded new-types. They are the only unit that is allowed to
-assert the compiler valid instances of the identifier type. Generators are also
-meant to play well together with the [`withScope`](./scoping.md#unique-scopes)
-function, receiving a uniquely typed scope symbol as parameter.
+Each module of an identifier also exposes a factory function that can construct
+new generator instances. Generators fall under the class of smart constructors
+in the context of branded new-types. They are the only unit that is allowed to
+assert the compiler valid instances of the identifier type. An instance must
+produce unique identifiers for the scope they are related to. Generator
+instances must be scoped singletons. Calling the factory multiple times for the
+same scope token result into the exact same generator instance. A singleton is
+registered to a scope internal registry using a unique key.
 
 ```typescript
 export type SomeIdentifierGenerator<NachrichtenScope> =
   () => SomeIdentifier<NachrichtenScope>;
 
+/**
+ * Factory to obtain an identifier generator to produce {@link SomeIdentifier} values.
+ *
+ * Generators are automatically scoped singletons. Multiple factory calls for the
+ * same scope result in the exact same generator instance.
+ *
+ * @example
+ * withScope((scope) => {
+ *   const nextSomeIdentifier = createSomeIdentifierGenerator(scope);
+ *   const someComposite = {
+ *     someIdentifierProperty: nextSomeIdentifier(),
+ *     // ...
+ *   }
+ * })
+ */
 export function createSomeIdentifierGenerator<NachrichtenScope>(
-  _scope: WithScope<NachrichtenScope>,
-): SomeIdentifierGenerator {
-  let nextIdentifier = 1;
-  // oxlint-disable-next-line no-unsafe-type-assertion -- explicit cast for branding
-  return () => nextIdentifier++ as SomeIdentifier<NachrichtenScope>;
+  scope: ScopeToken<NachrichtenScope>,
+): SomeIdentifierGenerator<NachrichtenScope> {
+  return scopedSingleton(scope, SOME_IDENTIFIER_GENERATOR_KEY, () => {
+    let nextIdentifier = 1;
+    // oxlint-disable-next-line no-unsafe-type-assertion -- explicit cast for branding
+    return () => nextIdentifier++ as SomeIdentifier<NachrichtenScope>;
+  });
 }
 
-// Somewhere else:
-withScope((scope) => {
-  const nextIdentifier = createSomeIdentifierGenerator(scope);
-  const someEntity = { identifier: nextIdentifier() };
-});
+const SOME_IDENTIFIER_GENERATOR_KEY = Symbol("some-identifier-generator");
 ```
 
 > [!INFO]
@@ -130,22 +147,40 @@ Generating an identifier is then enforced to adhere to this parametrization.
 References on the other hand use the same parameter to restrict themselves.
 
 ```typescript
-type ArtVonUnterscheidungsmerkmal = "A" | "B" | "C";
-
 /**
  * Identifier for entities of important kind. Instances are only unique within
  * the XJustiz-Nachricht they are included in.
  *
- * Some helpful documentation about the restriction by the generic parameter.
+ * Some identifiers can be produced with an instance of the related generator,
+ * obtained by the {@link createSomeIdentifierGenerator} factory.
+
+ * Helpful documentation about the restriction by the generic parameter...
  */
 export type SomeIdentifier<
   NachrichtenScope,
   Unterscheidungsmerkmal extends ArtVonUnterscheidungsmerkmal
 > = number & {
-  readonly [TAG]: "Identifiers can not be constructed manually.";
+  readonly [TAG]: "Use a generator instance to produce values, obtained by the `createSomeIdentifierGenerator` factory.";
   readonly unterscheidungsmerkmal: Unterscheidungsmerkmal;
 } & WithScope<NachrichtenScope>;
 
+/**
+ * Factory to obtain an identifier generator to produce {@link SomeIdentifier} values.
+ * Generating a {@link SomeIdentifier} requires to provide the
+ * {@link ArtVonUnterscheidungsmerkmal}.
+ *
+ * Generators are automatically scoped singletons. Multiple factory calls for the
+ * same scope result in the exact same generator instance.
+ *
+ * @example
+ * withScope((scope) => {
+ *   const nextSomeIdentifier = createSomeIdentifierGenerator(scope);
+ *   const someComposite = {
+ *     someIdentifierProperty: nextSomeIdentifier("A"),
+ *     // ...
+ *   }
+ * })
+ */
 export function createSomeIdentifierGenerator<NachrichtenScope>(
   _scope: WithScope<NachrichtenScope>,
 ) {
@@ -161,38 +196,6 @@ export function createSomeIdentifierGenerator<NachrichtenScope>(
     >;
   }
 }
-```
 
-### Accessibility & Responsibility
-
-Branding, scoping, and a dedicated generator solve the majority of problems
-to a high extend. However, there is still the challenge to avoid dangling
-references. If anyone can create new identifiers, it doesn't matter if they are
-scoped and separated from each other: you can just get an identifier, use it as
-reference and move on. But there is no entity that can actually be identified by
-this identifier. But even if the identifier would be used to construct an
-entity, it is still possible to forget about this entity.
-
-Therefore, it is necessary that library users can not access generators
-directly. The library must remain fully responsible to automatically generate
-identifiers for newly created entities and take care that none can be forgotten.
-This is the responsibility of the message orchestrators.
-
-Because the identifier type itself will be exposed to library users, the
-provided documentation should make a point about the practical usage. Also the
-branding tag should be extended for this.
-
-```typescript
-/**
- * Identifier for entities of important kind. Instances are only unique within
- * the XJustiz-Nachricht they are included in.
- *
- * The generation of identifiers is protected. The provided context of a message
- * orchestrator provides the necessary capabilities to produce entities with
- * automatic identifier generation for the correct scope. This helps to ensure
- * that identities are handled securely and correctly.
- */
-export type SomeIdentifier<NachrichtenScope> = number & {
-  readonly [TAG]: "Identifiers can not be constructed manually. Use the provided context to produce entities with automatic identifier generation.";
-} & WithScope<NachrichtenScope>;
+export type ArtVonUnterscheidungsmerkmal = "A" | "B" | "C";
 ```
