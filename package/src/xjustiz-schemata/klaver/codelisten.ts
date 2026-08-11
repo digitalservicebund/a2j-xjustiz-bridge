@@ -3,10 +3,8 @@ import {
   defineCodeliste,
 } from "~/xjustiz-schemata/shared-kernel/codelisten";
 
-export type AnspruchsartCodeliste = InferCodeliste<
-  typeof AnspruchsartCodeliste
->;
-export const AnspruchsartCodeliste = defineCodeliste({
+export type Anspruchsart = InferCodeliste<typeof Anspruchsart>;
+export const Anspruchsart = defineCodeliste({
   Zahlung: "001",
 });
 

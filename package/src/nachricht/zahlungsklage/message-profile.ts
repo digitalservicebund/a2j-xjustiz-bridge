@@ -1,5 +1,5 @@
 import {
-  type AnspruchsartCodeliste,
+  type Anspruchsart,
   type AntragCodeliste,
 } from "~/xjustiz-schemata/klaver/codelisten";
 import {
@@ -190,7 +190,7 @@ export type AntraegeFuerZahlungsklage<NachrichtenScope> = {
         anspruchsgegner: [
           RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Beklagter>,
         ];
-        anspruchsart: typeof AnspruchsartCodeliste.Zahlung;
+        anspruchsart: typeof Anspruchsart.Zahlung;
         wertAnspruch: Geldbetrag;
       },
     ];
@@ -247,7 +247,7 @@ type AnspruchFuerZahlungsklage<NachrichtenScope> = {
   anspruchsgegner: [
     RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Beklagter>,
   ];
-  anspruchsart: typeof AnspruchsartCodeliste.Zahlung;
+  anspruchsart: typeof Anspruchsart.Zahlung;
   wertAnspruch: Geldbetrag;
 };
 

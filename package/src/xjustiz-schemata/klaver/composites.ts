@@ -1,5 +1,5 @@
 import {
-  type AnspruchsartCodeliste,
+  type Anspruchsart,
   type AntragCodeliste,
 } from "~/xjustiz-schemata/klaver/codelisten";
 import {
@@ -32,7 +32,7 @@ export type Anspruch<NachrichtenScope> = {
   fortlaufendeNummer?: FortlaufendeNummer<NachrichtenScope, "Anspruch">;
   anspruchssteller?: RefRollennummer<NachrichtenScope>[];
   anspruchsgegner?: RefRollennummer<NachrichtenScope>[];
-  anspruchsart?: AnspruchsartCodeliste;
+  anspruchsart?: Anspruchsart;
   wertAnspruch?: Geldbetrag;
   anspruchsgegenstand?: DatatypeC;
 };

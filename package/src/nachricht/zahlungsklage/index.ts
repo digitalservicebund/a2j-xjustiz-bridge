@@ -2,7 +2,7 @@ export { zahlungsklage } from "./orchestrator";
 
 export {
   AntragCodeliste,
-  AnspruchsartCodeliste,
+  Anspruchsart,
 } from "~/xjustiz-schemata/klaver/codelisten";
 
 export {

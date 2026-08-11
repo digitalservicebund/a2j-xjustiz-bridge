@@ -96,7 +96,7 @@ if (import.meta.vitest) {
       Waehrung,
       Zinsmethode,
     } = await import("~/xjustiz-schemata/grunddatensatz/codelisten");
-    const { AntragCodeliste, AnspruchsartCodeliste } = await import(
+    const { AntragCodeliste, Anspruchsart } = await import(
       "~/xjustiz-schemata/klaver/codelisten"
     );
 
@@ -258,7 +258,7 @@ if (import.meta.vitest) {
                 anspruchsgegner: [
                   { refRollennummer: beklagter.rolle[0].rollennummer },
                 ],
-                anspruchsart: AnspruchsartCodeliste.Zahlung,
+                anspruchsart: Anspruchsart.Zahlung,
                 wertAnspruch: {
                   zahl: 5000,
                   auswahlWaehrung: {
@@ -348,7 +348,7 @@ if (import.meta.vitest) {
                               refRollennummer: beklagter.rolle[0].rollennummer,
                             },
                           ],
-                          anspruchsart: AnspruchsartCodeliste.Zahlung,
+                          anspruchsart: Anspruchsart.Zahlung,
                           wertAnspruch: {
                             zahl: 850.9,
                             auswahlWaehrung: {
