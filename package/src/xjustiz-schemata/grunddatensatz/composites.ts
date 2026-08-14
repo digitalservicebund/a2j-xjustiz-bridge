@@ -17,6 +17,7 @@ import { type DatatypeB } from "~/xjustiz-schemata/din-91379/datatypeB";
 import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatypeC";
 import { type DatatypeD } from "~/xjustiz-schemata/din-91379/datatypeD";
 import { type Decimal } from "~/xjustiz-schemata/xml-schema-definition/decimal";
+import { type Reference } from "~/xjustiz-schemata/shared-kernel/identifiers";
 import { type Rollennummer } from "~/xjustiz-schemata/grunddatensatz/rollennummer";
 import { type UUID } from "~/xjustiz-schemata/grunddatensatz/uuid";
 
@@ -130,7 +131,9 @@ export type RefRollennummer<
   NachrichtenScope,
   ZugehoerigeRollenbezeichnung extends Rollenbezeichnung = Rollenbezeichnung,
 > = {
-  refRollennummer: Rollennummer<NachrichtenScope, ZugehoerigeRollenbezeichnung>;
+  refRollennummer: Reference<
+    Rollennummer<NachrichtenScope, ZugehoerigeRollenbezeichnung>
+  >;
 };
 
 export type Geldbetrag = {

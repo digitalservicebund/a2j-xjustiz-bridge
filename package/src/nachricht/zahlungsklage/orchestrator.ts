@@ -1,3 +1,4 @@
+// oxlint-disable max-lines
 import {
   type AntraegeFuerZahlungsklage,
   type Beklagter,
@@ -39,6 +40,9 @@ if (import.meta.vitest) {
 
   // oxlint-disable-next-line max-lines-per-function
   describe("Zahlungsklage", async () => {
+    const { reference } = await import(
+      "~/xjustiz-schemata/shared-kernel/identifiers"
+    );
     const { decimal } = await import(
       "~/xjustiz-schemata/xml-schema-definition/decimal"
     );
@@ -140,7 +144,7 @@ if (import.meta.vitest) {
               {
                 rollenbezeichnung: Rollenbezeichnung.GesetzlicherVertreter,
                 geschaeftszeichen: datatypeC("KM-0042-2026").value,
-                referenz: [{ refRollennummer: rollennummerKlaeger }],
+                referenz: [{ refRollennummer: reference(rollennummerKlaeger) }],
               },
             ],
             beteiligter: {
@@ -218,7 +222,9 @@ if (import.meta.vitest) {
             rolle: [
               {
                 rollenbezeichnung: Rollenbezeichnung.Prozessbevollmaechtiger,
-                referenz: [{ refRollennummer: rollennummerBeklagter }],
+                referenz: [
+                  { refRollennummer: reference(rollennummerBeklagter) },
+                ],
               },
             ],
             beteiligter: {
@@ -240,8 +246,14 @@ if (import.meta.vitest) {
             anspruch: [
               {
                 fortlaufendeNummer: fortlaufendeNummerAnspruch,
-                anspruchssteller: [{ refRollennummer: rollennummerKlaeger }],
-                anspruchsgegner: [{ refRollennummer: rollennummerBeklagter }],
+                anspruchssteller: [
+                  { refRollennummer: reference(rollennummerKlaeger) },
+                ],
+                anspruchsgegner: [
+                  {
+                    refRollennummer: reference(rollennummerBeklagter),
+                  },
+                ],
                 anspruchsart: Anspruchsart.Zahlung,
                 wertAnspruch: {
                   zahl: 5000,
@@ -257,7 +269,7 @@ if (import.meta.vitest) {
             inhalt: datatypeE("Lorem ipsum").value,
             zinsanspruch: [
               {
-                refFortlaufendeNummer: fortlaufendeNummerAnspruch,
+                refFortlaufendeNummer: reference(fortlaufendeNummerAnspruch),
                 zinsen: [
                   {
                     zinssatz: decimal(0.05).value,
@@ -330,12 +342,12 @@ if (import.meta.vitest) {
                           fortlaufendeNummer: fortlaufendeNummerAnwaltskosten,
                           anspruchssteller: [
                             {
-                              refRollennummer: rollennummerKlaeger,
+                              refRollennummer: reference(rollennummerKlaeger),
                             },
                           ],
                           anspruchsgegner: [
                             {
-                              refRollennummer: rollennummerBeklagter,
+                              refRollennummer: reference(rollennummerBeklagter),
                             },
                           ],
                           anspruchsart: Anspruchsart.Zahlung,

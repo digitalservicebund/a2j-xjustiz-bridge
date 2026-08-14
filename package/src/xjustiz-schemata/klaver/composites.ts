@@ -10,6 +10,7 @@ import {
 import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatypeC";
 import { type DatatypeE } from "~/xjustiz-schemata/din-91379/datatypeE";
 import { type FortlaufendeNummer } from "~/xjustiz-schemata/klaver/fortlaufende-nummer";
+import { type Reference } from "~/xjustiz-schemata/shared-kernel/identifiers";
 import { type UUID } from "~/xjustiz-schemata/grunddatensatz/uuid";
 
 export type Antrag<NachrichtenScope> = {
@@ -21,7 +22,9 @@ export type Antrag<NachrichtenScope> = {
     inhalt: DatatypeE;
     zinsanspruch?: {
       fortlaufendeNummer?: FortlaufendeNummer<NachrichtenScope, "Zinsanspruch">;
-      refFortlaufendeNummer?: FortlaufendeNummer<NachrichtenScope, "Anspruch">;
+      refFortlaufendeNummer?: Reference<
+        FortlaufendeNummer<NachrichtenScope, "Anspruch">
+      >;
       zinsen: Zinsen[];
     }[];
   };
