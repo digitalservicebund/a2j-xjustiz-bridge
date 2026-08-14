@@ -34,7 +34,9 @@ experts. A message that leaves the system is guaranteed to be valid.
 
 ## Standard Conformity
 
-The XJustiz-Converter does not support the XJustiz standard to its full extend.
+The XJustiz-Converter is currently exclusively supporting version
+[3.6.2](https://xjustiz.justiz.de/XJustiz-Versionen/index.php#v362) of the
+XJustiz Standard. However, it does not support the standard to its full extend.
 Development is driven by the use cases of the [Onlinedienste der
 Justiz](https://service.justiz.de). The goal is not an all-encompassing, generic
 solution. But a focused solution that provides true value for the Onlinedienste.
