@@ -5,7 +5,7 @@
 In the schemata for the XJustiz standard, there are multiple entities which are
 assigned to and referenced by specific identifiers. The schemata define
 different datatypes for different identities, but not each entity has
-a dedicated identity type. This is partially encoded in comments and
+a dedicated identifier type. This is partially encoded in comments and
 human-readable documentation only. Partially it is even just undetermined.
 
 Furthermore, the scope in which an identifier is unique is constrained. Some
@@ -22,118 +22,264 @@ dangling references.
 
 ## Solution
 
-Identifiers are defined as new-type with some additional scoping. Instances can
-only be produced by a generator function. Generator instances are related to
-a given scope, producing unique identifiers. Generators must maintain restricted
-access and are not exposed to library users directly.
+Identifiers are defined as new-type with scoping and additional markers for
+identity constraints. Instances can only be produced by a generator function.
+Generator instances are related to a given scope, producing unique identifiers
+on runtime and type level.
 
-### What Entities Get Their Own Identity?
+### What Entities Get Their Own Identifier?
 
 To securely construct valid XJustiz-Nachrichten, it requires to have distinct
-identity types per kind of entity. In result, entities that share the same
-identifier type in the standard, get separate types based on that type in the
+identifier types per kind of entity. In result, entities that share the same
+identifier type in the standard, get separate types based on that one in the
 XJustiz-Converter. This helps to avoid any unintended confusions and possible
 incorrect references. However, there are certain exceptions. Like the
 `FortlaufendeNummer`, that has a continuously incrementing counter as generator,
-shared by multiple entities. Such exceptions must use the technique to [further
-enrich the identifier type](#enriching-identifier-types).
+shared by multiple entities. Such exceptions must use the technique of
+[additional type discriminators](#additional-type-discriminators).
 
-### Scoped New-Type
+### New-Type for Values
 
-Applying the [type branding](./type-branding.md) and [scoping](./scoping.md)
-patterns provides the foundation for each kind of identifier. The branding
-prevents any mixing between different kinds of identifiers. Scoping ensures
-consistency and avoids references between XJustiz-Nachrichten. While an
-XJustiz-Nachrichten is the most common scope, there can be also others.
-Also globally unique identifiers should be scoped, to allow for control on the
-reference side. Thereby, it is possible to require references to entities inside
-the same XJustiz-Nachricht, also if it is a global unique identifier. However,
-this also allows references to explicitly point to identifiers of an external
-scope.
+Identifiers have two dimensions: the actual runtime value and the type-level.
+The former is what actually ends up as part of a document. The latter is purely
+for type-level computation and constraints.
 
-Following the branding pattern, each identifier type gets its own module. The
-type of an identifier will be exposed to library users and should be documented
-respectively. In combination, an exemplary identifier type could look like this:
+The type for the runtime value uses the [type branding
+pattern](./type-branding.md) as foundation. It makes identifiers unmistakable and
+gives the module of the identifier type control over instantiation.
+
+`some-identifier.ts`:
 
 ```typescript
-declare const TAG: unique symbol;
+type SomeIdentifierValue = number & {
+  readonly [TAG]: "Use a generator instance to produce values, obtained by the `createSomeIdentifierGenerator` factory.";
+};
 
-/**
- * Identifier for entities of important kind. Instances are only unique within
- * the XJustiz-Nachricht they are included in.
+declare const TAG: unique symbol;
+```
+
+### Identity Constraints
+
+Identifier used in a document must adhere to the identity constraints. Such
+include the uniqueness of identifier declarations and the referential integrity.
+These constraints are evaluated statically at compile-time. Therefore, they
+require certain capabilities of each identifier type to allow for these
+type-level computations.
+
+The sum of all type-level capabilities and marker types is collected into the
+`WithIdentifierCapabilities` type, each identifier type must intersect with. The
+details of the generic type parameters get explained in the following sections.
+The `WithIdentifierCapabilities` type is defined as an interface to hide the
+details from library users and keep the public interface better readable and
+comprehensible.
+
+`some-identifier.ts`:
+
+```typescript
+/*
+ * Identifier for some entities of important kind. Instances are only unique
+ * within the XJustiz-Nachricht they are included in.
  *
  * Some identifiers can be produced with an instance of the related generator,
  * obtained by the {@link createSomeIdentifierGenerator} factory.
  */
-export type SomeIdentifier<NachrichtenScope> = number & {
-  readonly [TAG]: "Use a generator instance to produce values, obtained by the `createSomeIdentifierGenerator` factory.";
-} & WithScope<NachrichtenScope>;
+export type SomeIdentifier<
+  NachrichtenScope,
+  Ordinal extends number = number,
+> = SomeIdentifierValue &
+  WithIdentifierCapabilities<SomeIdentifierValue, NachrichtenScope, Ordinal>;
 ```
 
-### Generators
+#### Scoping
 
-Each module of an identifier also exposes a factory function that can construct
-new generator instances. Generators fall under the class of smart constructors
-in the context of branded new-types. They are the only unit that is allowed to
-assert the compiler valid instances of the identifier type. An instance must
-produce unique identifiers for the scope they are related to. Generator
-instances must be scoped singletons. Calling the factory multiple times for the
-same scope token result into the exact same generator instance. A singleton is
-registered to a scope internal registry using a unique key.
+The identity constraints directly integrate with the [scoping
+pattern](./scoping.md). Scoping ensures consistency and avoids (accidentally)
+confusing identifiers between different XJustiz-Nachrichten.
+Generated identifier instances are strictly related to their scope can
+exclusively be used within this scope. The most common scope is the
+`NachrichtenScope` that spans the full document of an XJustiz-Nachricht that
+gets composed. Commonly, also globally unique identifiers are included here,
+unless references to external entities are required.
+
+Scopes are used primarily as strong type-level restriction. But they also carry
+runtime capabilities. Each unique scope has a singleton registry, which is for
+example used for [generator instances](#generation-with-distinctive-markers)
+tightly coupled to their scope.
+
+#### Occurrences
+
+Identifiers occur in two different positions. They can either be declared as
+identifier of an entity they are attached to or they as reference to identity
+such an entity. Therefore, any property of a composite must either define if it
+expects a declaration or reference of an identifier. For convenience, generated
+identifiers are automatically marked as declaration for direct usage. References
+on the other side need to be explicit and can be created from declarations.
 
 ```typescript
-export type SomeIdentifierGenerator<NachrichtenScope> =
-  () => SomeIdentifier<NachrichtenScope>;
+type SomeComposite<NachrichtenScope> = {
+  identifier: SomeIdentifier<NachrichtenScope>;
+  relatedTo: Reference<SomeIdentifier<NachrichtenScope>>>;
+};
 
+const someIdentifier = someIdentifierGenerator.first();
+
+const composite: SomeComposite = {
+  identifier: someIdentifier,
+  relatedTo: reference(someIdentifier),
+};
+```
+
+#### Generation with Distinctive Markers
+
+Runtime values of an identifier are expected to be unique. However, to the
+compiler they are of the same type and not distinctive. Therefore, identifiers
+must use a distinctive marker. Under the hood, a distinctive marker is a tuple
+of the identifier value and an ordinal number. The types of two identifier
+instances become unique by their ordinal.
+
+To achieve this, identifiers must be generated as strict sequence. An instance
+of an identifier generator has a `first` identifier that has the ordinal `0`.
+Advancing the generator with `next()` requires to pass the previously generated
+identifier in the sequence, incrementing the ordinal on a type level. To ensure
+the strict relationship between runtime values and literal types, a the same
+generator instance must always produce the same value and type for the same
+position in the sequence. A truly new instance can only be generated by
+advancing the sequence based on last generated identifier. The resulting
+sequence is fully distinguishable by the TypeScript compiler.
+
+```typescript
+const firstIdentifier = someIdentifierGenerator.first(); // Ordinal 0
+const secondIdentifier = someIdentifierGenerator.next(firstIdentifier); // Ordinal 1
+const thirdIdentifier = someIdentifierGenerator.next(secondIdentifier); // Ordinal 2
+
+const equalToSecondIdentifier = someIdentifierGenerator.next(
+  someIdentifierGenerator.first(),
+); // Ordinal 2
+```
+
+An identifier type with the `Ordinal` type parameter as plain `number` basically
+means "any identifier of this type for this scope". It is the default for each
+identifier type to allow for direct usage in composite definitions.
+
+For the implementation of identifier generators, there are the two dimension
+again. The base generator produces non distinctive, but branded identifier
+**values**. For differentiation, they are also sometimes called a producer. In
+the context of the branded new-type value, a producer is a smart constructor and
+the only way to obtain instances.
+
+```typescript
+const SomeIdentifierProducer: NonDistinctiveGenerator<SomeIdentifierValue> = {
+  first: () => 1 as SomeIdentifierValue,
+  next: (previous) => (previous + 1) as SomeIdentifierValue,
+};
+```
+
+This must be enhanced on a type level to add the distinctive marker with the
+incrementing ordinal. Generators are defined as interface to hide details from
+library users to keep the public interface better readable and comprehensible.
+Due to higher-kinded type limitations, especially in combination with
+identifiers using [additional type
+discriminators](#additional-type-discriminators), there is no meaningful
+code that could be shared here. It must be copy-pasted per identifier type.
+
+```typescript
+interface SomeIdentifierGenerator<NachrichtenScope> = {
+  first: () => SomeIdentifier<NachrichtenScope, 0>;
+  next: <Ordinal extends number>(
+    previous: SomeIdentifier<NachrichtenScope, Ordinal>
+  ) => SomeIdentifier<NachrichtenScope, Increment<Ordinal>>;
+}
+```
+
+The generator factory of an identifier type brings then everything together.
+I uses the [singleton registry of a scope](./scoping.md#scoped-singletons) to
+obtain a single generator instance per given scope. That means, calling the
+factory twice for he same scope returns the exact same generator instance.
+
+````typescript
 /**
- * Factory to obtain an identifier generator to produce {@link SomeIdentifier} values.
+ * Factory to obtain an identifier generator to produce {@link SomeIdentifier}s.
  *
  * Generators are automatically scoped singletons. Multiple factory calls for the
  * same scope result in the exact same generator instance.
  *
  * @example
+ * ```typescript
  * withScope((scope) => {
- *   const nextSomeIdentifier = createSomeIdentifierGenerator(scope);
+ *   const someIdentifier = createSomeIdentifierGenerator(scope);
  *   const someComposite = {
- *     someIdentifierProperty: nextSomeIdentifier(),
+ *     identifier: someIdentifier.first(),
  *     // ...
  *   }
  * })
  */
-export function createSomeIdentifierGenerator<NachrichtenScope>(
-  scope: ScopeToken<NachrichtenScope>,
+export function createSomeIdentifierGenerator<NachrichtenScope(
+  scope: ScopeToken<NachrichtenScope>
 ): SomeIdentifierGenerator<NachrichtenScope> {
-  return scopedSingleton(scope, SOME_IDENTIFIER_GENERATOR_KEY, () => {
-    let nextIdentifier = 1;
-    // oxlint-disable-next-line no-unsafe-type-assertion -- explicit cast for branding
-    return () => nextIdentifier++ as SomeIdentifier<NachrichtenScope>;
-  });
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- gain generator type capabilities
+  return scopedSingleton(
+    scope,
+    SOME_IDENTIFIER_GENERATOR_KEY,
+    () => SomeIdentifierProducer
+  ) as never;
 }
 
 const SOME_IDENTIFIER_GENERATOR_KEY = Symbol("some-identifier-generator");
+````
+
+A generator can then be obtained and used within their scope like this:
+
+```typescript
+withScope((scope) => {
+  const someIdentifierGenerator = createSomeIdentifierGenerator(scope);
+  const firstIdentifier = someIdentifierGenerator.first();
+  const secondIdentifier = someIdentifierGenerator.next(firstIdentifier);
+
+  const sameGenerator = createSomeIdentifierGenerator(scope);
+  const thirdIdentifier = sameGenerator.next(secondIdentifier);
+});
 ```
 
-> [!INFO]
-> The term generator in this context refers only to the generic concept.
-> Not to generator objects from the iterator protocol in JavaScript. Functions
-> that are declared with an asterisk (`function* myGenerator`) and `yield`
-> values while being iterated. While theoretically usable, they provide no
-> benefit here.
+##### Memorizing Nondeterministic Generators
 
-The naming convention for the function that creates a new generator
-`create<IdentifierTypeName>Generator`. An instance of a generator should be called
-`next<IdentifierTypeName>`. This should maintain readability and can be quickly
-recalled when seeing the pattern. It is helpful to define a generator type, so
-it can be referenced upstream where generator instances are managed. This is
-especially the case for more complex generator signatures, like when having
-[enriched identifier types](#enriching-identifier-types).
+Some identifier types don't have a natural sequence like the primitive counter.
+In that sense they are nondeterministic based on a previous value in the
+sequence. The most prominent example are fully random identifiers like for UUID
+version 4. Such "value producing functions" can be wrapped as a memorized
+sequence generator using the `memorizeAsGenerator` function.
 
-### Enriching Identifier Types
+```typescript
+export function createSomeIdentifierGenerator<NachrichtenScope(
+  scope: ScopeToken<NachrichtenScope>
+): SomeIdentifierGenerator<NachrichtenScope> {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- gain generator type capabilities
+  return scopedSingleton(
+    scope,
+    SOME_IDENTIFIER_GENERATOR_KEY,
+    () => memorizeAsGenerator(randomSomeIdentifier),
+  ) as never;
+}
 
-Some identifiers have some custom behavior and need to carry more information to
+function randomSomeIdentifier(): SomeIdentifierValue {
+  // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
+  return /* something nondeterministic */ as SomeIdentifierValue;
+}
+```
+
+#### Verifying Constraints
+
+Given the identifier capabilities like declarations, references, and distinctive
+markers, constraints can be verified via type-level computations. For every
+referenced identifier it is possible to search for a matching declaration. Also,
+all identifiers in the declaration position of a document must be unique.
+Violations to these constraints are reported as compiler errors using the
+`VerifyIdentityConstraints` type.
+
+### Additional Type Discriminators
+
+Some identifiers have custom behavior and need to carry more information to
 fully control identity constrains. Such can be the need to allow for further
-restrictions of references. This is usually the case by a complementary property
-on the same identified entity. For example, references to Beteiligungen by
+restrictions of references. For example, references to Beteiligungen by
 a `Rollennummer` might need to be restricted based on the associated
 `Rollenbezeichnung`, to control certain relationships between Beteiligungen. Or
 similar, the `FortlaufendeNummer` can't be separated into multiple identifier
@@ -141,12 +287,16 @@ types, as it requires an overall incrementing counter cross all entities.
 However, references via `FortlaufendeNummer` require certain restrictions based
 on the related entity.
 
-The basic mechanism to enrich an identifier type is to add an extra generic
-parameter. Entities identified by it, must specify the matching parameter.
-Generating an identifier is then enforced to adhere to this parametrization.
-References on the other hand use the same parameter to restrict themselves.
+The basic mechanism is to use an additional type discriminator withe a generic
+parameter. Composite type definitions can specify possible discriminator
+literals for identifier declarations and references. When generating an
+identifier, the discriminator must be specified as argument.
 
-```typescript
+In contrast to their name, discriminators do not affect the distinctive value on
+a type level. Two instances of the same identifier type and ordinal number are
+unique, no matter their discriminator.
+
+````typescript
 /**
  * Identifier for entities of important kind. Instances are only unique within
  * the XJustiz-Nachricht they are included in.
@@ -154,48 +304,61 @@ References on the other hand use the same parameter to restrict themselves.
  * Some identifiers can be produced with an instance of the related generator,
  * obtained by the {@link createSomeIdentifierGenerator} factory.
 
- * Helpful documentation about the restriction by the generic parameter...
+ * Helpful documentation about the restriction by the generic parameter for the
+ * discriminator...
  */
 export type SomeIdentifier<
   NachrichtenScope,
-  Unterscheidungsmerkmal extends ArtVonUnterscheidungsmerkmal
-> = number & {
-  readonly [TAG]: "Use a generator instance to produce values, obtained by the `createSomeIdentifierGenerator` factory.";
-  readonly unterscheidungsmerkmal: Unterscheidungsmerkmal;
-} & WithScope<NachrichtenScope>;
+  Unterscheidungsmerkmal extends ArtVonUnterscheidungsmerkmal,
+  Ordinal extends number = number
+> = SomeIdentifierValue & {
+  readonly [UNTERSCHEIDUNGSMERKMAL]: Unterscheidungsmerkmal,
+} & WithIdentifierCapabilities<SomeIdentifierValue, NachrichtenScope, Ordinal>
+
+declare const UNTERSCHEIDUNGSMERKMAL: unique symbol;
+export type ArtVonUnterscheidungsmerkmal = "A" | "B" | "C";
+
+type SomeIdentifierValue = /* ... */;
 
 /**
- * Factory to obtain an identifier generator to produce {@link SomeIdentifier} values.
- * Generating a {@link SomeIdentifier} requires to provide the
+ * Factory to obtain an identifier generator to produce {@link SomeIdentifier}s.
+ * Generating {@link SomeIdentifier} requires to provide the
  * {@link ArtVonUnterscheidungsmerkmal}.
  *
  * Generators are automatically scoped singletons. Multiple factory calls for the
  * same scope result in the exact same generator instance.
  *
  * @example
+ * ```typescript
  * withScope((scope) => {
- *   const nextSomeIdentifier = createSomeIdentifierGenerator(scope);
+ *   const someIdentifier = createSomeIdentifierGenerator(scope);
  *   const someComposite = {
- *     someIdentifierProperty: nextSomeIdentifier("A"),
+ *     identifier: someIdentifier.first("A"),
  *     // ...
  *   }
  * })
  */
 export function createSomeIdentifierGenerator<NachrichtenScope>(
-  _scope: WithScope<NachrichtenScope>,
-) {
-  let nextIdentifier = 1;
-
-  return <Unterscheidungsmerkmal extends ArtVonUnterscheidungsmerkmal>(
-    _differentiator: Unterscheidungsmerkmal
-  ) =>
-    // oxlint-disable-next-line no-unsafe-type-assertion -- explicit cast for branding
-    nextIdentifier++ as SomeIdentifier<
-      NachrichtenScope,
-      Unterscheidungsmerkmal
-    >;
-  }
+  scope: ScopeToken<NachrichtenScope>
+): SomeIdentifierGenerator<NachrichtenScope> {
+  // ...
 }
 
-export type ArtVonUnterscheidungsmerkmal = "A" | "B" | "C";
-```
+const SomeIdentifierFactory: NonDistinctiveGenerator<SomeIdentifierValue> = {
+  / ...
+};
+
+interface SomeIdentifierGenerator<NachrichtenScope> = {
+  first: <Unterscheidungsmerkmal extends ArtVonUnterscheidungsmerkmal>(
+    unterscheidungsmerkmal: Unterscheidungsmerkmal,
+  ) => SomeIdentifier<NachrichtenScope, Unterscheidungsmerkmal, 0>;
+
+  next: <
+    Unterscheidungsmerkmal extends ArtVonUnterscheidungsmerkmal,
+    Ordinal extends number
+  >(
+    previous: SomeIdentifier<NachrichtenScope, ArtVonUnterscheidungsmerkmal, Ordinal>,
+    unterscheidungsmerkmal: Unterscheidungsmerkmal,
+  ) => SomeIdentifier<NachrichtenScope, Unterscheidungsmerkmal, Increment<Ordinal>>;
+}
+````

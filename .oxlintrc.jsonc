@@ -46,7 +46,7 @@
 
     // Team individual preferences, non restrictive, unforced:
     "import/max-dependencies": ["off"], // Penalizes usage of no barell files.
-    "typescript/consistent-type-definitions": ["error", "type"],
+    "typescript/consistent-type-definitions": ["off"], // There are good reasons for both.
     "typescript/prefer-readonly-parameter-types": [
       "error",
       {

@@ -68,3 +68,44 @@ export type ConsumeCharactersFrom<
  * Typically used to ensure the true identity of a base type.
  */
 export type Invariant<Basis> = (basis: Basis) => Basis;
+
+export type IsTuple<MaybeTuple> = MaybeTuple extends readonly unknown[]
+  ? number extends MaybeTuple["length"]
+    ? false
+    : true
+  : false;
+
+type NTuple<
+  Item,
+  Length extends number,
+  NMinusOneTuple extends readonly Item[] = [],
+> = NMinusOneTuple["length"] extends Length
+  ? NMinusOneTuple
+  : NTuple<Item, Length, [...NMinusOneTuple, Item]>;
+
+/**
+ * Increment a given literal number type by one.
+ * Intended to by used without unions. In case of a union, it will increment the
+ * smallest literal number type in the union
+ *
+ * @example
+ * ```typescript
+ * Increment<1> // 2
+ * Increment<99> // 100
+ * Increment<99, 5, 27> // 6
+ * Increment<number> // 1
+ * ```
+ */
+export type Increment<Operand extends number> = [
+  ...NTuple<unknown, Operand>,
+  unknown,
+]["length"] extends infer Incremented extends number
+  ? Incremented
+  : never;
+
+// prettier-ignore
+export type IsEqualTo<Left, Right> =
+  // oxlint-disable-next-line typescript/no-unnecessary-type-parameters
+  (<Probe>() => Probe extends Left ? 1 : 2) extends (<Probe> () => Probe extends Right ? 1 : 2)
+    ? true
+    : false;
