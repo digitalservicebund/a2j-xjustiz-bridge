@@ -23,7 +23,9 @@ XJustiz-Converter, read the [documentation overview](../README.md).
 > for justice). It is part of the shared project [Zugang zum
 > Recht](https://www.zugang-zum-recht-projekte.de/).
 
-## Installation
+## Setup
+
+### Installation
 
 ```sh
 npm add @digitalservicebund/a2j-xjustiz-converter
@@ -33,8 +35,32 @@ npm add @digitalservicebund/a2j-xjustiz-converter
 The library comes with rich IntelliSense support. Contextual hover hints,
 autocompletion, and the compiler itself provide guidance directly in the editor.
 
-<details>
-  <summary>To further improve the experience, glossaries that explain the ubiquitous language can be set up to become automatically accessible from within a code editor.</summary>
+### Runtime Environment Requirements
+
+The library is in theory agnostic to the JavaScript runtime environment.
+However, there is a strong focus on NodeJS as primary environment, used for
+development, testing, and production. The following APIs are expected to be
+available on the global context object (`globalThis`):
+
+- `Intl.Segmenter` (for Unicode segmentation)
+- `crypto.randomUUID` (for unique identifier generation, UUID v4 expected)
+- `Temporal` (for calendar based scalars)
+
+### TypeScript Configuration Options (Recommended)
+
+The XJustiz-Converter is built around a strong type system (more of this in the
+section [A Word on Type Security](#a-word-on-type-security)). Multiple
+constraints for composing correct messages are reported as errors by the
+TypeScript compiler. These can become bulky and messages eventually get
+truncated. This can be avoided by enabling the
+[`noErrorTruncation`](https://www.typescriptlang.org/tsconfig/#noErrorTruncation)
+option in `tsconfig.json`.
+
+### Additional Glossary (Optional)
+
+To further improve the experience, our glossaries can be set up to become
+automatically accessible from within a code editor. Glossaries explain the
+ubiquitous language and can help to understand the domain.
 
 Glossaries are written in a format consumable by
 [Contextive](https://contextive.tech). Installing the extension for an editor,
@@ -54,20 +80,7 @@ imports:
   - https://github.com/digitalservicebund/a2j-xjustiz-converter/tree/v0.2.0/xjustiz-converter.glossary.yaml
 ```
 
-</details>
-
-## Requirements
-
-The library is in theory agnostic to the JavaScript runtime environment.
-However, there is a strong focus on NodeJS as primary environment, used for
-development, testing, and production. The following APIs are expected to be
-available on the global context object (`globalThis`):
-
-- `Intl.Segmenter` (for Unicode segmentation)
-- `crypto.randomUUID` (for unique identifier generation, UUID v4 expected)
-- `Temporal` (for calendar based scalars)
-
-## A Word on Type Security
+### A Word on Type Security
 
 The library is built around a strong type system, following the approach of
 type-driven development to provide compile-time guarantees for valid
