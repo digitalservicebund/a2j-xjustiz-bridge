@@ -1,4 +1,4 @@
-export { zahlungsklage } from "./orchestrator";
+export { zahlungsklage } from "./message-orchestrator";
 export { verifyNachricht } from "~/verify-nachricht";
 
 export {
