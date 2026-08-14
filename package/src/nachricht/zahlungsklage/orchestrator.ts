@@ -84,12 +84,15 @@ if (import.meta.vitest) {
       const message = zahlungsklage(
         // oxlint-disable-next-line max-lines-per-function
         <NachrichtenScope>(scope: ScopeToken<NachrichtenScope>) => {
-          const nextRollennummer = createRollennummerGenerator(scope);
+          const rollennummer = createRollennummerGenerator(scope);
+          const rollennummerKlaeger = rollennummer.first(
+            Rollenbezeichnung.Klaeger,
+          );
 
           const klaeger = {
             rolle: [
               {
-                rollennummer: nextRollennummer(Rollenbezeichnung.Klaeger),
+                rollennummer: rollennummerKlaeger,
                 rollenbezeichnung: Rollenbezeichnung.Klaeger,
               },
             ],
@@ -137,7 +140,7 @@ if (import.meta.vitest) {
               {
                 rollenbezeichnung: Rollenbezeichnung.GesetzlicherVertreter,
                 geschaeftszeichen: datatypeC("KM-0042-2026").value,
-                referenz: [{ refRollennummer: klaeger.rolle[0].rollennummer }],
+                referenz: [{ refRollennummer: rollennummerKlaeger }],
               },
             ],
             beteiligter: {
@@ -180,10 +183,15 @@ if (import.meta.vitest) {
             },
           } satisfies GesetzlicherVertreter<NachrichtenScope>;
 
+          const rollennummerBeklagter = rollennummer.next(
+            rollennummerKlaeger,
+            Rollenbezeichnung.Beklagter,
+          );
+
           const beklagter = {
             rolle: [
               {
-                rollennummer: nextRollennummer(Rollenbezeichnung.Beklagter),
+                rollennummer: rollennummerBeklagter,
                 rollenbezeichnung: Rollenbezeichnung.Beklagter,
               },
             ],
@@ -210,9 +218,7 @@ if (import.meta.vitest) {
             rolle: [
               {
                 rollenbezeichnung: Rollenbezeichnung.Prozessbevollmaechtiger,
-                referenz: [
-                  { refRollennummer: beklagter.rolle[0].rollennummer },
-                ],
+                referenz: [{ refRollennummer: rollennummerBeklagter }],
               },
             ],
             beteiligter: {
@@ -224,20 +230,18 @@ if (import.meta.vitest) {
             },
           } satisfies Prozessbevollmaechtiger<NachrichtenScope>;
 
-          const nextFortlaufendeNummer =
-            createFortlaufendeNummerGenerator(scope);
+          const fortlaufendeNummer = createFortlaufendeNummerGenerator(scope);
+
+          const fortlaufendeNummerAnspruch =
+            fortlaufendeNummer.first("Anspruch");
 
           const sachantraege = {
             inhalt: datatypeE("Lorem ipsum").value,
             anspruch: [
               {
-                fortlaufendeNummer: nextFortlaufendeNummer("Anspruch"),
-                anspruchssteller: [
-                  { refRollennummer: klaeger.rolle[0].rollennummer },
-                ],
-                anspruchsgegner: [
-                  { refRollennummer: beklagter.rolle[0].rollennummer },
-                ],
+                fortlaufendeNummer: fortlaufendeNummerAnspruch,
+                anspruchssteller: [{ refRollennummer: rollennummerKlaeger }],
+                anspruchsgegner: [{ refRollennummer: rollennummerBeklagter }],
                 anspruchsart: Anspruchsart.Zahlung,
                 wertAnspruch: {
                   zahl: 5000,
@@ -253,8 +257,7 @@ if (import.meta.vitest) {
             inhalt: datatypeE("Lorem ipsum").value,
             zinsanspruch: [
               {
-                refFortlaufendeNummer:
-                  sachantraege.anspruch[0].fortlaufendeNummer,
+                refFortlaufendeNummer: fortlaufendeNummerAnspruch,
                 zinsen: [
                   {
                     zinssatz: decimal(0.05).value,
@@ -266,7 +269,13 @@ if (import.meta.vitest) {
             ],
           } satisfies AntraegeFuerZahlungsklage<NachrichtenScope>["nebenantraegeZinsen"];
 
-          const nextUUID = createUuidGenerator(scope);
+          const uuid = createUuidGenerator(scope);
+          const eigeneNachrichtenID = uuid.first();
+          const fortlaufendeNummerAnwaltskosten = fortlaufendeNummer.next(
+            fortlaufendeNummerAnspruch,
+            "Anspruch",
+          );
+          const vortragsID = uuid.next(eigeneNachrichtenID);
 
           return {
             nachrichtenkopf: {
@@ -278,7 +287,7 @@ if (import.meta.vitest) {
                     sonstige: datatypeD("Herr Dr. Max Mustermann").value,
                   },
                 },
-                eigeneNachrichtenID: nextUUID(),
+                eigeneNachrichtenID,
               },
               empfaenger: {
                 informationen: {
@@ -318,16 +327,15 @@ if (import.meta.vitest) {
                       },
                       anspruch: [
                         {
-                          fortlaufendeNummer:
-                            nextFortlaufendeNummer("Anspruch"),
+                          fortlaufendeNummer: fortlaufendeNummerAnwaltskosten,
                           anspruchssteller: [
                             {
-                              refRollennummer: klaeger.rolle[0].rollennummer,
+                              refRollennummer: rollennummerKlaeger,
                             },
                           ],
                           anspruchsgegner: [
                             {
-                              refRollennummer: beklagter.rolle[0].rollennummer,
+                              refRollennummer: rollennummerBeklagter,
                             },
                           ],
                           anspruchsart: Anspruchsart.Zahlung,
@@ -365,7 +373,7 @@ if (import.meta.vitest) {
                   vortrag: [
                     {
                       schlagwort: datatypeC("Zahlungsanspruch").value,
-                      vortragsID: nextUUID(),
+                      vortragsID,
                       ausfuehrungen: {
                         inhalt: {
                           tatsachenvortragSachverhaltsbeschreibung: datatypeC(

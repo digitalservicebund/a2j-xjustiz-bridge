@@ -4,16 +4,17 @@ import {
 } from "~/xjustiz-schemata/din-91379/datatypeC";
 import {
   type ScopeToken,
-  type WithScope,
   scopedSingleton,
-  withScope,
 } from "~/xjustiz-schemata/shared-kernel/scoping";
+import {
+  type WithIdentifierCapabilities,
+  memorizeAsGenerator,
+} from "~/xjustiz-schemata/shared-kernel/identifiers";
 import {
   type Beteiligung, // oxlint-disable-line no-unused-vars -- reference by TSDoc
 } from "~/xjustiz-schemata/grunddatensatz/composites";
+import { type Increment } from "~/metatypes";
 import { type Rollenbezeichnung } from "~/xjustiz-schemata/grunddatensatz/codelisten";
-
-declare const TAG: unique symbol;
 
 /**
  * UUID dedicated to identifier Beteiligte by one of their specific Rollen.
@@ -46,16 +47,17 @@ declare const TAG: unique symbol;
 export type Rollennummer<
   NachrichtenScope,
   ZugehoerigeRollenbezeichnung extends Rollenbezeichnung = Rollenbezeichnung,
-> = DatatypeC & {
-  readonly [TAG]: "Use a generator instance to produce values, obtained by the `createRollennummerGenerator` factory.";
-  readonly zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung;
-} & WithScope<NachrichtenScope>;
+  Ordinal extends number = number,
+> = RollennummerValue & {
+  readonly [ZUGEHOERIGE_ROLLENBEZEICHNUNG]: ZugehoerigeRollenbezeichnung;
+} & WithIdentifierCapabilities<RollennummerValue, NachrichtenScope, Ordinal>;
 
-export type RollennummerGenerator<NachrichtenScope> = <
-  ZugehoerigeRollenbezeichnung extends Rollenbezeichnung,
->(
-  zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung,
-) => Rollennummer<NachrichtenScope, ZugehoerigeRollenbezeichnung>;
+type RollennummerValue = DatatypeC & {
+  readonly [TAG]: "Use a generator instance to produce values, obtained by the `createRollennummerGenerator` factory.";
+};
+
+declare const TAG: unique symbol;
+declare const ZUGEHOERIGE_ROLLENBEZEICHNUNG: unique symbol;
 
 /**
  * Factory to obtain an identifier generator to produce {@link Rollennummer}
@@ -68,9 +70,9 @@ export type RollennummerGenerator<NachrichtenScope> = <
  * @example
  * ```typescript
  * withScope((scope) => {
- *   const nextRollennummer = createRollennummerGenerator(scope);
+ *   const rollennummer = createRollennummerGenerator(scope);
  *   const rolle = {
- *     rollennummer: nextRollennummer(Rollenbezeichnung.Klaeger),
+ *     rollennummer: rollennummer.first(Rollenbezeichnung.Klaeger),
  *     rollenbezeichnung: Rollenbezeichnung.Klaeger,
  *     // ...
  *   }
@@ -80,39 +82,49 @@ export type RollennummerGenerator<NachrichtenScope> = <
 export function createRollennummerGenerator<NachrichtenScope>(
   scope: ScopeToken<NachrichtenScope>,
 ): RollennummerGenerator<NachrichtenScope> {
-  return scopedSingleton(
-    scope,
-    ROLLENNUMMER_GENERATOR_KEY,
-    () =>
-      <ZugehoerigeRollenbezeichnung extends Rollenbezeichnung>(
-        _zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung,
-      ) => {
-        const uuid = datatypeC(globalThis.crypto.randomUUID());
-
-        if (uuid.issues) {
-          // No control over runtime environment provided cryptography. SHOULD never happen!
-          throw new TypeError(
-            "Generated UUID is unexpectedly no valid Datatype C",
-          );
-        } else {
-          // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
-          return uuid.value as Rollennummer<
-            NachrichtenScope,
-            ZugehoerigeRollenbezeichnung
-          >;
-        }
-      },
-  );
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- gain generator type capabilities
+  return scopedSingleton(scope, ROLLENNUMMER_GENERATOR_KEY, () =>
+    memorizeAsGenerator(randomRollennummer),
+  ) as never;
 }
 
 const ROLLENNUMMER_GENERATOR_KEY = Symbol("rollennummer-generator");
 
+function randomRollennummer(): RollennummerValue {
+  const uuid = datatypeC(globalThis.crypto.randomUUID());
+
+  if (uuid.issues) {
+    // No control over runtime environment provided cryptography. SHOULD never happen!
+    throw new TypeError("Generated UUID is unexpectedly no valid Datatype C");
+  } else {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- explicit assertion for branding
+    return uuid.value as RollennummerValue;
+  }
+}
+
+interface RollennummerGenerator<NachrichtenScope> {
+  first: <ZugehoerigeRollenbezeichnung extends Rollenbezeichnung>(
+    zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung,
+  ) => Rollennummer<NachrichtenScope, ZugehoerigeRollenbezeichnung, 0>;
+
+  next: <
+    ZugehoerigeRollenbezeichnung extends Rollenbezeichnung,
+    Ordinal extends number,
+  >(
+    previous: Rollennummer<NachrichtenScope, Rollenbezeichnung, Ordinal>,
+    zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung,
+  ) => Rollennummer<
+    NachrichtenScope,
+    ZugehoerigeRollenbezeichnung,
+    Increment<Ordinal>
+  >;
+}
+
 if (import.meta.vitest) {
   const { describe, it, expect } = import.meta.vitest;
 
-  // oxlint-disable-next-line max-lines-per-function
   describe("Rollennummer", () => {
-    describe("generator", async () => {
+    describe("generator", () => {
       /*
        * Test cases uses loops to repeatably exercise the generator and test for
        * the same property. This is a bit part of the nature when testing such
@@ -120,45 +132,29 @@ if (import.meta.vitest) {
        * and might find flaws over time when runs have accumulated enough.
        */
 
-      const { Rollenbezeichnung } = await import(
-        "~/xjustiz-schemata/grunddatensatz/codelisten"
-      );
+      it("produces unique runtime values for a meaningful number of generations", () => {
+        const generatedRollennummern = new Set<string>();
 
-      it("produces unique identifiers for a meaningful sequence length", () => {
-        withScope((scope) => {
-          const nextRollennummer = createRollennummerGenerator(scope);
-          const generatedRollennummern = new Set<string>();
-
-          repeat(1000, () => {
-            const rollennummer = nextRollennummer(Rollenbezeichnung.Beklagter);
-            expect(generatedRollennummern.has(rollennummer)).toBe(false);
-            generatedRollennummern.add(rollennummer);
-          });
+        repeat(1000, () => {
+          const rollennummer = randomRollennummer();
+          expect(generatedRollennummern.has(rollennummer)).toBe(false);
+          generatedRollennummern.add(rollennummer);
         });
       });
 
       it("produces actually valid Datatype C values", () => {
-        withScope((scope) => {
-          const nextRollennummer = createRollennummerGenerator(scope);
+        repeat(1000, () => {
+          const rollennummer = randomRollennummer();
 
-          repeat(1000, () => {
-            const rollennummer = nextRollennummer(Rollenbezeichnung.Beklagter);
-            expect(datatypeC(rollennummer)).toStrictEqual({
-              value: rollennummer,
-            });
+          expect(datatypeC(rollennummer)).toStrictEqual({
+            value: rollennummer,
           });
         });
       });
 
       it("doesn't throw an exception unexpectedly", () => {
-        withScope((scope) => {
-          const nextRollennummer = createRollennummerGenerator(scope);
-
-          repeat(1000, () => {
-            expect(() =>
-              nextRollennummer(Rollenbezeichnung.Beklagter),
-            ).not.toThrow();
-          });
+        repeat(1000, () => {
+          expect(randomRollennummer).not.toThrow();
         });
       });
     });

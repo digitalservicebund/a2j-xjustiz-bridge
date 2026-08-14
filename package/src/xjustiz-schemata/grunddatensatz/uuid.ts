@@ -1,11 +1,12 @@
 import {
   type ScopeToken,
-  type WithScope,
   scopedSingleton,
-  withScope,
 } from "~/xjustiz-schemata/shared-kernel/scoping";
-
-declare const TAG: unique symbol;
+import {
+  type WithIdentifierCapabilities,
+  memorizeAsGenerator,
+} from "~/xjustiz-schemata/shared-kernel/identifiers";
+import { type Increment } from "~/metatypes";
 
 /**
  * Universally unique identifier — used to identify various different entities
@@ -17,11 +18,17 @@ declare const TAG: unique symbol;
  * UUIDs can be produced with an instance of the related generator, obtained by
  * the {@link createUuidGenerator} factory.
  */
-export type UUID<NachrichtenScope> = string & {
-  readonly [TAG]: "Use a generator instance to produce values, obtained by the `createUuidGenerator` factory.";
-} & WithScope<NachrichtenScope>;
+export type UUID<
+  NachrichtenScope,
+  Ordinal extends number = number,
+> = UUIDValue &
+  WithIdentifierCapabilities<UUIDValue, NachrichtenScope, Ordinal>;
 
-export type UUIDGenerator<NachrichtenScope> = () => UUID<NachrichtenScope>;
+type UUIDValue = string & {
+  readonly [TAG]: "Use a generator instance to produce values, obtained by the `createUuidGenerator` factory.";
+};
+
+declare const TAG: unique symbol;
 
 /**
  * Factory to obtain an identifier generator to produce {@link UUID} values.
@@ -32,9 +39,9 @@ export type UUIDGenerator<NachrichtenScope> = () => UUID<NachrichtenScope>;
  * @example
  * ```typescript
  * withScope((scope) => {
- *   const nextUUID = createUuidGenerator(scope);
+ *   const uuid = createUuidGenerator(scope);
  *   const absender = {
- *     eigeneNachrichtenID: nextUUID(),
+ *     eigeneNachrichtenID: uuid.first(),
  *     // ...
  *   }
  * })
@@ -42,17 +49,26 @@ export type UUIDGenerator<NachrichtenScope> = () => UUID<NachrichtenScope>;
  */
 export function createUuidGenerator<NachrichtenScope>(
   scope: ScopeToken<NachrichtenScope>,
-): UUIDGenerator<NachrichtenScope> {
-  return scopedSingleton(
-    scope,
-    UUID_GENERATOR_KEY,
-    () => () =>
-      // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
-      globalThis.crypto.randomUUID() as UUID<NachrichtenScope>,
-  );
+): UuidGenerator<NachrichtenScope> {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- gain generator type capabilities
+  return scopedSingleton(scope, UUID_GENERATOR_KEY, () =>
+    memorizeAsGenerator(randomUUID),
+  ) as never;
 }
 
 const UUID_GENERATOR_KEY = Symbol("uuid-generator");
+
+function randomUUID(): UUIDValue {
+  // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
+  return globalThis.crypto.randomUUID() as UUIDValue;
+}
+
+export interface UuidGenerator<NachrichtenScope> {
+  first: () => UUID<NachrichtenScope, 0>;
+  next: <Ordinal extends number>(
+    previous: UUID<NachrichtenScope, Ordinal>,
+  ) => UUID<NachrichtenScope, Increment<Ordinal>>;
+}
 
 if (import.meta.vitest) {
   const { describe, it, expect } = import.meta.vitest;
@@ -66,16 +82,13 @@ if (import.meta.vitest) {
        * and might find flaws over time when runs have accumulated enough.
        */
 
-      it("produces unique identifiers for a meaningful sequence length", () => {
-        withScope((scope) => {
-          const nextUUID = createUuidGenerator(scope);
-          const generatedUUIDs = new Set<string>();
+      it("produces unique runtime values for a meaningful number of generations", () => {
+        const generatedUUIDs = new Set<string>();
 
-          repeat(1000, () => {
-            const uuid = nextUUID();
-            expect(generatedUUIDs.has(uuid)).toBe(false);
-            generatedUUIDs.add(uuid);
-          });
+        repeat(1000, () => {
+          const uuid = randomUUID();
+          expect(generatedUUIDs.has(uuid)).toBe(false);
+          generatedUUIDs.add(uuid);
         });
       });
     });
