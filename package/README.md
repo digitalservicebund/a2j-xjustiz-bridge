@@ -111,12 +111,76 @@ function that starts a new message.
 ```typescript
 import {
   zahlungsklage,
-  type DatatypeA,
-  type DatatypeB,
-  // ... everything you need for Zahlungsklagen (payment claim)
+  datatypeA
+  createRollennummerGenerator,
+  Rollenbezeichnung,
+  verifyNachricht,
+  // ... everything used during composition
 } from "@digitalservicebund/a2j-xjustiz-converter/nachricht/zahlungsklage";
 
-const message = zahlungsklage(/* compose message here */);
+const nachrichtEncodedInXml = zahlungsklage(
+  (scope) => {
+    const rollennummer = createRollennummerGenerator(scope);
+    const rollennummerFuerKlaeger = rollennummer.first(Rollenbezeichnung.Klaeger);
+
+    const klaeger = {
+      rolle: [{
+        rollennummer: rollennummerFuerKlaeger,
+        rollenbezeichnung: Rollenbezeichnung.Klaeger,
+      }],
+      beteiligter: {
+        auswahlBeteiligter: {
+          natuerlichePerson: {
+            vollerName: {
+              nachname: datatypeA("Mustermann").value
+            },
+            geschlecht: Geschlecht.Weiblich,
+            anschrift: [{
+              strasse: datatypeB("Musterstrasse").value,
+              hausnummer: datatypeB("1A").value,
+            }],
+          },
+        },
+      },
+    };
+
+    const rollennummerFuerGesetzlichenVertreter = rollennummer.next(
+      rollennummerFuerKlaeger,
+      Rollenbezeichnung.GesetzlicherVertreter,
+    );
+
+    const gesetzlicherVertreter = {
+      rolle: [{
+        rollennummer: rollennummerFuerGesetzlichenVertreter,
+        rollenbezeichnung: Rollenbezeichnung.GesetzlicherVertreter,
+        geschaeftszeichen: datatypeC("KM-0042-2026").value,
+        referenz: [{ refRollennummer: reference(rollennummerFuerKlaeger) }],
+      }],
+      beteiligter: {
+        auswahlBeteiligter: {
+          raKanzlei: {
+            bezeichnung: {
+              bezeichnungAktuell: datatypeD("Kanzlei Mustermann").value,
+            },
+            kanzleiform: Kanzleiform.Einzelanwalt,
+          },
+        },
+      },
+    };
+
+    // ... and much more
+
+    return verifyNachricht({
+      nachrichtenkopf: { /* ... */ },
+      grunddaten: {
+        verfahrensdaten: {
+          beteiligung: [klaeger, gesetzlicherVertreter],
+        }
+      },
+      inhaltsdaten: { /* ... */ },
+    });
+  },
+);
 ```
 
 The XJustiz-Converter defines more message types than the XJustiz standard
@@ -127,16 +191,6 @@ narrowed conformance profiles based on the messages in the standard. Message
 profiles are developed in cooperation with the service teams. They are much more
 restrictive and enforce various invariants for their related use case. But they
 also strip down plenty of not relevant aspects for the targeted use case.
-
-> [!IMPORTANT]
-> The concept of message orchestrators is currently not yet
-> practically implemented. Existing implementations, shown in the examples, are
-> only mocks and are intended to be used for early communication purposes.
-> Message orchestrators will soon be implemented and available for production.
-> Refined types for input validation are fully implemented and production ready.
->
-> If you are starting with input validation, you can skip ahead to [Refined
-> Types and Input Validation](#refined-types-and-input-validation).
 
 ### From Scalars to Full Messages
 
