@@ -20,6 +20,7 @@ export async function setup({ provide }: SetupContext) {
   const xjustizToolsTestContainerUrl = `http://${startedContainer.getHost()}:${startedContainer.getMappedPort(8888)}`;
 
   provide("xjustizToolsTestContainerUrl", xjustizToolsTestContainerUrl);
+  provide("xjustizToolsContainerId", startedContainer.getId());
 
   return async function teardown() {
     await startedContainer.stop();
