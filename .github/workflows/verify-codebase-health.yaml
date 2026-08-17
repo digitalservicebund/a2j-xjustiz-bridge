@@ -5,12 +5,20 @@ on:
     - cron: 0 0 * * * # nightly
 permissions:
   contents: read
+  packages: read
 jobs:
   verify-codebase-health:
     runs-on: ubuntu-latest
     steps:
       - name: checkout codebase
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: log into container registry
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: prepare development environment
         uses: jetify-com/devbox-install-action@8c6a66ed6273138b1915457069de78cb52fe3bd7 # v0.15.0
@@ -37,5 +45,19 @@ jobs:
           path: ./.task/cache/trivy
           key: cache-trivy-${{ steps.date.outputs.date }}-v1
           restore-keys: cache-trivy-
+
+      - name: load cache for XJustiz Tools image
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ./.task/cache/xjustiz-tools-image.tar
+          key: cache-xjustiz-tools-image-${{ steps.date.outputs.date }}-v1
+          restore-keys: cache-xjustiz-tools-image-
+
+      - name: refresh XJustiz Tools image cache
+        shell: bash
+        run: |
+          mkdir --parents ./.task/cache
+          docker pull ghcr.io/digitalservicebund/a2j-xjustiz-tools:latest
+          docker save --output ./.task/cache/xjustiz-tools-image.tar ghcr.io/digitalservicebund/a2j-xjustiz-tools:latest
 
       - run: devbox run task --verbose verify:codebase-health
