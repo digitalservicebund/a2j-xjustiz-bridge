@@ -3,3 +3,7 @@ preferFrozenLockfile: true
 trustPolicy: no-downgrade
 trustPolicyExclude:
   - tinyexec # known false positive - actually uses stronger provenance attestation
+allowBuilds:
+  protobufjs: true # Required by dockerode, which is used by testcontainers.
+  ssh2: true # Required by docker-modem, which is used by testcontainers.
+  cpu-features: true # it's testcontainers dependency
