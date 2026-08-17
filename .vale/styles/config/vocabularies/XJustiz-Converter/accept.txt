@@ -6,7 +6,7 @@ Verhaltenskodex
 [Dd]evbox
 Flox
 [Dd]evenv
-ESLint
+(ESLint|eslint)
 [Oo]xlint
 OXC
 Vite
