@@ -109,11 +109,12 @@ tightly coupled to their scope.
 #### Occurrences
 
 Identifiers occur in two different positions. They can either be declared as
-identifier of an entity they are attached to or they as reference to identity
-such an entity. Therefore, any property of a composite must either define if it
-expects a declaration or reference of an identifier. For convenience, generated
-identifiers are automatically marked as declaration for direct usage. References
-on the other side need to be explicit and can be created from declarations.
+identifier of an entity they are attached to or they act as reference to
+identity such an entity. Therefore, any property of a composite must either
+define if it expects a declaration or reference of an identifier. For
+convenience, generated identifiers are automatically marked as declaration for
+direct usage. References on the other side need to be explicit and can be
+created from declarations.
 
 ```typescript
 type SomeComposite<NachrichtenScope> = {

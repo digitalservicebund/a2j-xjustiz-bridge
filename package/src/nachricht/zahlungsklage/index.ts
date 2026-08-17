@@ -1,4 +1,5 @@
 export { zahlungsklage } from "./message-orchestrator";
+export type * from "./message-profile";
 export { verifyNachricht } from "~/verify-nachricht";
 
 export {
