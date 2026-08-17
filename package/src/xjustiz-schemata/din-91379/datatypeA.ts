@@ -22,7 +22,7 @@ import { transformXsdPatternToJavaScriptExpression } from "~/xjustiz-schemata/xm
 declare const TAG: unique symbol;
 
 /**
- * Datatype A of the DIN SPEC 91379 norm. A string with restricted character set.
+ * Datatype A of the DIN 91379 norm. A string with restricted character set.
  *
  * Meant to be used for names of natural persons on sovereign official documents.
  * That includes all Latin characters, plus additional non-letters of group N1

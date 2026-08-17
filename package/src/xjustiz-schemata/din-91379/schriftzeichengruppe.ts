@@ -55,7 +55,7 @@ export type NichtBuchstabenE1 = "ƒ" | "ʰ" | "ʳ" | "ˆ" | "˜" | "ˢ" | "ᵈ" 
 
 /**
  * String.Latin+ specification by KoSIT (Koordinierungsstelle für IT-Standards)
- * as supplementing and commented version of the DIN SPEC 91379.
+ * as supplementing and commented version of the DIN 91379.
  *
  * @see {@link https://www.xoev.de/sixcms/media.php/13/StringLatin%2012.zip | PDF Document}
  */

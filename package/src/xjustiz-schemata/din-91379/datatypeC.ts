@@ -26,7 +26,7 @@ import { transformXsdPatternToJavaScriptExpression } from "~/xjustiz-schemata/xm
 declare const TAG: unique symbol;
 
 /**
- * Datatype C of the DIN SPEC 91379 norm. A string with restricted character set.
+ * Datatype C of the DIN 91379 norm. A string with restricted character set.
  *
  * This is an extension of {@link DatatypeB}, meant to be used for general
  * free text. Unlike previous datatypes, Datatype C permits multi-line input

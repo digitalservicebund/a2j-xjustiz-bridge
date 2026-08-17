@@ -29,7 +29,7 @@ import { transformXsdPatternToJavaScriptExpression } from "~/xjustiz-schemata/xm
 declare const TAG: unique symbol;
 
 /**
- * Datatype E of the DIN SPEC 91379 norm. A string with restricted character set.
+ * Datatype E of the DIN 91379 norm. A string with restricted character set.
  *
  * This is an extension of {@link DatatypeC} and {@link DatatypeD}, making it
  * the most comprehensive datatype. It encompasses all normative and extended

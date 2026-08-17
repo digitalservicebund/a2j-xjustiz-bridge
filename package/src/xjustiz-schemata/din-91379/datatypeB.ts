@@ -24,7 +24,7 @@ import { transformXsdPatternToJavaScriptExpression } from "~/xjustiz-schemata/xm
 declare const TAG: unique symbol;
 
 /**
- * Datatype B of the DIN SPEC 91379 norm. A string with restricted character set.
+ * Datatype B of the DIN 91379 norm. A string with restricted character set.
  *
  * This is an extension of {@link DatatypeA}, meant to be used for address
  * related scalars like street name, house number, names of cities, and legal

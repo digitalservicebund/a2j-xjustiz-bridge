@@ -7,7 +7,7 @@
  * This function interprets characters as linguistic graphemes. The given regular
  * expression for the `allowedCharacters` **MUST** be so defined that is works
  * when applied to a single grapheme, as it will be evaluated per segmented
- * grapheme. All patterns by the **DIN SPEC 91379 datatypes** suit these
+ * grapheme. All patterns by the **DIN 91379 datatypes** suit these
  * requirements.
  *
  * **WARNING:**
