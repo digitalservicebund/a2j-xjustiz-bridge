@@ -3,10 +3,38 @@ import { defineConfig } from "vitest/config";
 // oxlint-disable-next-line no-default-export -- required by tsdown
 export default defineConfig({
   test: {
-    includeSource: ["src/**/*.ts"],
-    watch: false, // Disable default
-  },
-  resolve: {
-    tsconfigPaths: true,
+    watch: false,
+    projects: [
+      {
+        resolve: {
+          tsconfigPaths: true,
+        },
+        test: {
+          name: "unit",
+          includeSource: ["src/**/*.ts"],
+          exclude: [
+            "**/node_modules/**",
+            "**/.git/**",
+            "src/nachricht/zahlungsklage/message-orchestrator.ts",
+          ],
+        },
+      },
+      {
+        resolve: {
+          tsconfigPaths: true,
+        },
+        test: {
+          name: "integration",
+          includeSource: [
+            "src/nachricht/zahlungsklage/message-orchestrator.ts",
+          ],
+          exclude: ["**/node_modules/**", "**/.git/**"],
+          globalSetup: ["./testcontainers-setup.ts"],
+          hookTimeout: 50_000,
+          testTimeout: 70_000,
+          disableConsoleIntercept: true,
+        },
+      },
+    ],
   },
 });

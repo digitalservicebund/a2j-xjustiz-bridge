@@ -212,9 +212,14 @@ tasks:
   test:
     desc: run executable test suites to dynamically test business logic etc.
     deps: [setup:runtime-dependencies]
-    sources: ["./package/**/*"]
     dir: ./package
-    cmd: pnpm exec vitest
+    cmd: pnpm exec vitest --project unit
+
+  test:integration:
+    desc: run integration tests with external service in Testcontainers
+    deps: [setup:runtime-dependencies]
+    dir: ./package
+    cmd: pnpm exec vitest --project integration
 
   build:
     desc: build the library by bundling it as a package

@@ -9,7 +9,7 @@
      * We try to be as runtime environment agnostic as possible. Any requirement
      * MUST be communicated to the user in the documentation!
      *
-     * For gloabl type declarations, add new entries with great care. The
+     * For global type declarations, add new entries with great care. The
      * baseline is based on the A2J Platform. Extensions should picked explicitly
      * without adding the full libraries. Like don't just add `ESNext` or `DOM`.
      * For the global object, do not add any entry, but explicitly declare them
