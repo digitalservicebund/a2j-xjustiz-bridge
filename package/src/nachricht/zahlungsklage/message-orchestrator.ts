@@ -11,6 +11,11 @@ import {
   type ScopeToken,
   withScope,
 } from "~/xjustiz-schemata/shared-kernel/scoping";
+import {
+  type XjustizMessageXmlResult,
+  type XjustizToolsConnectionParameter,
+  generateXjustizMessageXml,
+} from "~/generate-xml-document";
 import { type VerifiedNachricht } from "~/verify-nachricht";
 
 /**
@@ -29,23 +34,27 @@ export function zahlungsklage(
   compose: <NachrichtenScope>(
     scope: ScopeToken<NachrichtenScope>,
   ) => VerifiedNachricht<Zahlungsklage<NachrichtenScope>>,
-): string {
+  xjustizToolsConnectionParameter: XjustizToolsConnectionParameter,
+): Promise<XjustizMessageXmlResult> {
   return withScope((scope) => {
     const nachricht = compose(scope);
-    return JSON.stringify(nachricht);
+    return generateXjustizMessageXml(
+      JSON.stringify(nachricht),
+      xjustizToolsConnectionParameter,
+    );
   });
 }
 
 if (import.meta.vitest) {
-  const { describe, it, expect } = import.meta.vitest;
+  const { describe, it, expect, inject } = import.meta.vitest;
+  const xjustizToolsConnectionParameter = {
+    baseUrl: inject("xjustizToolsTestContainerUrl"),
+  };
 
   // oxlint-disable-next-line max-lines-per-function
   describe("Zahlungsklage", async () => {
     const { reference } = await import(
       "~/xjustiz-schemata/shared-kernel/identifiers"
-    );
-    const { decimal } = await import(
-      "~/xjustiz-schemata/xml-schema-definition/decimal"
     );
     const { datatypeA } = await import(
       "~/xjustiz-schemata/din-91379/datatypeA"
@@ -75,7 +84,6 @@ if (import.meta.vitest) {
       Rollenbezeichnung,
       Telekommunikationsart,
       Waehrung,
-      Zinsmethode,
     } = await import("~/xjustiz-schemata/grunddatensatz/codelisten");
     const { AntragCodeliste, Anspruchsart } = await import(
       "~/xjustiz-schemata/klaver/codelisten"
@@ -86,8 +94,8 @@ if (import.meta.vitest) {
     const { verifyNachricht } = await import("~/verify-nachricht");
 
     // oxlint-disable-next-line max-lines-per-function
-    it("is possible to create a valid example message", () => {
-      const message = zahlungsklage(
+    it("is possible to create a valid example message", async () => {
+      const message = await zahlungsklage(
         // oxlint-disable-next-line max-lines-per-function
         <NachrichtenScope>(scope: ScopeToken<NachrichtenScope>) => {
           const rollennummer = createRollennummerGenerator(scope);
@@ -269,18 +277,7 @@ if (import.meta.vitest) {
 
           const nebenantraegeZinsen = {
             inhalt: datatypeE("Lorem ipsum").value,
-            zinsanspruch: [
-              {
-                refFortlaufendeNummer: reference(fortlaufendeNummerAnspruch),
-                zinsen: [
-                  {
-                    zinssatz: decimal(0.05).value,
-                    zinsmethode: Zinsmethode.JaehrlicherZinssatzUeberBasiszins,
-                    zinsbeginn: Temporal.Now.plainDateISO(),
-                  },
-                ],
-              },
-            ],
+            zinsanspruch: [],
           } satisfies AntraegeFuerZahlungsklage<NachrichtenScope>["nebenantraegeZinsen"];
 
           const uuid = createUuidGenerator(scope);
@@ -306,7 +303,7 @@ if (import.meta.vitest) {
               empfaenger: {
                 informationen: {
                   auswahlKommunikationspartner: {
-                    gericht: Gerichte["Bundesamt für Justiz"],
+                    gericht: Gerichte["ZZ Test-Bund"],
                   },
                 },
                 auswahlAktenzeichen: { aktenzeichenNeu: true },
@@ -402,9 +399,11 @@ if (import.meta.vitest) {
             },
           });
         },
+        xjustizToolsConnectionParameter,
       );
 
-      expect(message).toBeDefined();
+      expect(message).toMatchObject({ ok: true });
+      expect(JSON.stringify(message)).toContain("<?xml version=");
     });
   });
 }
