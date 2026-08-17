@@ -52,7 +52,7 @@ type IncludesIdentifierDeclarationsOrReferences<DocumentPart> =
 export type UncheckableCollectionsWithIdentifiersError<
   UncheckableCollectionsWithIdentifiers,
 > = TypeError &
-  "Found collection including identifiers that can't be verified for uniqueness. Use literally typed collections like tuples." & {
+  "Found collection including identifiers that can't be verified for uniqueness. Try to use the `satisfies` operator." & {
     readonly uncheckableCollectionsWithIdentifiers: UncheckableCollectionsWithIdentifiers;
   };
 
@@ -194,7 +194,7 @@ if (import.meta.vitest) {
         }>
       >().toEqualTypeOf<
         TypeError &
-          "Found collection including identifiers that can't be verified for uniqueness. Use literally typed collections like tuples." & {
+          "Found collection including identifiers that can't be verified for uniqueness. Try to use the `satisfies` operator." & {
             readonly uncheckableCollectionsWithIdentifiers: string &
               IdentifierDeclaration;
           }
@@ -208,7 +208,7 @@ if (import.meta.vitest) {
         }>
       >().toEqualTypeOf<
         TypeError &
-          "Found collection including identifiers that can't be verified for uniqueness. Use literally typed collections like tuples." & {
+          "Found collection including identifiers that can't be verified for uniqueness. Try to use the `satisfies` operator." & {
             readonly uncheckableCollectionsWithIdentifiers: Reference<IdentifierDeclaration>;
           }
       >();
