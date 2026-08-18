@@ -10,4 +10,5 @@ Our [decision records](./decision-records) document big and small decisions and
 their underlying research. There is also documentation how our
 [tool usage](./tool-usage/) and related conventions. For the active development
 on the codebase, we document recurring [implementation pattern](./patterns) as
-well.
+well. The [release process](./release-and-publish-npm-package.md) describes how to release and publish
+the NPM package.

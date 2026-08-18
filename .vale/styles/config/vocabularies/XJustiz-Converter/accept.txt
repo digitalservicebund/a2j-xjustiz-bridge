@@ -76,7 +76,7 @@ Zahlungsklage
 Structurizr
 [Dd]ependabot
 worktree
-[Pp]npm
+([Pp]?npm|NPM)
 [Cc]orepack
 bundler
 [Tt]sdown
