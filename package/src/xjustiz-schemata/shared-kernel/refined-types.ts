@@ -38,9 +38,9 @@ import { type StandardSchemaV1 } from "@standard-schema/spec";
  */
 export function defineRefinedType<
   Input,
-  Output extends DeepReadonly<Input>,
   ParseInput extends { (input: Input): Result<Output> },
   Messages extends IssueMessages,
+  Output extends DeepReadonly<Input> = InferParseOutput<Input, ParseInput>,
 >(
   isInputType: (value: unknown) => value is Input,
   parseInput: (issueMessages?: Messages) => ParseInput,
@@ -66,7 +66,7 @@ export function defineRefinedType<
   };
 
   function customize(customIssueMessages: Messages) {
-    return defineRefinedType<Input, Output, ParseInput, Messages>(
+    return defineRefinedType<Input, ParseInput, Messages, Output>(
       isInputType,
       parseInput,
       customIssueMessages,
@@ -150,6 +150,15 @@ export type RefinedTypeFactory<
       customIssueMessages: Messages,
     ) => RefinedTypeFactory<Input, Output, ParseInput, Messages>;
   };
+
+type InferParseOutput<
+  Input,
+  ParseInput extends (input: Input) => Result<DeepReadonly<Input>>,
+> = ParseInput extends (
+  input: Input,
+) => Result<infer Output extends DeepReadonly<Input>>
+  ? Output
+  : DeepReadonly<Input>;
 
 /**
  * Represents the result of a parsed input value. It can either be successful with
@@ -263,3 +272,22 @@ export type IsLiteral<MaybeLiteral, Base> =
           : false;
 
 const VENDOR = "a2j-xjustiz-converter" as const;
+
+if (import.meta.vitest) {
+  const { describe, it, expectTypeOf } = import.meta.vitest;
+
+  describe("refined types", () => {
+    it("correctly infers the output type for the Standard Schema", () => {
+      type BrandedString = string & { CHEAP_TAG: "branded string" };
+
+      function parse(input: string): Result<BrandedString> {
+        // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+        return { value: input as BrandedString };
+      }
+
+      const factory = defineRefinedType(isString, () => parse);
+
+      expectTypeOf(factory).toExtend<StandardSchemaV1<string, BrandedString>>();
+    });
+  });
+}
