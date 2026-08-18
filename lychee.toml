@@ -4,5 +4,7 @@ exclude = [
   # Yet a private GitHub repository. Requires authentication token to validate.
   "https://github.com/digitalservicebund/a2j-architecture",
   # Internal document at Google Docs from company.
-  "https://docs.google.com/document/d/1-7-jyt_jOqsSlsXxcY4djpe-Ws_JggcM_b78txr5vw0*"
+  "https://docs.google.com/document/d/1-7-jyt_jOqsSlsXxcY4djpe-Ws_JggcM_b78txr5vw0*",
+  # The npm website blocks automated tools like lychee using Cloudflare anti-bot protection, resulting in a 403 Forbidden error
+  "https://www.npmjs.com/package/@digitalservicebund*"
 ]
