@@ -348,3 +348,60 @@ const result = customDatatypeA(someInput);
 
 Notice that the customization does not apply to compile-time parsing. Parsing
 issues reported by the compiler only face developers and can't be changed.
+
+##### Excursion - Deep Integrated Usage with Zod
+
+When using Zod as schema library (as the Onlinedienste der Justiz do), it might
+be necessary to integrate more deeply with the refined types. While Zod supports
+the Standard Schema natively, as shown above, it might be necessary to combine
+it with other schemas. Unfortunately, Zod does not allow Standard Schemas to be
+used with operators like `and`, `or`, or `intersect`. For example,
+`myZodSchema.pipe(datatypeA)` does not work. If this is required, it is
+necessary to "convert" the Standard Schemas into a first-class Zod schemas. The
+following code snippet can be copied to do so. It takes into account the
+transforming properties of the refined types. Please make sure to **always** use
+the `pipe` operator instead of a plain `and`, to maintain the transformed type.
+Else, `myZodStringSchema.pipe(datatypeA)` becomes finally parsed as plain
+`string`, not `DatatypeA`.
+
+```typescript
+import { datatypeA as originalDatatypeA } from "@digitalservicebund/a2j-xjustiz-converter/nachricht/zahlungsklage";
+
+export const datatypeA = convertStandardSchemaToZod(
+  originalDatatypeA.customize({
+    /* ... */
+  }),
+);
+
+/**
+ * While Zod supports Standard Schemas natively, it doesn't allow them to be used
+ * with operators like `and` or `pipe`. For example,
+ * `someZodSchema.pipe(someStandardSchema)` is not allowed. This function takes
+ * a Standard Schema and constructs a fully integrated Zod schema from it.
+ * Doing so, it takes into account possible input to output transformations by
+ * the validation function of the Standard Schema.
+ */
+function convertStandardSchemaToZod<Input, Output>(
+  schema: StandardSchemaV1<Input, Output>,
+): z.ZodType<Output, Input> {
+  return z.any().transform((input, context) => {
+    const result = schema["~standard"].validate(input);
+
+    if (result instanceof Promise)
+      throw new Error("Asynchronous schemas are not supported");
+
+    if (result.issues) {
+      result.issues?.forEach((issue) => context.addIssue(issue.message));
+      return z.NEVER;
+    } else {
+      return result.value;
+    }
+  });
+}
+```
+
+The [`StandardSchemaV1`](https://standardschema.dev/schema#the-interface) can be
+added by the
+[`@standard-schema/spec`](https://www.npmjs.com/package/@standard-schema/spec)
+package directly (already a transitive dependency). As alternative, the standard
+also recommends to just copy the types selectively.
