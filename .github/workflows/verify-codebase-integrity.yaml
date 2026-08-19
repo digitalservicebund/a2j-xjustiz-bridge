@@ -3,9 +3,13 @@ name: verify codebase integrity
 on: push
 permissions:
   contents: read
+  packages: read
 jobs:
   verify-codebase-integrity:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: checkout codebase
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -26,7 +30,6 @@ jobs:
 
       - name: get current date
         id: date
-        shell: bash
         run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
 
       - name: load cache for link validation checks
@@ -48,68 +51,38 @@ jobs:
             .vale/styles/alex
           key: style-packages-${{ hashFiles('.vale.ini') }}-v1
 
-      - run: devbox run task --verbose verify:codebase-integrity
-
-  verify-codebase-integration:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: read
-    steps:
-      - name: checkout codebase
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: log into container registry
+      - name: log into registry to access XJustiz-Tools service OCI image
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.XJUSTIZ_TOOLS_IMAGE_PAT }}
 
-      - name: prepare development environment
-        uses: jetify-com/devbox-install-action@8c6a66ed6273138b1915457069de78cb52fe3bd7 # v0.15.0
-        with:
-          enable-cache: true
-          devbox-version: 0.17.5
-          sha256-checksum: 520abeaca5fb8e8175bea2acdaac4109e87768ac25ad8da5ad2e6eace5a6060b #devbox_0.17.5_linux_amd64.tar.gz
-
-      - name: load cache for runtime dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: ./package/node_modules
-          key: runtime-dependencies-${{ hashFiles('./package/pnpm-lock.yaml') }}-v1
-          restore-keys: runtime-dependencies-
-
-      - name: get current date
-        id: date
-        shell: bash
-        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
-
-      - name: restore cache for XJustiz Tools image
-        id: xjustiz-tools-image-cache
+      - name: load cache for XJustiz-Tools service OCI image
+        id: load-cache-for-xjustiz-tools-image
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ./.task/cache/xjustiz-tools-image.tar
           key: cache-xjustiz-tools-image-${{ steps.date.outputs.date }}-v1
           restore-keys: cache-xjustiz-tools-image-
 
-      - name: load cached XJustiz Tools image
-        if: steps.xjustiz-tools-image-cache.outputs.cache-hit == 'true'
-        shell: bash
-        run: docker load --input ./.task/cache/xjustiz-tools-image.tar
-
-      - run: devbox run task --verbose test:integration
-
-      - name: save XJustiz Tools image archive
-        if: steps.xjustiz-tools-image-cache.outputs.cache-hit != 'true'
-        shell: bash
+      # Note: Updates are actually fetched frequently by the 'verify codebase health' workflow.
+      - name: download XJustiz-Tools service OCI image if missing
+        id: download-xjustiz-tools-image
+        if: steps.load-cache-for-xjustiz-tools-image.outputs.cache-hit != 'true'
         run: |
+          docker pull ghcr.io/digitalservicebund/a2j-xjustiz-tools:latest
           mkdir --parents ./.task/cache
           docker save --output ./.task/cache/xjustiz-tools-image.tar ghcr.io/digitalservicebund/a2j-xjustiz-tools:latest
 
-      - name: save XJustiz Tools image cache
-        if: steps.xjustiz-tools-image-cache.outputs.cache-hit != 'true'
+      - name: update cache for XJustiz-Tools service OCI image
+        if: steps.download-xjustiz-tools-image.conclusion == 'success'
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ./.task/cache/xjustiz-tools-image.tar
           key: cache-xjustiz-tools-image-${{ steps.date.outputs.date }}-v1
+
+      - name: load XJustiz-Tools service OCI image
+        run: docker load --input ./.task/cache/xjustiz-tools-image.tar
+
+      - run: devbox run task --verbose verify:codebase-integrity

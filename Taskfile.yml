@@ -211,6 +211,12 @@ tasks:
 
   test:
     desc: run executable test suites to dynamically test business logic etc.
+    deps:
+      - test:unit
+      - test:integration
+
+  test:unit:
+    desc: run unit tests
     deps: [setup:runtime-dependencies]
     dir: ./package
     cmd: pnpm exec vitest --project unit
