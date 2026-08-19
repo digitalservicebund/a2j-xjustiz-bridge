@@ -276,7 +276,7 @@ if (import.meta.vitest) {
       });
 
       it("remains undetermined for valid and invalid inputs outside the supported range of Lateinische Buchstaben", () => {
-        expectTypeOf(datatypeA("Müller")).toEqualTypeOf<Result<DatatypeA>>();
+        expectTypeOf(datatypeA("González")).toEqualTypeOf<Result<DatatypeA>>();
         expectTypeOf(datatypeA("יצחק רבין")).toEqualTypeOf<Result<DatatypeA>>();
       });
 

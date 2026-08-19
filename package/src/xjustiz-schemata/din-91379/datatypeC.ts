@@ -283,7 +283,7 @@ if (import.meta.vitest) {
         expectTypeOf(datatypeC("Невский 15")).toEqualTypeOf<
           Result<DatatypeC>
         >();
-        expectTypeOf(datatypeC("Müller")).toEqualTypeOf<Result<DatatypeC>>();
+        expectTypeOf(datatypeC("González")).toEqualTypeOf<Result<DatatypeC>>();
       });
 
       it("remains undetermined for non-static string literals", () => {

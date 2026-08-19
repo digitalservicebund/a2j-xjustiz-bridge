@@ -4,10 +4,11 @@
  *
  * Incomplete primarily because it includes multi code point Unicode sequences,
  * that can't be matched by the TypeScript compiler. Furthermore, the table is
- * huge. Focus on ASCII range to focus on impact. Future extensions possible.
+ * huge. The ASCII range acts as foundation, plus some extensions like German
+ * umlaute. Others are missing. Future extensions possible.
  */
 // prettier-ignore
-export type LateinischeBuchstabenIncomplete = "a" | "A" | "b" | "B" | "c" | "C" | "d" | "D" | "e" | "E" | "f" | "F" | "g" | "G" | "h" | "H" | "i" | "I" | "j" | "J" | "k" | "K" | "l" | "L" | "m" | "M" | "n" | "N" | "o" | "O" | "p" | "P" | "q" | "Q" | "r" | "R" | "s" | "S" | "t" | "T" | "u" | "U" | "v" | "V" | "w" | "W" | "x" | "X" | "y" | "Y" | "z" | "Z";
+export type LateinischeBuchstabenIncomplete = "a" | "A" | "b" | "B" | "c" | "C" | "d" | "D" | "e" | "E" | "f" | "F" | "g" | "G" | "h" | "H" | "i" | "I" | "j" | "J" | "k" | "K" | "l" | "L" | "m" | "M" | "n" | "N" | "o" | "O" | "p" | "P" | "q" | "Q" | "r" | "R" | "s" | "S" | "t" | "T" | "u" | "U" | "v" | "V" | "w" | "W" | "x" | "X" | "y" | "Y" | "z" | "Z" | "ä" | "Ä" | "ö" | "Ö" | "ü" | "Ü" | "ß";
 
 /**
  * "Nicht-Buchstaben N1" defined in table 5 of the {@link _StringLatinPlusSpecification | String.Latin+ specification}.
