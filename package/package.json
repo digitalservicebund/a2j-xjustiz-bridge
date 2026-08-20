@@ -34,9 +34,9 @@
   },
   "devDependencies": {
     "fast-check": "^4.8.0",
-    "publint": "^0.3.21",
+    "publint": "^0.3.23",
     "testcontainers": "^12.1.0",
-    "tsdown": "^0.22.0",
+    "tsdown": "^0.22.14",
     "vitest": "^4.1.10"
   }
 }
