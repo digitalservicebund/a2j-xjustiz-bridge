@@ -4,7 +4,12 @@ on:
   workflow_dispatch:
 
 jobs:
+  verify-codebase-integrity:
+    uses: ./.github/workflows/verify-codebase-integrity.yaml
+    secrets: inherit
+
   publish:
+    needs: verify-codebase-integrity
     runs-on: ubuntu-latest
     environment: npm-publish-library
     permissions:

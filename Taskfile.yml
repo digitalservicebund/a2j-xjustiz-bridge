@@ -241,9 +241,7 @@ tasks:
   publish:
     desc: publish the library to the NPM package registry
     summary: publishing requires OpenID Connect authentication and is expected to run in an authorized environment
-    deps:
-      - build
-      - test
+    deps: ["build"]
     dir: ./package
     cmds:
       - cp ../LICENSE ./LICENSE

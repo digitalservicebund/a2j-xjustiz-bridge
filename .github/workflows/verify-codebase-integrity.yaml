@@ -1,6 +1,9 @@
 # $schema=https://www.schemastore.org/github-workflow.json
 name: verify codebase integrity
-on: push
+on:
+  push:
+  workflow_call:
+
 permissions:
   contents: read
   packages: read
