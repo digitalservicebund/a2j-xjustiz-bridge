@@ -2,7 +2,7 @@
 
 [Related Decision Record](../decision-records/0018-bundle-the-library-with-tsdown.md)
 
-[Tsdown](https://tsdown.dev) is used to bundle the XJustiz-Converter TypeScript
+[Tsdown](https://tsdown.dev) is used to bundle the XJustiz-Bridge TypeScript
 library before publishing it to a package registry.
 
 ## Transpilation Target

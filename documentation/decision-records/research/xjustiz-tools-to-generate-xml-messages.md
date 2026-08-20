@@ -6,7 +6,7 @@ library. The service is developed by the BLK-AG IT-Standards who are also
 responsible for the XJustiz standard itself, with help by the Governikus GmbH
 & Co. KG.
 
-The service has become interesting in the context of the XJustiz-Converter, as
+The service has become interesting in the context of the XJustiz-Bridge, as
 it gained functionality that makes it potentially more effortless to compose
 XJustiz messages. Just with their latest released version 1.1.1 from the 6th of
 May 2026, they added support for the KLAVER module of the XJustiz standard. This
@@ -28,7 +28,7 @@ The bundle of utilities includes a bunch of interesting features:
 - Generate an XJustiz messages in XML format from a JSON dataset.
 - Validate XJustiz messages for conformity to the standard.
 
-In the context of the XJustiz-Converter, the generation of XML documents from
+In the context of the XJustiz-Bridge, the generation of XML documents from
 JSON seems primarily interesting. The JSON format is much more integrated and
 directly usable by the Onlinedienste written in the TypeScript programming
 language. XML is not a first-class citizen in the JavaScript ecosystem and good
@@ -57,7 +57,7 @@ when hosting the service in production.
 
 As pointed out, the most interesting feature of the XJustiz-Tools is the
 capability to generate XML documents from JSON datasets as input. However, the
-primary task of the XJustiz-Converter stays untouched: make it as straight
+primary task of the XJustiz-Bridge stays untouched: make it as straight
 forward as possible to reliably translate user form data to messages of the
 XJustiz standard for the Onlinedienste.
 

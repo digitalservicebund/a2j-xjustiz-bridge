@@ -13,7 +13,7 @@ meaning that gets lost or distorted in translation. At the same time, all
 technical code, frameworks, and tooling conventions are English. Past attempts
 to translate everything into English led to inconsistent terms, causing
 confusion between developers and domain experts, and unnecessary cognitive
-overhead. For the XJustiz-Converter this is especially the case, because the
+overhead. For the XJustiz-Bridge this is especially the case, because the
 public XJustiz specification is in German too.
 
 How should we handle the mix of German domain language and English technical

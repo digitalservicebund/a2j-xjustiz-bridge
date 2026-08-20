@@ -29,7 +29,7 @@ declared goal by the BLK-AG IT-Standards is to become open-source when ready.
 For deeper insights and more information, check out the [research for using the
 XJustiz-Tools to generate XML messages](./research/xjustiz-tools-to-generate-xml-messages.md).
 Because the XJustiz-Tools must be integrated as a service via network, the
-[decision record to implement the XJustiz-Converter as library] and its related
+[decision record to implement the XJustiz-Bridge as library] and its related
 research is also relevant, as it is partially contrary.
 
 ## Decision Drivers
@@ -40,7 +40,7 @@ research is also relevant, as it is partially contrary.
 
 ## Decision Outcome
 
-We use the XJustiz-Converter to integrate with the XJustiz-Tools. We use their
+We use the XJustiz-Bridge to integrate with the XJustiz-Tools. We use their
 JSON Schema as target data structure, having the tools convert it into validated
 XML documents. It is the intend to support the developing digital systems around
 the XJustiz standard and to work closer with the BLK-AG IT-Standards.

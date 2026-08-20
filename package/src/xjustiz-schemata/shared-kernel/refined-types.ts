@@ -271,7 +271,7 @@ export type IsLiteral<MaybeLiteral, Base> =
             : true
           : false;
 
-const VENDOR = "a2j-xjustiz-converter" as const;
+const VENDOR = "a2j-xjustiz-bridge" as const;
 
 if (import.meta.vitest) {
   const { describe, it, expectTypeOf } = import.meta.vitest;

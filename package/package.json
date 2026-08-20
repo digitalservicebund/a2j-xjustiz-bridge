@@ -1,13 +1,13 @@
 {
   "$schema": "https://www.schemastore.org/package.json",
-  "name": "@digitalservicebund/a2j-xjustiz-converter",
+  "name": "@digitalservicebund/a2j-xjustiz-bridge",
   "version": "0.5.1",
   "description": "Assisted composition of XJustiz messages that are ensured to be valid.",
   "author": "Team Court Communication (Access to Justice) - DigitalService GmbH des Bundes",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/digitalservicebund/a2j-xjustiz-converter.git"
+    "url": "git+https://github.com/digitalservicebund/a2j-xjustiz-bridge.git"
   },
   "type": "module",
   "sideEffects": false,

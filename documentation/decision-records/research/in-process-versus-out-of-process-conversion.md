@@ -14,9 +14,9 @@ nontrivial and can be error-prone.
 The Court Communication team is a dedicated complicated subsystem team
 responsible to enable the teams of all Onlinedienste to produce XML documents,
 that are valid XJustiz messages without becoming XJustiz domain experts
-themselves. Therefore, the XJustiz-Converter should be provided.
+themselves. Therefore, the XJustiz-Bridge should be provided.
 
-Two fundamental approaches exist for the XJustiz-Converter: Hosting a separate
+Two fundamental approaches exist for the XJustiz-Bridge: Hosting a separate
 service that Onlinedienste call remotely (out-of-process), or providing
 a library that Onlinedienste compile against directly (in-process). This
 document evaluates both approaches against the product requirements and
@@ -24,8 +24,8 @@ organizational context.
 
 ## The Conversion Problem: A Layered View
 
-Regardless of whether the converter is implemented as a service or a library,
-the same fundamental work for a conversion must be performed. This work can be
+Regardless of whether the bridge is implemented as a service or a library, the
+same fundamental work for a conversion must be performed. This work can be
 decomposed into multiple layers of responsibility. Based on current analysis,
 with focus on the later assessed requirements of correctness, four layers can be
 identified. Understanding these layers helps to clarify where each approach
@@ -85,8 +85,8 @@ constraints can not be resolved by raw translation. For example, if a field in
 XJustiz is required to be of "Datatype A" from the DIN norm 91379 (which
 basically restricts a string to Latin only characters), users must not enter
 characters not allowed for this datatype. This should be directly integrated
-into the user input forms. The converter can't silently drop nonconforming
-characters. This is a not a limitation of the converter, but a legal constrain
+into the user input forms. The bridge can't silently drop nonconforming
+characters. This is a not a limitation of the bridge, but a legal constrain
 enforced by the standard. From the perspective of domain driven development,
 this is a conformist relationship. XJustiz is sovereign and the Onlinedienste
 just capture data that conforms to the standard.
@@ -190,18 +190,18 @@ XML support out of the box plus the capabilities for the desired type-driven
 development. Therefore, a compromise is necessary. In regards of the preceding
 analysis, and in perspective of the following requirement evaluation, the
 type-driven development capabilities seem to provide more advantages for the
-XJustiz-Converter.
+XJustiz-Bridge.
 
 ## Evaluation Against Requirements
 
 The following evaluation maps both approaches against the requirements from the
-product requirements document (Tech Enabler: XJustiz-Converter, 27.01.2026).
+product requirements document (Tech Enabler: XJustiz-Bridge, 27.01.2026).
 
 ### Validity & Runtime Failure Rate
 
 > The failure rate of conversions that block users and can't be fixed at runtime
 > MUST be significantly below 1%.
-> The converter MUST ensure that only valid XJustiz messages can be composed.
+> The bridge MUST ensure that only valid XJustiz messages can be composed.
 > The focus SHOULD be on the respective latest XJustiz version.
 
 **In-Process Library**
@@ -234,7 +234,7 @@ control, but has a higher risk of runtime errors.
 
 ### Imperative, Synchronous Interface
 
-> The converter MUST provide an imperative interface for synchronous
+> The bridge MUST provide an imperative interface for synchronous
 > request-response communication.
 
 **In-Process Library**
@@ -296,7 +296,7 @@ comes with a lot of additional infrastructure overhead like network latency.
 
 **In-Process Library**
 Onlinedienste install the library as dependency using their package manager. The
-converter can be imported directly for the respective use case. Autocompletion
+bridge can be imported directly for the respective use case. Autocompletion
 is directly supported and the compiler provides immediate feedback on errors.
 The developer writes ordinary code within guided boundaries. The documentation
 is directly available and provided Zod schemas can be integrated into the UI.
@@ -330,7 +330,7 @@ Onlinedienste to become conform.
 
 ### IT Security & Data Protection
 
-> The converter MUST be IT-Grundschutz and DSGVO conform, with respective
+> The bridge MUST be IT-Grundschutz and DSGVO conform, with respective
 > concept documents.
 
 **In-Process Library**
@@ -362,7 +362,7 @@ Bug fixes and features can be deployed once and all consumers benefit
 immediately. This must be evaluated in the context of the actual problem and an
 organization's practices and culture.
 
-#### What Actually Triggers an Update of the Converter?
+#### What Actually Triggers an Update of the Bridge?
 
 **XJustiz Standard Version Updates**
 The standard currently changes every year. New releases are announced early and
@@ -403,7 +403,7 @@ As already established, the service requires an API contract, using a data model
 shared with the Onlinedienste. This model is less capable than a programming
 language's native type system at expressing the full range of constraints.
 
-Such model must not just mirror XJustiz, else the converter would be useless.
+Such model must not just mirror XJustiz, else the bridge would be useless.
 Instead, the model should be developed closer along the domain model of the
 Onlinedienste. Though, certain constraints like restrictions on character sets
 can't be dissolved.
@@ -441,7 +441,7 @@ production, if that should become required.
 Both approaches require the same test strategy for the core conversion logic
 itself. Among others, these will include property tests, golden baseline tests,
 negative compile tests, and output validation against the public schemas. The
-difference is how the Onlinedienste test their integration with the converter.
+difference is how the Onlinedienste test their integration with the bridge.
 
 **In-Process Library**
 The integration itself are function calls. The compiler takes care of their

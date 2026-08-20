@@ -31,11 +31,11 @@ For remote usage, it is possible to reference the glossaries using the
 [import](https://docs.contextive.tech/community/guides/setting-up-glossaries/#terms-defined-in-an-external-data-source)
 configuration option. A minimal external glossary looks just like this:
 
-`xjustiz-converter.glossary.yaml`:
+`xjustiz.glossary.yaml`:
 
 ```yaml
 imports:
-  - https://github.com/digitalservicebund/a2j-xjustiz-converter/tree/main/xjustiz-converter.glossary.yaml
+  - https://github.com/digitalservicebund/a2j-xjustiz-bridge/tree/main/xjustiz.glossary.yaml
   # or with fixed release tag matching the installed library version (e.g. version 0.2.0):
-  - https://github.com/digitalservicebund/a2j-xjustiz-converter/tree/v0.2.0/xjustiz-converter.glossary.yaml
+  - https://github.com/digitalservicebund/a2j-xjustiz-bridge/tree/v0.2.0/xjustiz.glossary.yaml
 ```

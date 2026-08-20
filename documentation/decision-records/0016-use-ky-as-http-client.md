@@ -7,7 +7,7 @@ date: 2026-05-22
 
 ## Context and Problem Statement
 
-We are building the XJustiz-Converter as a TypeScript library for integrating
+We are building the XJustiz-Bridge as a TypeScript library for integrating
 with the XJustiz-Tools and handling sensitive user data. While the current
 focus is on Node.js environments, we want to keep the implementation
 platform-agnostic so that browser support stays a viable option for the

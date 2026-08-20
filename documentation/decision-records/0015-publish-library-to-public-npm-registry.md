@@ -9,7 +9,7 @@ consulted: Niko Felger
 
 ## Context and Problem Statement
 
-The XJustiz-Converter is provided as a TypeScript library. The goal is to
+The XJustiz-Bridge is provided as a TypeScript library. The goal is to
 maintain an X-as-a-service relationship. That concludes into the decision to
 publish the library as a package and allow users to install it as conveniently
 as possible like a regular runtime dependency.
@@ -77,7 +77,7 @@ as a new commit to this branch. That means the worktree content of this branch
 is in fact the package content itself. For each release, there will a Git tag,
 using semantic version syntax. Library users can install directly from the
 public repository like this: `npm install
-github.com:digitalservicebund/a2j-xjustiz-converter#v0.1.0`. Dependabot is
+github.com:digitalservicebund/a2j-xjustiz-bridge#v0.1.0`. Dependabot is
 supposed to be capable of understanding this and find new updates based on
 version tags and included `package.json` files.
 
@@ -91,6 +91,6 @@ version tags and included `package.json` files.
 
 We gonna follow the company [internal guidelines](https://digitalservicebund.atlassian.net/wiki/x/agAtg)
 to publish to the NPM registry. That means the package is gonna be called
-`@digitalservicebund/a2j-xjustiz-converter`. As soon as we have our basic
+`@digitalservicebund/a2j-xjustiz-bridge`. As soon as we have our basic
 package set up, an administrator of the company will enable our release workflow
 on GitHub Actions to make the OpenID Connect authentication work.

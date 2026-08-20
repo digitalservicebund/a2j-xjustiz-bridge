@@ -58,7 +58,7 @@ in regards of automatic Codelisten updates?
 ## Decision Outcome
 
 Chosen option: "Manually Maintain Codelisten", because this gives the most
-control. It gives us trust in the integration between XJustiz-Converter and
+control. It gives us trust in the integration between XJustiz-Bridge and
 XJustiz-Tools. Furthermore, it is likely the securest way to run the service for
 data protection.
 

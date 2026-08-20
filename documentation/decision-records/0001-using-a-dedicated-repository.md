@@ -13,7 +13,7 @@ The new Court Communication (complication subsystem) team needs a code repositor
 to develop its products. There are at least two products that will be developed
 by this team:
 
-1. The XJustiz-Converter to compose XJustiz messages, consumed by all
+1. The XJustiz-Bridge to compose XJustiz messages, consumed by all
    Onlinedienste via the Platform team and probably the Kompla team as well.
 2. The ERV Orchestrator as an integration service, consumed by all Onlinedienste
    via the Platform team.
@@ -62,10 +62,10 @@ given context. There are no notable risks with potential high impact.
 ### Confirmation
 
 The actual relationship and interaction modes with the other teams will show if
-the separation of the XJustiz-Converter as X-as-a-Service works out well in
-production. Depending on if the Kompla team will actually use the converter, and
-if there is constant collaboration necessary, a joined mono repository might
-become more relevant.
+the separation of the XJustiz-Bridge as X-as-a-Service works out well in
+production. Depending on if the Kompla team will actually use the bridge, and if
+there is constant collaboration necessary, a joined mono repository might become
+more relevant.
 
 ## Pros and Cons of the Options
 

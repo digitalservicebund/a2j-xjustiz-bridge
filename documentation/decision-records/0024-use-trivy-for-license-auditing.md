@@ -7,7 +7,7 @@ date: 2026-07-29
 
 ## Context and Problem Statement
 
-As the Court Communication team builds the XJustiz-Converter and maintains
+As the Court Communication team builds the XJustiz-Bridge and maintains
 infrastructure such as the OCI container images for the XJustiz-Tools, ensuring
 software compliance is an important priority. We need an automated way to audit
 licenses and provide visibility into the licenses of third-party dependencies

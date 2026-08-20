@@ -8,7 +8,7 @@ decision-makers: Thore Straßburg, Pram Gurusinga
 
 ## Context and Problem Statement
 
-The XJustiz-Converter is provided as a TypeScript library. Therefore, it must be
+The XJustiz-Bridge is provided as a TypeScript library. Therefore, it must be
 bundled and published to a package registry. The target group of library users
 is known to internal teams working on the Access to Justice project. This limits
 the needs for broad compatibility and allows for more stringent optimizations

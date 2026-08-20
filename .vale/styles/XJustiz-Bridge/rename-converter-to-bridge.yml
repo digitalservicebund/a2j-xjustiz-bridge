@@ -1,0 +1,10 @@
+extends: substitution
+message: "XJustiz-Converter has been renamed to XJustiz-Bridge. Use '%s' instead of '%s'."
+level: error
+vocab: false
+action:
+  name: replace
+swap:
+  XJustiz-Converter: XJustiz-Bridge
+  Converter: Bridge
+  converter: bridge

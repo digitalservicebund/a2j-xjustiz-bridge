@@ -1,14 +1,14 @@
-# XJustiz-Converter
+# XJustiz-Bridge
 
 > Assisted composition of XJustiz messages that are ensured to be valid.
 
-The XJustiz-Converter is a component for the [Elektronischen
+The XJustiz-Bridge is a component for the [Elektronischen
 Rechtsverkehr](https://www.bundesjustizamt.de/DE/DasBfJ/Kontakt/Rechtsverkehr/Rechtsverkehr_node.html)
 (electronic legal traffic), providing capabilities to compose legal messages
 according to the [XJustiz](https://xjustiz.justiz.de) standard.
 
 Valid messages in XML format can be composed using the
-`@digitalservicebund/a2j-xjustiz-converter` TypeScript library. With a strong
+`@digitalservicebund/a2j-xjustiz-bridge` TypeScript library. With a strong
 type system and type-level computations, it guides the library user to adhere to
 the standard and compose messages that are valid based on compile-time
 guarantees. This provides early feedback to engineers already during
@@ -16,10 +16,10 @@ development, without causing runtime errors that affect the end-user experience
 in production negatively.
 
 To learn more about the motivation, the scope, and approach of the
-XJustiz-Converter, read the [documentation overview](../README.md).
+XJustiz-Bridge, read the [documentation overview](../README.md).
 
 > [!IMPORTANT]
-> The XJustiz-Converter is heavily focused and developed primarily for the usage
+> The XJustiz-Bridge is heavily focused and developed primarily for the usage
 > by the [Onlinedienste der Justiz](https://service.justiz.de) (online services
 > for justice). It is part of the shared project [Zugang zum
 > Recht](https://www.zugang-zum-recht-projekte.de/).
@@ -29,10 +29,10 @@ XJustiz-Converter, read the [documentation overview](../README.md).
 ### Installation
 
 The library is published to the [NPM package
-registry](https://www.npmjs.com/package/@digitalservicebund/a2j-xjustiz-converter) and can be installed using any compatible package manager.
+registry](https://www.npmjs.com/package/@digitalservicebund/a2j-xjustiz-bridge) and can be installed using any compatible package manager.
 
 ```sh
-npm add @digitalservicebund/a2j-xjustiz-converter
+npm add @digitalservicebund/a2j-xjustiz-bridge
 # or pnpm, yarn, ...
 ```
 
@@ -52,7 +52,7 @@ available on the global context object (`globalThis`):
 
 ### TypeScript Configuration Options (Recommended)
 
-The XJustiz-Converter is built around a strong type system (more of this in the
+The XJustiz-Bridge is built around a strong type system (more of this in the
 section [A Word on Type Security](#a-word-on-type-security)). Multiple
 constraints for composing correct messages are reported as errors by the
 TypeScript compiler. These can become bulky and messages eventually get
@@ -71,17 +71,17 @@ Glossaries are written in a format consumable by
 editor, it will automatically provide extra documentation context in hover
 hints, everywhere code symbols contain terms found in the glossary.
 Complementing the code documentation itself, this can help to work with the
-XJustiz domain and the converter.
+XJustiz domain and the XJustiz-Bridge.
 
 This requires to define a glossary file in the own (local) repository.
 
-`xjustiz-converter.glossary.yaml`:
+`xjustiz-bridge.glossary.yaml`:
 
 ```yaml
 imports:
-  - https://github.com/digitalservicebund/a2j-xjustiz-converter/tree/main/xjustiz-converter.glossary.yaml
+  - https://github.com/digitalservicebund/a2j-xjustiz-bridge/tree/main/xjustiz.glossary.yaml
   # or with fixed release tag matching the installed library version (e.g. version 0.2.0):
-  - https://github.com/digitalservicebund/a2j-xjustiz-converter/tree/v0.2.0/xjustiz-converter.glossary.yaml
+  - https://github.com/digitalservicebund/a2j-xjustiz-bridge/tree/v0.2.0/xjustiz.glossary.yaml
 ```
 
 ### A Word on Type Security
@@ -97,7 +97,7 @@ to produce runtime errors by incorrectly composed messages.
 
 It is recommended to use strict linting rules to assist staying disciplined and
 catch violations early. At least for the part of the codebase that interacts
-with the XJustiz-Converter. Such could be for example Oxlint rules (e.g.
+with the XJustiz-Bridge. Such could be for example Oxlint rules (e.g.
 [`no-explicit-any`](https://oxc.rs/docs/guide/usage/linter/rules/typescript/no-explicit-any.html),
 [`no-unsafe-type-assertions`](https://oxc.rs/docs/guide/usage/linter/rules/typescript/no-unsafe-type-assertion.html))
 or their respective counterpart by ESLint.
@@ -105,7 +105,7 @@ or their respective counterpart by ESLint.
 ## Usage
 
 The following chapters provide an overview of what it needs to compose
-a complete message. They teach the basic concepts of how the XJustiz-Converter
+a complete message. They teach the basic concepts of how the XJustiz-Bridge
 works.
 
 In complement to this, the library itself puts quite some effort into support
@@ -113,7 +113,7 @@ from within the development environment. The public interface is documented in
 detail, provides examples, and links related resources. It is always worth
 hovering a code symbol in the editor or to force code completion.
 
-With type-driven development as foundation of the XJustiz-Converter, compiler
+With type-driven development as foundation of the XJustiz-Bridge, compiler
 errors are communicative. They express the required constraints and provide
 hints how to fix the issue. TypeScript errors can sometimes be verbose and
 tricky to interpret. However, in most cases a human readable text message should
@@ -122,7 +122,7 @@ be included.
 ### Find the Correct Message Profile
 
 The XJustiz standard is developed around the concept of messages as primary
-entity — so does the library. However, the XJustiz-Converter defines more
+entity — so does the library. However, the XJustiz-Bridge defines more
 messages than the XJustiz standard does. Messages in the standard often have
 a broad scope and can be quite generic and open for interpretation. Focusing on
 actual application use cases by the online services, there is the concept of
@@ -152,7 +152,7 @@ steps can be imported directly from the same path. Such includes functions,
 types, constants, etc.
 
 ```typescript
-import { zahlungsklage } from "@digitalservicebund/a2j-xjustiz-converter/nachricht/zahlungsklage";
+import { zahlungsklage } from "@digitalservicebund/a2j-xjustiz-bridge/nachricht/zahlungsklage";
 ```
 
 The message orchestrator opens the document scope to the composition function
@@ -181,7 +181,7 @@ zahlungsklage((scope) => {
 });
 ```
 
-Scoping is an important pattern in the XJustiz-Converter. While the here
+Scoping is an important pattern in the XJustiz-Bridge. While the here
 documented guides should be sufficient to learn how to use it, there is some
 [additional documentation](#more-on-the-scoping-pattern) in case you want to
 learn more about it.
@@ -211,7 +211,7 @@ document in a plain string. The "generation" of the XML is done by the official
 XJustiz-Tools are an HTTP REST based service that provides diverse capabilities
 to support the work with XJustiz. It is a 3rd party, yet proprietary, product
 with restricted access, but with the ambitions to become Open Source eventually.
-The XJustiz-Converter requires the connection parameters to a running instance
+The XJustiz-Bridge requires the connection parameters to a running instance
 of this service. It uses it to generate the actual XML document as final step.
 For the _Onlinedienste der Justiz_, contact the Court Communication team to get
 access to an internally managed service instance.
@@ -231,12 +231,12 @@ if (compositionResult.ok) {
 }
 ```
 
-In theory, the XJustiz-Converter enforces the composition of valid messages
+In theory, the XJustiz-Bridge enforces the composition of valid messages
 only. As a result, the XJustiz-Tools should never fail, unless the
-XJustiz-Converter has a bug. However, the integration with the XJustiz-Tools as
+XJustiz-Bridge has a bug. However, the integration with the XJustiz-Tools as
 a remote service inherently introduces the risk of runtime errors. These errors
 can not be recovered from. Therefore, no details are shared cross the boundary.
-The XJustiz-Converter does its best to address network issues and a temporary
+The XJustiz-Bridge does its best to address network issues and a temporary
 unavailable service. Additional retry and back-off logic on top is not
 recommended. The internally managed service instance for the _Onlinedienste der
 Justiz_ is monitored by the Court Communication team to detect bugs and issues
@@ -274,7 +274,7 @@ import {
   verifyNachricht,
   zahlungsklage,
   // ... everything else used during composition
-} from "@digitalservicebund/a2j-xjustiz-converter/nachricht/zahlungsklage";
+} from "@digitalservicebund/a2j-xjustiz-bridge/nachricht/zahlungsklage";
 
 const compositionResult = zahlungsklage(
   (scope) => {
@@ -404,7 +404,7 @@ import * as z from "zod";
 import {
   datatypeA, // Standard Schema for DatatypeA
   datatypeB, // Standard Schema for DatatypeB
-} from "@digitalservicebund/a2j-xjustiz-converter/nachricht/zahlungsklage";
+} from "@digitalservicebund/a2j-xjustiz-bridge/nachricht/zahlungsklage";
 
 const User = z.object({
   name: datatypeA,
@@ -434,7 +434,7 @@ a failure with some parsing issues.
 import {
   datatypeA, // Refined type factory of DatatypeA
   datatypeB, // Refined type factory of DatatypeB
-} from "@digitalservicebund/a2j-xjustiz-converter/nachricht/zahlungsklage";
+} from "@digitalservicebund/a2j-xjustiz-bridge/nachricht/zahlungsklage";
 
 const result = datatypeA(someInput);
 
@@ -496,7 +496,7 @@ a new instance of the factory with customized issue messages. That means the
 result can be used the same way as the original factory.
 
 ```typescript
-import { datatypeA as originalDatatypeA } from "@digitalservicebund/a2j-xjustiz-converter/nachricht/zahlungsklage";
+import { datatypeA as originalDatatypeA } from "@digitalservicebund/a2j-xjustiz-bridge/nachricht/zahlungsklage";
 
 const datatypeA = originalDatatypeA.customize({
   invalidCharacters: (characters) =>
@@ -528,7 +528,7 @@ Else, `myZodStringSchema.pipe(datatypeA)` becomes finally parsed as plain
 `string`, not `DatatypeA`.
 
 ```typescript
-import { datatypeA as originalDatatypeA } from "@digitalservicebund/a2j-xjustiz-converter/nachricht/zahlungsklage";
+import { datatypeA as originalDatatypeA } from "@digitalservicebund/a2j-xjustiz-bridge/nachricht/zahlungsklage";
 
 export const datatypeA = convertStandardSchemaToZod(
   originalDatatypeA.customize({
@@ -790,10 +790,10 @@ For most cases, there is no need to understand the scoping pattern in more
 detail. Composing a message successfully should be possible just from knowing
 the basics as shown in the guides here. The following is completely optional.
 
-Scoping is a mechanism in the XJustiz-Converter that is used to create
+Scoping is a mechanism in the XJustiz-Bridge that is used to create
 a boundary in which certain constraints are enforced. For example, the
 identifier type `Rollennummer` must not only be unique within an
-XJustiz-Converter, but it should also be an incrementing counter.
+XJustiz-Bridge, but it should also be an incrementing counter.
 
 Scoping is integrated with by certain scalar types, like identifiers. Up the
 schemata, composites that build on top of these scalars inherently become scoped

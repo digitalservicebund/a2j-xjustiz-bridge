@@ -8,7 +8,7 @@ decision-makers: Thore Straßburg, Pram Gurusinga
 
 ## Context and Problem Statement
 
-The TypeScript library for the XJustiz-Converter will need some runtime
+The TypeScript library for the XJustiz-Bridge will need some runtime
 dependencies for production as well as testing. Furthermore, the library itself
 will be published to a package registry as well. That means we need
 a development platform-specific package manager. It will be complementary to the

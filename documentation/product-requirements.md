@@ -10,10 +10,10 @@ Users of the service platform seek an uncomplicated way to digitally communicate
 with the court and to send their data. The _Elektronische Rechtsverkehr (ERV)_
 (translation: electronic legal traffic) is the current standard of the digital
 communication and XJustiz is the data format for the exchange of structured data
-within the justice. The XJustiz-Converter converts the data specified in the
+within the justice. The XJustiz-Bridge converts the data specified in the
 Onlinedienste into valid XJustiz messages (according to current standard).
 
-Objective & Added value: Through the integration of the converter we ensure that
+Objective & Added value: Through the integration of the bridge we ensure that
 received applications and specialized data can be imported directly into the
 specialized procedures of the courts (e.g., via SAFE-ID) without manual
 recording effort. This minimizes transmission errors, accelerates the processing
@@ -32,17 +32,17 @@ times and fulfills the legal requirements on the modern legal traffic.
 
 ## In Scope
 
-- The converter enables the effective transforming and translating of form data
+- The bridge enables the effective transforming and translating of form data
   from the Onlinedienste into the corresponding module of the XJustiz standard, so
   it can be dispatched.
-- The converter MUST ensure that only valid XJustiz messages can be composed.
+- The bridge MUST ensure that only valid XJustiz messages can be composed.
   The focus SHOULD be on the respective latest XJustiz version.
-- The converter MUST provide an imperative interface for synchronous
+- The bridge MUST provide an imperative interface for synchronous
   request-response communication.
 
 ## Out of Scope
 
-- The transmission of the data will be done separate from the converter,
+- The transmission of the data will be done separate from the bridge,
   including handling of necessary transfer parameter for the message container.
 
 ## Nonfunctional Requirements
@@ -54,19 +54,19 @@ times and fulfills the legal requirements on the modern legal traffic.
   to provide relief. The "Time To First Hello World" (TTFHW) SHOULD be below 10
   minutes. The "Time To First Value" (TTFV) can be more complex but SHOULD be
   within 1-2 days
-- The converter MUST be IT-Grundschutz and DSGVO conform, with respective
+- The bridge MUST be IT-Grundschutz and DSGVO conform, with respective
   concept documents.
 
 ## Solution Analysis
 
 **Which Internal and/or external customers are affected, and how?**
-Internal: Onlinedienste at service.justiz.de can use the XJustiz-Converter to compose valid messages.
+Internal: Onlinedienste at service.justiz.de can use the XJustiz-Bridge to compose valid messages.
 Internal: The ERV transmission system can transfer these messages.
 External: Courts receive valid and structured data based on the current XJustiz standard
 
 **What is the potential impact on solutions, programs, and services?**
 Maybe the XJustiz utilities of the _AG IT Standards_.
-Making the XJustiz-Converter publicly available for external services.
+Making the XJustiz-Bridge publicly available for external services.
 
 **What is the potential impact on sales, distribution, deployment, and support?**
 Maintenance and Monitoring

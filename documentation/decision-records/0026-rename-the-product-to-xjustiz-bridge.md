@@ -6,6 +6,8 @@ consulted: Thore Straßburg, Pram Gurusinga, Christoph Böhmer
 informed: whole Access-to-Justice project, Bundesministerium der Justiz und für Verbraucherschutz
 ---
 
+<!-- vale XJustiz-Bridge.rename-converter-to-bridge = NO -->
+
 # Rename the Product to XJustiz-Bridge
 
 ## Context and Problem Statement

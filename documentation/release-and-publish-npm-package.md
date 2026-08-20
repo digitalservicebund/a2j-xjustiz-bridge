@@ -1,15 +1,16 @@
 # Release and Publish the NPM Package
 
 This document describes how to release a new version of the
-`@digitalservicebund/a2j-xjustiz-converter` package and publish it to the public
-[NPM registry](https://www.npmjs.com/package/@digitalservicebund/a2j-xjustiz-converter).
+`@digitalservicebund/a2j-xjustiz-bridge` package and publish it to the public
+[NPM
+registry](https://www.npmjs.com/package/@digitalservicebund/a2j-xjustiz-bridge).
 
 ## Preconditions
 
 - Ensure that the changes for the release are merged into `main`.
 - Ensure that the working tree is clean.
 - Check the
-  [existing tags](https://github.com/digitalservicebund/a2j-xjustiz-converter/tags)
+  [existing tags](https://github.com/digitalservicebund/a2j-xjustiz-bridge/tags)
   and determine the next semantic version. Tags use the `v` prefix, for example
   `v0.5.0`.
 
@@ -40,7 +41,7 @@ This document describes how to release a new version of the
 3. Push the commit and tag to GitHub
 
 4. Open
-   [Releases](https://github.com/digitalservicebund/a2j-xjustiz-converter/releases)
+   [Releases](https://github.com/digitalservicebund/a2j-xjustiz-bridge/releases)
    and select **Draft a new release**.
 
 5. Select the newly created tag, for example `v0.5.0`.
@@ -62,7 +63,7 @@ package is published separately in the next step.
 ## Publish the Package
 
 1. Open the
-   [publish library to NPM package registry workflow](https://github.com/digitalservicebund/a2j-xjustiz-converter/actions/workflows/publish.yaml).
+   [publish library to NPM package registry workflow](https://github.com/digitalservicebund/a2j-xjustiz-bridge/actions/workflows/publish.yaml).
 
 2. Select **Run workflow**.
 

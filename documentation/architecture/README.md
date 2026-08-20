@@ -1,6 +1,6 @@
 # Architecture
 
-Architecture decision records for the XJustiz-Converter are administered in the
+Architecture decision records for the XJustiz-Bridge are administered in the
 [documentation/decision-records](../decision-records) directory.
 
 ## C4 Model
@@ -10,17 +10,17 @@ repository contains the overall system architecture of the encompassing Access
 to Justice project. Among other documentation, it includes a C4 model with views
 for the system context and containers. Complementary, there is a [focused C4
 model](./c4-model.dsl) from the perspective of the
-XJustiz-Converter. Therefore, it includes only the level 2 container view plus
+XJustiz-Bridge. Therefore, it includes only the level 2 container view plus
 the level 3 component view of the library. The model is written in the
 description language by Structurizr.
 
-### Level 2 - XJustiz-Converter Containers
+### Level 2 - XJustiz-Bridge Containers
 
-The XJustiz-Converter is primarily a TypeScript library (see [related decision
-record](../decision-records/0012-implement-the-xjustiz-converter-as-library.md))
+The XJustiz-Bridge is primarily a TypeScript library (see [related decision
+record](../decision-records/0012-implement-the-xjustiz-bridge-as-library.md))
 that can be integrated by JavaScript based applications that need to compose
 XJustiz messages. In practice, the Onlinedienste on the A2J platform are
-currently the only users of the converter. The library provides the
+currently the only users of the bridge. The library provides the
 functionality that makes it as convenient as possible to compose standard
 compliant messages with compile time guarantees.
 
@@ -33,7 +33,7 @@ internally to generate validated XML documents.
 
 ### Level 3 - Library Components
 
-The library is the heart of the XJustiz-Converter and primary interaction point.
+The library is the heart of the XJustiz-Bridge and primary interaction point.
 The library is made up of the following components.
 
 **XJustiz Schemata**
@@ -52,7 +52,7 @@ application integration. Overall, the types representing the schema components
 try to encompass as many invariants and Schematron rules as possible. For
 example certain identity constraints are partially encoded here, using scoped
 identity types. However, the schemata definitions are intentionally not
-complete. The standard is extensive and the XJustiz-Converter just projects what
+complete. The standard is extensive and the XJustiz-Bridge just projects what
 is actually necessary for the Onlinedienste.
 
 **Message Profiles** On top of the raw schemata, there are the message profiles.

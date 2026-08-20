@@ -32,7 +32,7 @@ on runtime and type level.
 To securely construct valid XJustiz-Nachrichten, it requires to have distinct
 identifier types per kind of entity. In result, entities that share the same
 identifier type in the standard, get separate types based on that one in the
-XJustiz-Converter. This helps to avoid any unintended confusions and possible
+XJustiz-Bridge. This helps to avoid any unintended confusions and possible
 incorrect references. However, there are certain exceptions. Like the
 `FortlaufendeNummer`, that has a continuously incrementing counter as generator,
 shared by multiple entities. Such exceptions must use the technique of

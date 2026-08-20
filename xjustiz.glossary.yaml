@@ -8,7 +8,7 @@ contexts:
 
           A message is document in XML format to be transmitted via the ERV (Elektronischer Rechtsverkehr) with other parties of the justice system. There are various different message types cross the Fachmodule of the XJustiz standard for different use-cases.
 
-          XJustiz-Converter: foundation for message profiles
+          XJustiz-Bridge: foundation for message profiles
         aliases:
           - Nachricht
           - XJustiz message
@@ -20,16 +20,16 @@ contexts:
           Concept from the XÖV Standardisierungsrahmen. Only referenced by the standard with independent releases possible.
           Discoverable at the [XRepository](https://www.xrepository.de).
 
-          XJustiz-Converter: scalar - implemented as TypeScript enumerations.
+          XJustiz-Bridge: scalar - implemented as TypeScript enumerations.
       - name: DIN 91379
         definition: |
           "Characters and defined character sequences in Unicode for the electronic processing of names and data exchange in Europe"
 
           Norm specification referenced by the XJustiz-Standard. Most prominent artifacts in XJustiz are the so called Datatypes A, B, C, D, and E. Being A the most restrictive character set with E the most open one.
 
-          XJustiz-Converter: scalar - implemented as refined type with smart constructor
+          XJustiz-Bridge: scalar - implemented as refined type with smart constructor
 
-  - name: XJustiz-Converter
+  - name: XJustiz-Bridge
     domainVisionStatement: Assisted composition of XJustiz messages that are ensured to be valid.
     terms:
       - name: Message Profile

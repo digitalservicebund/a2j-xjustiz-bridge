@@ -1,6 +1,6 @@
-workspace "XJustiz-Converter" "C4 Model in the context of the Access to Justice project, focused on the XJustiz-Converter" {
+workspace "XJustiz-Bridge" "C4 Model in the context of the Access to Justice project, focused on the XJustiz-Bridge" {
     model {
-        xJustizConverter = softwareSystem "XJustiz-Converter" "The subsystem team's product. Provides domain functionality via a TypeScript library backed by an internal service." {
+        xJustizBridge = softwareSystem "XJustiz-Bridge" "The subsystem team's product. Provides domain functionality via a TypeScript library backed by an internal service." {
             xJustizTools = container "XJustiz-Tools" "Third-party implementation (vendor-supplied JAR). Managed and operated by the Court Communication team. Provides a REST API." "Java Service / OCI Container" "Third Party"
 
             
@@ -33,7 +33,7 @@ workspace "XJustiz-Converter" "C4 Model in the context of the Access to Justice 
             
         }
         
-        consumerApplication = softwareSystem "Consumer Application" "JavaScript based application that uses XJustiz-Converter to compose XJustiz messages." "External" {
+        consumerApplication = softwareSystem "Consumer Application" "JavaScript based application that uses XJustiz-Bridge to compose XJustiz messages." "External" {
             javascriptRuntime = container "JavaScript Runtime" "Runs the library in-process" {
                 -> library "Compose XJustiz Message & Use Input Schemata" "In-Process"
             }
@@ -41,12 +41,12 @@ workspace "XJustiz-Converter" "C4 Model in the context of the Access to Justice 
     }
 
     views {
-        container xJustizConverter "ContainerView" "XJustiz-Converter - Court Communication" {
+        container xJustizBridge "ContainerView" "XJustiz-Bridge - Court Communication" {
             include *
             autoLayout
         }
         
-        component library "ComponentView" "XJustiz-Converter - Court Communication" {
+        component library "ComponentView" "XJustiz-Bridge - Court Communication" {
             include *
             autoLayout tb
         }

@@ -74,7 +74,7 @@ frustration for automated quality assurance for documentation as code
 practitioners. However, there is barely a way around this without dropping the
 whole linting for spelling.
 
-If such a word is encountered, add it to [the file](../../.vale/styles/config/vocabularies/XJustiz-Converter/accept.txt)
+If such a word is encountered, add it to [the file](../../.vale/styles/config/vocabularies/XJustiz-Bridge/accept.txt)
 with accepted terms. One entry per line. We deliberately try to keep this process
 as less annoying as possible. Therefore, we use only a single list of terms for
 everything. That creates the issue, that information why a term was added is not

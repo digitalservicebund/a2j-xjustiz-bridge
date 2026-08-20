@@ -5,7 +5,7 @@ decision-makers: Thore Straßburg
 consulted: Kai Bernhard, Flo Drews, Pram Gurusinga
 ---
 
-# Implement the XJustiz-Converter as Library
+# Implement the XJustiz-Bridge as Library
 
 ## Context and Problem Statement
 
@@ -21,16 +21,16 @@ nontrivial and can be error-prone.
 The Court Communication team is a dedicated complicated subsystem team
 responsible to enable the teams of all Onlinedienste to produce XML documents,
 that are valid XJustiz messages without becoming XJustiz domain experts
-themselves. Therefore, the XJustiz-Converter should be provided.
+themselves. Therefore, the XJustiz-Bridge should be provided.
 
-Two fundamental approaches exist for the XJustiz-Converter: Hosting a separate
+Two fundamental approaches exist for the XJustiz-Bridge: Hosting a separate
 service that Onlinedienste call remotely (out-of-process), or providing
 a library that Onlinedienste compile against directly (in-process). Some
 [supportive research](./research/in-process-versus-out-of-process-conversion.md)
 evaluates both approaches both in more depth and acts as foundation for this
 decision.
 
-Should the XJustiz-Converter be implemented as a service or a library?
+Should the XJustiz-Bridge be implemented as a service or a library?
 
 ## Decision Drivers
 
@@ -38,9 +38,9 @@ Driving decision follow directly from the [product requirement document](../prod
 and got evaluated throughout in the related research document. Relevant
 requirements for this decision are:
 
-- The converter MUST ensure that only valid XJustiz messages can be composed.
+- The bridge MUST ensure that only valid XJustiz messages can be composed.
 - The focus SHOULD be on the respective latest XJustiz version.
-- The converter MUST provide an imperative interface for synchronous
+- The bridge MUST provide an imperative interface for synchronous
   request-response communication.
 - The conversion SHOULD be finished within 3 seconds for the user. The duration
   MUST stay below an upper limit of 10 seconds. This complies best practices of
@@ -49,7 +49,7 @@ requirements for this decision are:
   to provide relief. The "Time To First Hello World" (TTFHW) SHOULD be below 10
   minutes. The "Time To First Value" (TTFV) can be more complex but SHOULD be
   within 1-2 days
-- The converter MUST be IT-Grundschutz and DSGVO conform, with respective
+- The bridge MUST be IT-Grundschutz and DSGVO conform, with respective
   concept documents.
 
 ## Considered Options

@@ -8,7 +8,7 @@ decision-makers: Thore Straßburg, Pram Gurusinga
 
 ## Context and Problem Statement
 
-Working on the TypeScript library of the XJustiz-Converter, we need a framework
+Working on the TypeScript library of the XJustiz-Bridge, we need a framework
 to write and run our tests with.
 
 Which framework should we use for testing purposes?

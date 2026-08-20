@@ -15,7 +15,7 @@ for the DIN norm 91379. Following our type-driven development, we use the "parse
 don't validate" pattern. The parsing to construct valid instances of scalar
 values creates an explicit and well-defined error boundary.
 
-It should be as convenient as possible for users of the XJustiz-Converter
+It should be as convenient as possible for users of the XJustiz-Bridge
 library to work with these scalars. That means to integrate the parsing properly
 into the flow of dynamic user inputs, especially for validation errors.
 

@@ -113,4 +113,4 @@ export const Geschlecht = {
 Unfortunately, symbols can't be serialized natively. Codes disappear silently.
 This is missed quickly, causing unexpected issues late in the pipeline. After
 all, codes are only unique within their Codeliste. Issues in the
-XJustiz-Converter are avoided at compile-time when composing a message.
+XJustiz-Bridge are avoided at compile-time when composing a message.
