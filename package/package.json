@@ -1,7 +1,7 @@
 {
   "$schema": "https://www.schemastore.org/package.json",
   "name": "@digitalservicebund/a2j-xjustiz-converter",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Assisted composition of XJustiz messages that are ensured to be valid.",
   "author": "Team Court Communication (Access to Justice) - DigitalService GmbH des Bundes",
   "license": "MIT",
