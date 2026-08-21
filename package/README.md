@@ -24,6 +24,33 @@ XJustiz-Bridge, read the [documentation overview](../README.md).
 > for justice). It is part of the shared project [Zugang zum
 > Recht](https://www.zugang-zum-recht-projekte.de/).
 
+## Table of Contents
+
+- [Setup](#setup)
+  - [Installation](#installation)
+  - [Runtime Environment Requirements](#runtime-environment-requirements)
+  - [TypeScript Configuration Options (Recommended)](#typescript-configuration-options-recommended)
+  - [Additional Glossary (Optional)](#additional-glossary-optional)
+  - [A Word on Type Security](#a-word-on-type-security)
+- [Usage](#usage)
+  - [Find the Correct Message Profile](#find-the-correct-message-profile)
+  - [Use the Message Orchestrator](#use-the-message-orchestrator)
+  - [Fill the Content](#fill-the-content)
+    - [From Scalars to Full Messages](#from-scalars-to-full-messages)
+    - [Refined Types and Input Validation](#refined-types-and-input-validation)
+      - [Construction](#construction)
+        - [Using the Standard Schema](#using-the-standard-schema)
+        - [Using the Parsing Function Directly](#using-the-parsing-function-directly)
+      - [Customizing Issue Messages](#customizing-issue-messages)
+      - [Excursion - Deep Integrated Usage with Zod](#excursion---deep-integrated-usage-with-zod)
+    - [Working with Identifiers](#working-with-identifiers)
+      - [Generating Identifiers](#generating-identifiers)
+      - [Identifiers with Additional Discriminator](#identifiers-with-additional-discriminator)
+      - [Referencing](#referencing)
+    - [Using Codelisten](#using-codelisten)
+    - [Accessing the Scope Type Directly](#accessing-the-scope-type-directly)
+- [More on the Scoping Pattern](#more-on-the-scoping-pattern)
+
 ## Setup
 
 ### Installation
