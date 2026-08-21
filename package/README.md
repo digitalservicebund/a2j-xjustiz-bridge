@@ -77,6 +77,12 @@ available on the global context object (`globalThis`):
 - `crypto.randomUUID` (for unique identifier generation, UUID v4 expected)
 - `Temporal` (for calendar based scalars)
 
+> [!IMPORTANT]
+> When using NodeJS, version 26 or newer is required because the library uses
+> the native Temporal API. If upgrading NodeJS is not possible, provide a
+> Temporal polyfill on `globalThis` before using the library, for example with
+> [`@js-temporal/polyfill`](https://github.com/js-temporal/temporal-polyfill).
+
 ### TypeScript Configuration Options (Recommended)
 
 The XJustiz-Bridge is built around a strong type system (more of this in the
