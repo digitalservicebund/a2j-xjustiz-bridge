@@ -59,8 +59,8 @@ The library is published to the [NPM package
 registry](https://www.npmjs.com/package/@digitalservicebund/a2j-xjustiz-bridge) and can be installed using any compatible package manager.
 
 ```sh
-npm add @digitalservicebund/a2j-xjustiz-bridge
-# or pnpm, yarn, ...
+pnpm add @digitalservicebund/a2j-xjustiz-bridge
+# or npm, yarn, ...
 ```
 
 The library comes with rich IntelliSense support. Contextual hover hints,
