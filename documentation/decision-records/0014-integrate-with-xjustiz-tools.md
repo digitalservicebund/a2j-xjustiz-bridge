@@ -29,7 +29,8 @@ declared goal by the BLK-AG IT-Standards is to become open-source when ready.
 For deeper insights and more information, check out the [research for using the
 XJustiz-Tools to generate XML messages](./research/xjustiz-tools-to-generate-xml-messages.md).
 Because the XJustiz-Tools must be integrated as a service via network, the
-[decision record to implement the XJustiz-Bridge as library] and its related
+[decision record to implement the XJustiz-Bridge as
+library](./0012-implement-the-xjustiz-bridge-as-library.md) and its related
 research is also relevant, as it is partially contrary.
 
 ## Decision Drivers
