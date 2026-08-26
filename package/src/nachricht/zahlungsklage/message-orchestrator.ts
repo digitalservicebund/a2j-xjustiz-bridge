@@ -12,23 +12,24 @@ import {
   withScope,
 } from "~/xjustiz-schemata/shared-kernel/scoping";
 import {
+  type VerifiedNachricht,
+  type VerifiedNachrichtOrErrors,
+} from "~/verify-nachricht";
+import {
   type XjustizMessageXmlResult,
   type XjustizToolsConnectionParameter,
   generateXjustizMessageXml,
 } from "~/generate-xml-document";
-import { type VerifiedNachricht } from "~/verify-nachricht";
 
 /**
  * Message orchestrator to compose a Nachricht for a _Zahlungsklage_.
  *
- * This message type is based on the XJustiz KLAVER module, using the generic
- * message type `nachricht.klaver.klageverfahren.3500001` with the
- * specialization of an `anderes Klageverfahren`.
+ * This message profile is based on the XJustiz KLAVER module, using the generic
+ * message type `nachricht.klaver.klageverfahren.3500001` with the specialization
+ * of an `anderes Klageverfahren`.
  *
- * **ATTENTION:**
- * This is still under construction. Not all constraints are verified yet.
- * Also, the resulting message is in the intermediate JSON serialization,
- * instead of as an XML document.
+ * Use {@link verifyZahlungsklage} for the final return statement of the
+ * `compose` function, to get a properly verified Zahlungsklage as required.
  */
 export function zahlungsklage(
   compose: <NachrichtenScope>(
@@ -36,13 +37,50 @@ export function zahlungsklage(
   ) => VerifiedNachricht<Zahlungsklage<NachrichtenScope>>,
   xjustizToolsConnectionParameter: XjustizToolsConnectionParameter,
 ): Promise<XjustizMessageXmlResult> {
-  return withScope((scope) => {
+  return withScope(<NachrichtenScope>(scope: ScopeToken<NachrichtenScope>) => {
     const nachricht = compose(scope);
     return generateXjustizMessageXml(
       JSON.stringify(nachricht),
       xjustizToolsConnectionParameter,
     );
   });
+}
+
+/**
+ * Used as last step of composing a `Zahlungsklage` with the {@link zahlungsklage}
+ * orchestrator to output a valid {@link VerifiedNachricht}. It will apply
+ * multiple type-level computations to verify constraints like for identities or
+ * excess properties.
+ *
+ * In the successful case, when there are no errors, it resoles to the original
+ * `Nachricht`. Otherwise, it resolves to all detected issues, causing a mismatch
+ * on the output of the message composer.
+ *
+ * **ATTENTION:**
+ * Due to restrictions of the TypeScript compiler, the validation must happen in
+ * the return position of the function. Thereby, issues will not be reported at
+ * the function call itself. Hence, issues become only visible by
+ * compiler errors on the outer context of the message orchestrator.
+ *
+ * @example
+ * ```typescript
+ * zahlungsklage((scope) => {
+ *   // Preparations ...
+ *   return verifyZahlungsklage({
+ *     // Message ...
+ *   });
+ * });
+ * ```
+ */
+export function verifyZahlungsklage<
+  Scope,
+  const Nachricht extends Zahlungsklage<Scope>,
+>(
+  _scope: ScopeToken<Scope>,
+  nachricht: Nachricht,
+): VerifiedNachrichtOrErrors<Nachricht, Zahlungsklage<Scope>> {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+  return nachricht as never;
 }
 
 if (import.meta.vitest) {
@@ -91,7 +129,6 @@ if (import.meta.vitest) {
     const { createFortlaufendeNummerGenerator } = await import(
       "~/xjustiz-schemata/klaver/fortlaufende-nummer"
     );
-    const { verifyNachricht } = await import("~/verify-nachricht");
 
     // oxlint-disable-next-line max-lines-per-function
     it("is possible to create a valid example message", async () => {
@@ -288,7 +325,7 @@ if (import.meta.vitest) {
           );
           const vortragsID = uuid.next(eigeneNachrichtenID);
 
-          return verifyNachricht({
+          return verifyZahlungsklage(scope, {
             nachrichtenkopf: {
               xjustizVersion: "3.6.2",
               erstellungszeitpunkt: Temporal.Now.instant(),

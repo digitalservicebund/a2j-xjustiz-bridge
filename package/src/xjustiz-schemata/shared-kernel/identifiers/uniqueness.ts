@@ -8,7 +8,7 @@ import {
   type IdentifierDeclaration,
   type Reference,
 } from "./occurrences";
-import { type IsEqualTo, type IsTuple } from "~/metatypes";
+import { type IndicesOfTuple, type IsEqualTo, type IsTuple } from "~/metatypes";
 
 /*
  * Type-level computations to verify the uniqueness of identifier declarations
@@ -68,7 +68,7 @@ type FindDuplicateIdentifierDeclarations<DocumentPart> =
     ? // Requires VerifyUniquenessOfIdentifierDeclarations because plain arrays collapse here undetected.
       FindDuplicateIdentifierDeclarationsAmongSiblings<
         DocumentPart,
-        KeysOfTuple<DocumentPart>
+        IndicesOfTuple<DocumentPart>
       >
     : DocumentPart extends object
       ? FindDuplicateIdentifierDeclarationsAmongSiblings<
@@ -104,11 +104,6 @@ type FindDuplicateIdentifierDeclarationsBetweenGroups<Left, Right> =
         : NoDuplicates
       : Unreachable
     : Unreachable;
-
-type KeysOfTuple<Tuple extends readonly unknown[]> =
-  Extract<keyof Tuple, `${number}`> extends `${infer Key extends number}`
-    ? Key
-    : never;
 
 export type DuplicateIdentifierDeclarationsError<
   DuplicateIdentifierDeclarations,

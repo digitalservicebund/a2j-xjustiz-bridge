@@ -109,3 +109,17 @@ export type IsEqualTo<Left, Right> =
   (<Probe>() => Probe extends Left ? 1 : 2) extends (<Probe> () => Probe extends Right ? 1 : 2)
     ? true
     : false;
+
+/**
+ * Just the clean numerical indices of the tuple entries. Exclude symbols for
+ * iterator etc.
+ *
+ * @example
+ * ```typescript
+ * IndicesOfTuple<["a", "b", "c"]> // 1 | 2 | 3
+ * ```
+ */
+export type IndicesOfTuple<Tuple extends readonly unknown[]> =
+  Extract<keyof Tuple, `${number}`> extends `${infer Indices extends number}`
+    ? Indices
+    : never;

@@ -223,17 +223,16 @@ Message orchestrators put multiple restrictions onto the composition function.
 The output must be a valid instance of the matching message profile (here
 `Zahlungsklage`). There are dedicated guides [how to fill the content of the message](#fill-the-content).
 
-The instance of the message profile must then pass a final verification to
-obtain a `VerifiedNachricht` using the `verifyNachricht` function, as expected
-by the orchestrator. Any violations at this point cause a type mismatch and
-result in compiler errors that must be fixed. For example, a duplicate
-identifier.
+The message must then pass a final verification to obtain a `VerifiedNachricht`.
+Therefore, each message profile provides a matching verification function. Any
+violations at this point cause a type mismatch and result in compiler errors
+that must be fixed. For example, a duplicate identifier.
 
 ```typescript
 zahlungsklage((scope) => {
-  // Composing message ...
-  return verifyNachricht({
-    /* ... */
+  // Preparations ...
+  return verifyZahlungsklage(scope, {
+    // Message ...
   });
 });
 ```
@@ -304,7 +303,7 @@ import {
   datatypeA, // Actual DIN 91379 datatypes, no documentation placeholders.
   datatypeB,
   Rollenbezeichnung,
-  verifyNachricht,
+  verifyZahlungsklage,
   zahlungsklage,
   // ... everything else used during composition
 } from "@digitalservicebund/a2j-xjustiz-bridge/nachricht/zahlungsklage";
@@ -372,7 +371,7 @@ const compositionResult = zahlungsklage(
 
     // ... and much more
 
-    return verifyNachricht({
+    return verifyZahlungsklage(scope, {
       nachrichtenkopf: {
         /* ... */
       },
@@ -813,9 +812,9 @@ zahlungsklage(
 );
 ```
 
-It is important to use `satisfies` operator. Otherwise, the final
-`verifyNachricht` will not work and report issues, because it can't properly
-evaluate the exact type of the composed message object.
+It is important to use `satisfies` operator. Otherwise, the final verification
+will not work and report issues, because it can't properly evaluate the exact
+type of the composed message object.
 
 ## More on the Scoping Pattern
 
