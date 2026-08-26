@@ -65,6 +65,10 @@ const Geschlecht = defineCodeliste({
 const weiblich: { readonly code: "2" } = Geschlecht.Weiblich;
 ```
 
+The types provided by the shared implementation try to maximize the developer
+experience for users of Codelisten. This is especially helpful when working with
+Codelisten as discriminator for an identifier type.
+
 Codelisten can be long and extensive. Following the [design
 principles](../../DESIGN_PRINCIPLES.md#progressive-implementation-by-use-case),
 Codelisten are also progressively implemented by use case. That means members

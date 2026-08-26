@@ -59,13 +59,34 @@ export function defineCodeliste<const Eintraege extends Codelisteneintraege>(
 export type InferCodeliste<Liste extends Codeliste<Codelisteneintraege>> =
   Liste[keyof Liste];
 
-type Codeliste<Eintraege extends Record<string, Code>> = {
-  readonly [Key in keyof Eintraege]: { readonly code: Eintraege[Key] };
+type Codelisteneintraege = Record<string, string>;
+
+type Codeliste<Eintraege extends Codelisteneintraege> = {
+  readonly [Name in keyof Eintraege]: Eintraege[Name] extends infer Code
+    ? Codelisteneintrag<Name & string, Code & string>
+    : never;
 };
 
-type Codelisteneintraege = Record<Name, Code>;
-type Name = string;
-type Code = string;
+/**
+ * Prettifies the display of Codelisteinträge, conserving the name to improve
+ * comprehensibility.
+ *
+ * Background:
+ * Under the hood, only raw codes are included in a message. Thereby,
+ * a the runtime value of Codelisteneintrag by itself is just the code wrapped
+ * in an object. While XJustiz messages themselves are not meant to be read by
+ * humans, composing a message as developer still demands readability. A random
+ * type instance of `{ code: "108" }` looks confusing and lacks details to act.
+ * The interface hides the runtime presentation and preserves the name of the
+ * Codelisteneintrag.
+ */
+interface Codelisteneintrag<Name extends string, Code extends string> {
+  /** @internal */
+  readonly [PHANTOM_NAME_KEY]: Name;
+  readonly code: Code;
+}
+
+declare const PHANTOM_NAME_KEY: unique symbol;
 
 if (import.meta.vitest) {
   const { describe, it, expect, expectTypeOf } = import.meta.vitest;
@@ -93,7 +114,9 @@ if (import.meta.vitest) {
       });
 
       expectTypeOf<InferCodeliste<typeof codeliste>>().toEqualTypeOf<
-        { readonly code: "1" } | { readonly code: "2" } | { readonly code: "3" }
+        | Codelisteneintrag<"Maennlich", "1">
+        | Codelisteneintrag<"Weiblich", "2">
+        | Codelisteneintrag<"Divers", "3">
       >();
     });
   });
