@@ -3,6 +3,9 @@ name: publish library to NPM package registry
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   verify-codebase-integrity:
     uses: ./.github/workflows/verify-codebase-integrity.yaml
