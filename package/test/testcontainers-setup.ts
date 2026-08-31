@@ -13,6 +13,7 @@ export async function setup({ provide }: SetupContext) {
     "ghcr.io/digitalservicebund/a2j-xjustiz-tools:latest",
   )
     .withExposedPorts(8888)
+    .withStartupTimeout(75_000)
     .withWaitStrategy(Wait.forHttp("/actuator/health", 8888))
     .withReuse()
     .start();
