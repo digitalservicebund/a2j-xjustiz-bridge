@@ -9,6 +9,7 @@ import {
   type Organisation,
   type RAKanzlei,
   type RefRollennummer,
+  type Zinsen,
 } from "~/xjustiz-schemata/grunddatensatz/composites";
 import {
   type Gerichte,
@@ -20,6 +21,7 @@ import { type DatatypeE } from "~/xjustiz-schemata/din-91379/datatypeE";
 import { type DateTime } from "~/xjustiz-schemata/xml-schema-definition/scalars";
 import { type FortlaufendeNummer } from "~/xjustiz-schemata/klaver/fortlaufende-nummer";
 import { type NachrichtKlaverKlageverfahren3500001 } from "~/xjustiz-schemata/klaver/nachricht-klaver-klageverfahren-3500001";
+import { type Reference } from "~/xjustiz-schemata/shared-kernel/identifiers";
 import { type Rollennummer } from "~/xjustiz-schemata/grunddatensatz/rollennummer";
 import { type UUID } from "~/xjustiz-schemata/grunddatensatz/uuid";
 
@@ -199,12 +201,19 @@ export type AntraegeFuerZahlungsklage<NachrichtenScope> = {
     | {
         inhalt: DatatypeE;
         /**
-         * XJustiz Tools currently accepts only an empty array here. Supplying
+         * XJustiz-Tools currently accepts only an empty array here. Supplying
          * a populated interest claim is rejected, even when its data is valid.
          */
-        zinsanspruch: [];
+        zinsanspruch: [] | [ZinsanspruchFuerZahlungsklage<NachrichtenScope>];
       };
   auswahlSonstigeAntraege?: SonstigerAntragFuerZahlungsklage<NachrichtenScope>[];
+};
+
+export type ZinsanspruchFuerZahlungsklage<NachrichtenScope> = {
+  refFortlaufendeNummer: Reference<
+    FortlaufendeNummer<NachrichtenScope, "Anspruch">
+  >;
+  zinsen: [Zinsen];
 };
 
 export type SonstigerAntragFuerZahlungsklage<NachrichtenScope> =
@@ -233,7 +242,7 @@ export type WeitererAntrag = {
   };
 };
 
-type AnspruchFuerZahlungsklage<NachrichtenScope> = {
+export type AnspruchFuerZahlungsklage<NachrichtenScope> = {
   fortlaufendeNummer: FortlaufendeNummer<NachrichtenScope, "Anspruch">;
   anspruchssteller: [
     RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Klaeger>,
