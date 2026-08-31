@@ -8,7 +8,7 @@ Flox
 [Dd]evenv
 (ESLint|eslint)
 [Oo]xlint
-OXC
+(OXC|oxc)
 Vite
 bikeshedding
 Kompla
@@ -21,6 +21,9 @@ Bernhard
 Struckrad
 Undici
 Nygard
+Nebenantraege
+Zinsanspruch
+Anwaltskostenanspruch
 Drews
 Niko
 Felger
