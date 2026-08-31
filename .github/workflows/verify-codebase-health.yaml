@@ -50,7 +50,7 @@ jobs:
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ./.task/cache/xjustiz-tools-image.tar
-          key: cache-xjustiz-tools-image-${{ steps.date.outputs.date }}-v1
+          key: cache-xjustiz-tools-image-${{ steps.date.outputs.date }}-v2
           restore-keys: cache-xjustiz-tools-image-
 
       - name: refresh XJustiz Tools image cache
