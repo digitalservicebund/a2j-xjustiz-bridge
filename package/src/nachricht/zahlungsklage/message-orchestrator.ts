@@ -20,6 +20,13 @@ import {
   type XjustizToolsConnectionParameter,
   generateXjustizMessageXml,
 } from "~/generate-xml-document";
+import {
+  antragAufAnwaltskosten,
+  antragAufVersaeumnisurteil,
+  weitererAntrag,
+} from "~/ergonomics/sonstige-antraege";
+import { geldbetrag } from "~/ergonomics/geldbetrag";
+import { nebenantraegeZinsen } from "~/ergonomics/nebenantraege-zinsen";
 
 /**
  * Message orchestrator to compose a Nachricht for a _Zahlungsklage_.
@@ -121,9 +128,8 @@ if (import.meta.vitest) {
       Kanzleiform,
       Rollenbezeichnung,
       Telekommunikationsart,
-      Waehrung,
     } = await import("~/xjustiz-schemata/grunddatensatz/codelisten");
-    const { AntragCodeliste, Anspruchsart } = await import(
+    const { Anspruchsart } = await import(
       "~/xjustiz-schemata/klaver/codelisten"
     );
     const { createFortlaufendeNummerGenerator } = await import(
@@ -302,20 +308,10 @@ if (import.meta.vitest) {
                   },
                 ],
                 anspruchsart: Anspruchsart.Zahlung,
-                wertAnspruch: {
-                  zahl: 5000,
-                  auswahlWaehrung: {
-                    waehrung: Waehrung.Euro,
-                  },
-                },
+                wertAnspruch: geldbetrag(5000),
               },
             ],
           } satisfies AntraegeFuerZahlungsklage<NachrichtenScope>["sachantraege"];
-
-          const nebenantraegeZinsen = {
-            inhalt: datatypeE("Lorem ipsum").value,
-            zinsanspruch: [],
-          } satisfies AntraegeFuerZahlungsklage<NachrichtenScope>["nebenantraegeZinsen"];
 
           const uuid = createUuidGenerator(scope);
           const eigeneNachrichtenID = uuid.first();
@@ -364,56 +360,21 @@ if (import.meta.vitest) {
             inhaltsdaten: {
               antraege: {
                 sachantraege,
-                nebenantraegeZinsen,
+                nebenantraegeZinsen: nebenantraegeZinsen(
+                  datatypeE("Lorem ipsum").value,
+                ),
                 auswahlSonstigeAntraege: [
-                  {
-                    antragSonstige: {
-                      auswahlAntragSonstige: {
-                        sonstigerAntragTextform: datatypeE(
-                          "Die beklagte Partei traegt die aussergerichtlich angefallenen Anwaltskosten in Hoehe von 850.90 Euro.",
-                        ).value,
-                      },
-                      anspruch: [
-                        {
-                          fortlaufendeNummer: fortlaufendeNummerAnwaltskosten,
-                          anspruchssteller: [
-                            {
-                              refRollennummer: reference(rollennummerKlaeger),
-                            },
-                          ],
-                          anspruchsgegner: [
-                            {
-                              refRollennummer: reference(rollennummerBeklagter),
-                            },
-                          ],
-                          anspruchsart: Anspruchsart.Zahlung,
-                          wertAnspruch: {
-                            zahl: 850.9,
-                            auswahlWaehrung: {
-                              waehrung: Waehrung.Euro,
-                            },
-                          },
-                        },
-                      ],
-                    },
-                  },
-                  {
-                    antragSonstige: {
-                      auswahlAntragSonstige: {
-                        antragWerteliste:
-                          AntragCodeliste.AntragAufVersaeumnisurteil,
-                      },
-                    },
-                  },
-                  {
-                    antragSonstige: {
-                      auswahlAntragSonstige: {
-                        sonstigerAntragTextform: datatypeE(
-                          "Weitere Antraege ...",
-                        ).value,
-                      },
-                    },
-                  },
+                  antragAufAnwaltskosten({
+                    text: datatypeE(
+                      "Die beklagte Partei traegt die aussergerichtlich angefallenen Anwaltskosten in Hoehe von 850.90 Euro.",
+                    ).value,
+                    fortlaufendeNummer: fortlaufendeNummerAnwaltskosten,
+                    klaeger: rollennummerKlaeger,
+                    beklagter: rollennummerBeklagter,
+                    wertAnspruch: geldbetrag(850.9),
+                  }),
+                  antragAufVersaeumnisurteil(),
+                  weitererAntrag(datatypeE("Weitere Antraege ...").value),
                 ],
               },
               auswahlBegruendetheit: {
