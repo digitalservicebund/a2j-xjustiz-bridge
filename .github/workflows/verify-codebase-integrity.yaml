@@ -89,3 +89,5 @@ jobs:
         run: docker load --input ./.task/cache/xjustiz-tools-image.tar
 
       - run: devbox run task --verbose verify:codebase-integrity
+        env:
+          DEBUG: testcontainers*
