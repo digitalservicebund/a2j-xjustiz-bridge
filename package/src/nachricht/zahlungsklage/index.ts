@@ -1,5 +1,20 @@
+// oxlint-disable no-barrel-file -- public API entrypoint
 export * from "./message-orchestrator";
 export type * from "./message-profile";
+
+export { zahlungsklage } from "./message-orchestrator";
+export { geldbetrag } from "~/ergonomics/geldbetrag";
+export { nebenantraegeZinsen } from "~/ergonomics/nebenantraege-zinsen";
+export { zinsanspruch } from "~/ergonomics/zinsanspruch";
+export type {
+  AntragAufAnwaltskostenErgebnis,
+  AntragAufAnwaltskostenOptions,
+} from "~/ergonomics/sonstige-antraege";
+export {
+  antragAufAnwaltskosten,
+  antragAufVersaeumnisurteil,
+  weitererAntrag,
+} from "~/ergonomics/sonstige-antraege";
 
 export {
   AntragCodeliste,
