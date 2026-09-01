@@ -7,10 +7,12 @@ import {
   type RefRollennummer,
   type Zinsen,
 } from "~/xjustiz-schemata/grunddatensatz/composites";
+import { type BeweisNummer } from "~/xjustiz-schemata/klaver/beweis-nummer";
 import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatypeC";
 import { type DatatypeE } from "~/xjustiz-schemata/din-91379/datatypeE";
 import { type FortlaufendeNummer } from "~/xjustiz-schemata/klaver/fortlaufende-nummer";
 import { type Reference } from "~/xjustiz-schemata/shared-kernel/identifiers";
+import { type Rollenbezeichnung } from "~/xjustiz-schemata/grunddatensatz/codelisten";
 import { type UUID } from "~/xjustiz-schemata/grunddatensatz/uuid";
 
 export type Antrag<NachrichtenScope> = {
@@ -49,18 +51,35 @@ export type SonstigerAntrag<NachrichtenScope> = {
   };
 };
 
-export type Ausfuehrungen = {
+export type Beweis<NachrichtenScope> = {
+  beweisNummer: BeweisNummer<NachrichtenScope>;
+  auswahlBeweismittel:
+    | {
+        zeugen: RefRollennummer<
+          NachrichtenScope,
+          typeof Rollenbezeichnung.Zeuge
+        >;
+      }
+    | {
+        parteivernehmung: RefRollennummer<
+          NachrichtenScope,
+          typeof Rollenbezeichnung.Klaeger | typeof Rollenbezeichnung.Beklagter
+        >;
+      };
+};
+
+export type Ausfuehrungen<Nachrichtenscope> = {
   inhalt?: {
     tatsachenvortragSachverhaltsbeschreibung?: DatatypeC;
     rechtlicheWuerdigung?: DatatypeC;
   };
+  refBeweisNummer?: Reference<BeweisNummer<Nachrichtenscope>>[];
 };
 
 export type Vortrag<NachrichtenScope> = {
   schlagwort: DatatypeC;
   vortragsID: UUID<NachrichtenScope>;
-  ausfuehrungen: Ausfuehrungen;
-
+  ausfuehrungen: Ausfuehrungen<NachrichtenScope>;
   fremdeVortragsID?: UUID<NachrichtenScope>[];
 };
 

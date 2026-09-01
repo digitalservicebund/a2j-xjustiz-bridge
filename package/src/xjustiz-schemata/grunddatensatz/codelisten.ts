@@ -25,6 +25,7 @@ export const Rollenbezeichnung = defineCodeliste({
   GesetzlicherVertreter: "088",
   Klaeger: "101",
   Prozessbevollmaechtiger: "132",
+  Zeuge: "202",
 });
 
 export type Telekommunikationsart = InferCodeliste<

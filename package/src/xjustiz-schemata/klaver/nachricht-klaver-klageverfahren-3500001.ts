@@ -2,6 +2,7 @@ import {
   type Antrag,
   type Ausfuehrungen,
   type AuswahlBegruendetheit,
+  type Beweis,
 } from "./composites";
 import {
   type Grunddaten,
@@ -13,7 +14,8 @@ export type NachrichtKlaverKlageverfahren3500001<NachrichtenScope> = {
   grunddaten: Grunddaten<NachrichtenScope>;
   inhaltsdaten: {
     antraege?: Antrag<NachrichtenScope>;
-    sonstigeProzessualeAusfuehrungen?: Ausfuehrungen;
+    beweis?: Beweis<NachrichtenScope>[];
+    sonstigeProzessualeAusfuehrungen?: Ausfuehrungen<NachrichtenScope>;
     auswahlBegruendetheit?: AuswahlBegruendetheit<NachrichtenScope>;
   };
 };

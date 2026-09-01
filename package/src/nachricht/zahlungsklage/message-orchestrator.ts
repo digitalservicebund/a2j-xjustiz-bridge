@@ -1,11 +1,13 @@
 // oxlint-disable max-lines
 import {
   type AntraegeFuerZahlungsklage,
+  type BegruendetheitFuerZahlungsklage,
   type Beklagter,
   type GesetzlicherVertreter,
   type Klaeger,
   type Prozessbevollmaechtiger,
   type Zahlungsklage,
+  type Zeuge,
 } from "~/nachricht/zahlungsklage/message-profile";
 import {
   type ScopeToken,
@@ -20,13 +22,6 @@ import {
   type XjustizToolsConnectionParameter,
   generateXjustizMessageXml,
 } from "~/generate-xml-document";
-import {
-  antragAufAnwaltskosten,
-  antragAufVersaeumnisurteil,
-  weitererAntrag,
-} from "~/ergonomics/sonstige-antraege";
-import { geldbetrag } from "~/ergonomics/geldbetrag";
-import { nebenantraegeZinsen } from "~/ergonomics/nebenantraege-zinsen";
 
 /**
  * Message orchestrator to compose a Nachricht for a _Zahlungsklage_.
@@ -132,8 +127,23 @@ if (import.meta.vitest) {
     const { Anspruchsart } = await import(
       "~/xjustiz-schemata/klaver/codelisten"
     );
+    const { createBeweisNummerGenerator } = await import(
+      "~/xjustiz-schemata/klaver/beweis-nummer"
+    );
     const { createFortlaufendeNummerGenerator } = await import(
       "~/xjustiz-schemata/klaver/fortlaufende-nummer"
+    );
+    const { zeuge: createZeuge, parteivernehmung } = await import(
+      "~/ergonomics/beweis"
+    );
+    const {
+      antragAufAnwaltskosten,
+      antragAufVersaeumnisurteil,
+      weitererAntrag,
+    } = await import("~/ergonomics/sonstige-antraege");
+    const { geldbetrag } = await import("~/ergonomics/geldbetrag");
+    const { nebenantraegeZinsen } = await import(
+      "~/ergonomics/nebenantraege-zinsen"
     );
 
     // oxlint-disable-next-line max-lines-per-function
@@ -283,11 +293,32 @@ if (import.meta.vitest) {
             beteiligter: {
               auswahlBeteiligter: {
                 natuerlichePerson: {
-                  vollerName: { nachname: datatypeA("Erika Mustermann").value },
+                  vollerName: { nachname: datatypeA("Mustermann").value },
                 },
               },
             },
           } satisfies Prozessbevollmaechtiger<NachrichtenScope>;
+
+          const rollennummerFuerZeuge = rollennummer.next(
+            rollennummerBeklagter,
+            Rollenbezeichnung.Zeuge,
+          );
+
+          const zeuge = {
+            rolle: [
+              {
+                rollennummer: rollennummerFuerZeuge,
+                rollenbezeichnung: Rollenbezeichnung.Zeuge,
+              },
+            ],
+            beteiligter: {
+              auswahlBeteiligter: {
+                natuerlichePerson: {
+                  vollerName: { nachname: datatypeA("Beweismann").value },
+                },
+              },
+            },
+          } satisfies Zeuge<NachrichtenScope>;
 
           const fortlaufendeNummer = createFortlaufendeNummerGenerator(scope);
 
@@ -313,13 +344,51 @@ if (import.meta.vitest) {
             ],
           } satisfies AntraegeFuerZahlungsklage<NachrichtenScope>["sachantraege"];
 
+          const beweisNummer = createBeweisNummerGenerator(scope);
+          const beweisNummerForZeuge = beweisNummer.first();
+          const beweisOfAZeuge = createZeuge(
+            scope,
+            beweisNummerForZeuge,
+            rollennummerFuerZeuge,
+          );
+
+          const beweisNummerForParteivernehmung =
+            beweisNummer.next(beweisNummerForZeuge);
+
+          const beweisOfAParteivernehmung = parteivernehmung(
+            scope,
+            beweisNummerForParteivernehmung,
+            rollennummerKlaeger,
+          );
+
           const uuid = createUuidGenerator(scope);
-          const eigeneNachrichtenID = uuid.first();
+          const vortragsID = uuid.first();
+
+          const begruendetheit = {
+            vortrag: [
+              {
+                schlagwort: datatypeC("Zahlungsanspruch").value,
+                vortragsID,
+                ausfuehrungen: {
+                  inhalt: {
+                    tatsachenvortragSachverhaltsbeschreibung: datatypeC(
+                      "Der Zahlungsanspruch besteht aus dem zugrunde liegenden Vertrag.",
+                    ).value,
+                  },
+                  refBeweisNummer: [
+                    reference(beweisNummerForZeuge),
+                    reference(beweisNummerForParteivernehmung),
+                  ],
+                },
+              },
+            ],
+          } satisfies BegruendetheitFuerZahlungsklage<NachrichtenScope>["anderesKlageverfahren"];
+
+          const eigeneNachrichtenID = uuid.next(vortragsID);
           const fortlaufendeNummerAnwaltskosten = fortlaufendeNummer.next(
             fortlaufendeNummerAnspruch,
             "Anspruch",
           );
-          const vortragsID = uuid.next(eigeneNachrichtenID);
 
           return verifyZahlungsklage(scope, {
             nachrichtenkopf: {
@@ -354,6 +423,7 @@ if (import.meta.vitest) {
                   gesetzlicherVertreter,
                   beklagter,
                   prozessbevollmaechtiger,
+                  zeuge,
                 ],
               },
             },
@@ -377,22 +447,9 @@ if (import.meta.vitest) {
                   weitererAntrag(datatypeE("Weitere Antraege ...").value),
                 ],
               },
+              beweis: [beweisOfAZeuge, beweisOfAParteivernehmung],
               auswahlBegruendetheit: {
-                anderesKlageverfahren: {
-                  vortrag: [
-                    {
-                      schlagwort: datatypeC("Zahlungsanspruch").value,
-                      vortragsID,
-                      ausfuehrungen: {
-                        inhalt: {
-                          tatsachenvortragSachverhaltsbeschreibung: datatypeC(
-                            "Der Zahlungsanspruch besteht aus dem zugrunde liegenden Vertrag.",
-                          ).value,
-                        },
-                      },
-                    },
-                  ],
-                },
+                anderesKlageverfahren: begruendetheit,
               },
             },
           });

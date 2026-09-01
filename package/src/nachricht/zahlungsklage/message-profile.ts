@@ -15,6 +15,8 @@ import {
   type Gerichte,
   type Rollenbezeichnung,
 } from "~/xjustiz-schemata/grunddatensatz/codelisten";
+import { type Beweis } from "~/xjustiz-schemata/klaver/composites";
+import { type BeweisNummer } from "~/xjustiz-schemata/klaver/beweis-nummer";
 import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatypeC";
 import { type DatatypeD } from "~/xjustiz-schemata/din-91379/datatypeD";
 import { type DatatypeE } from "~/xjustiz-schemata/din-91379/datatypeE";
@@ -38,17 +40,18 @@ import { type UUID } from "~/xjustiz-schemata/grunddatensatz/uuid";
  *   - utility types for efficient overriding to improve maintainability
  */
 
-export type Zahlungsklage<NachrichtenScope> = {
+export interface Zahlungsklage<NachrichtenScope> {
   nachrichtenkopf: NachrichtenkopfFuerZahlungsklage<NachrichtenScope>;
   grunddaten: GrunddatenFuerZahlungsklage<NachrichtenScope>;
   inhaltsdaten: {
     antraege: AntraegeFuerZahlungsklage<NachrichtenScope>;
-    sonstigeProzessualeAusfuehrungen?: AusfuehrungenFuerZahlungsklage;
+    beweis?: Beweis<NachrichtenScope>[];
+    sonstigeProzessualeAusfuehrungen?: AusfuehrungenFuerZahlungsklage<NachrichtenScope>;
     auswahlBegruendetheit: BegruendetheitFuerZahlungsklage<NachrichtenScope>;
   };
-};
+}
 
-export type NachrichtenkopfFuerZahlungsklage<NachrichtenScope> = {
+export interface NachrichtenkopfFuerZahlungsklage<NachrichtenScope> {
   xjustizVersion: "3.6.2";
   erstellungszeitpunkt: DateTime;
   absender: {
@@ -66,32 +69,39 @@ export type NachrichtenkopfFuerZahlungsklage<NachrichtenScope> = {
     };
   };
   herstellerinformation: Herstellerinformation;
-};
+}
 
-export type GrunddatenFuerZahlungsklage<NachrichtenScope> = {
+export interface GrunddatenFuerZahlungsklage<NachrichtenScope> {
   verfahrensdaten: {
     beteiligung:
-      | [Klaeger<NachrichtenScope>, Beklagter<NachrichtenScope>]
-      | [
-          Klaeger<NachrichtenScope>,
-          GesetzlicherVertreter<NachrichtenScope>,
-          Beklagter<NachrichtenScope>,
-        ]
       | [
           Klaeger<NachrichtenScope>,
           Beklagter<NachrichtenScope>,
-          Prozessbevollmaechtiger<NachrichtenScope>,
+          ...Zeuge<NachrichtenScope>[],
         ]
       | [
           Klaeger<NachrichtenScope>,
           GesetzlicherVertreter<NachrichtenScope>,
           Beklagter<NachrichtenScope>,
+          ...Zeuge<NachrichtenScope>[],
+        ]
+      | [
+          Klaeger<NachrichtenScope>,
+          Beklagter<NachrichtenScope>,
           Prozessbevollmaechtiger<NachrichtenScope>,
+          ...Zeuge<NachrichtenScope>[],
+        ]
+      | [
+          Klaeger<NachrichtenScope>,
+          GesetzlicherVertreter<NachrichtenScope>,
+          Beklagter<NachrichtenScope>,
+          Prozessbevollmaechtiger<NachrichtenScope>,
+          ...Zeuge<NachrichtenScope>[],
         ];
   };
-};
+}
 
-export type Klaeger<NachrichtenScope> = {
+export interface Klaeger<NachrichtenScope> {
   rolle: [
     {
       rollennummer: Rollennummer<
@@ -106,7 +116,7 @@ export type Klaeger<NachrichtenScope> = {
       natuerlichePerson: NatuerlichePerson;
     };
   };
-};
+}
 
 export type GesetzlicherVertreter<NachrichtenScope> = {
   rolle: [
@@ -170,6 +180,23 @@ export type Prozessbevollmaechtiger<NachrichtenScope> = {
       referenz: [
         RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Beklagter>,
       ];
+    },
+  ];
+  beteiligter: {
+    auswahlBeteiligter: {
+      natuerlichePerson: NatuerlichePerson;
+    };
+  };
+};
+
+export type Zeuge<NachrichtenScope> = {
+  rolle: [
+    {
+      rollennummer: Rollennummer<
+        NachrichtenScope,
+        typeof Rollenbezeichnung.Zeuge
+      >;
+      rollenbezeichnung: typeof Rollenbezeichnung.Zeuge;
     },
   ];
   beteiligter: {
@@ -254,11 +281,12 @@ export type AnspruchFuerZahlungsklage<NachrichtenScope> = {
   wertAnspruch: Geldbetrag;
 };
 
-export type AusfuehrungenFuerZahlungsklage = {
+export type AusfuehrungenFuerZahlungsklage<NachrichtenScope> = {
   inhalt: {
     tatsachenvortragSachverhaltsbeschreibung: DatatypeC;
     rechtlicheWuerdigung?: DatatypeC;
   };
+  refBeweisNummer: Reference<BeweisNummer<NachrichtenScope>>[];
 };
 
 export type BegruendetheitFuerZahlungsklage<NachrichtenScope> = {
@@ -273,7 +301,7 @@ export type BegruendetheitFuerZahlungsklage<NachrichtenScope> = {
 export type VortragZurBegruendetheitFuerZahlungsklage<NachrichtenScope> = {
   schlagwort: DatatypeC;
   vortragsID: UUID<NachrichtenScope>;
-  ausfuehrungen: AusfuehrungenFuerZahlungsklage;
+  ausfuehrungen: AusfuehrungenFuerZahlungsklage<NachrichtenScope>;
   fremdeVortragsID?: UUID<NachrichtenScope>[];
 };
 
