@@ -19,6 +19,10 @@
       "types": "./dist/nachricht/zahlungsklage.d.ts",
       "import": "./dist/nachricht/zahlungsklage.js"
     },
+    "./ergonomics/*": {
+      "types": "./dist/ergonomics/*.d.ts",
+      "import": "./dist/ergonomics/*.js"
+    },
     "./package.json": "./package.json"
   },
   "packageManager": "pnpm@11.4.0",
