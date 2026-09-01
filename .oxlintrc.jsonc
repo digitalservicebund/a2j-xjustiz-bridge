@@ -24,7 +24,7 @@
     "eslint/no-magic-numbers": "off", // Too many false positives that reduce quality.
     "eslint/max-statements": "off", // Unsuited metric to actually reduce complexity.
     "eslint/no-inline-comments": "off", // They actually reduce risk of rotting.
-    "eslint/max-lines": ["error", 400], // In-source demand more lines (default is 300).
+    "eslint/max-lines": ["error", 400], // In-source tests demand more lines (default is 300).
     "eslint/no-inner-declarations": "off", // In-source tests sometimes need this.
     "import/no-named-export": "off", // Strongly believe in named exports for better imports.
     "import/prefer-default-export": "off", // Strongly believe in named exports for better imports.
