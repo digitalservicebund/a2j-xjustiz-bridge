@@ -4,7 +4,6 @@ import {
 } from "./generation";
 import {
   type FindAllIdentifierDeclarations,
-  type FindAllIdentifierReferences,
   type IdentifierDeclaration,
   type Reference,
 } from "./occurrences";
@@ -33,7 +32,7 @@ type FindUncheckableCollectionsWithIdentifiers<DocumentPart> =
   DocumentPart extends readonly (infer Entry)[]
     ? IsTuple<DocumentPart> extends true
       ? FindUncheckableCollectionsWithIdentifiers<Entry>
-      : IncludesIdentifierDeclarationsOrReferences<Entry> extends true
+      : IncludesIdentifierDeclarations<Entry> extends true
         ? Entry
         : AllGood
     : DocumentPart extends object
@@ -42,11 +41,9 @@ type FindUncheckableCollectionsWithIdentifiers<DocumentPart> =
         >
       : AllGood;
 
-type IncludesIdentifierDeclarationsOrReferences<DocumentPart> =
+type IncludesIdentifierDeclarations<DocumentPart> =
   IsEmpty<FindAllIdentifierDeclarations<DocumentPart>> extends true
-    ? IsEmpty<FindAllIdentifierReferences<DocumentPart>> extends true
-      ? false
-      : true
+    ? false
     : true;
 
 export type UncheckableCollectionsWithIdentifiersError<
@@ -192,19 +189,6 @@ if (import.meta.vitest) {
           "Found collection including identifiers that can't be verified for uniqueness. Try to use the `satisfies` operator." & {
             readonly uncheckableCollectionsWithIdentifiers: string &
               IdentifierDeclaration;
-          }
-      >();
-    });
-
-    it("reports an error for an array with a plain reference", () => {
-      expectTypeOf<
-        VerifyUniquenessOfIdentifierDeclarations<{
-          identifiers: Reference<IdentifierDeclaration>[];
-        }>
-      >().toEqualTypeOf<
-        TypeError &
-          "Found collection including identifiers that can't be verified for uniqueness. Try to use the `satisfies` operator." & {
-            readonly uncheckableCollectionsWithIdentifiers: Reference<IdentifierDeclaration>;
           }
       >();
     });
