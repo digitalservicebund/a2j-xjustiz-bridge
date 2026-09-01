@@ -4,8 +4,6 @@ export type * from "./message-profile";
 
 export { zahlungsklage } from "./message-orchestrator";
 export { geldbetrag } from "~/ergonomics/geldbetrag";
-export { nebenantraegeZinsen } from "~/ergonomics/nebenantraege-zinsen";
-export { zinsanspruch } from "~/ergonomics/zinsanspruch";
 export type {
   AntragAufAnwaltskostenErgebnis,
   AntragAufAnwaltskostenOptions,

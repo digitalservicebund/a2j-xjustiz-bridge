@@ -142,9 +142,6 @@ if (import.meta.vitest) {
       weitererAntrag,
     } = await import("~/ergonomics/sonstige-antraege");
     const { geldbetrag } = await import("~/ergonomics/geldbetrag");
-    const { nebenantraegeZinsen } = await import(
-      "~/ergonomics/nebenantraege-zinsen"
-    );
 
     // oxlint-disable-next-line max-lines-per-function
     it("is possible to create a valid example message", async () => {
@@ -430,9 +427,9 @@ if (import.meta.vitest) {
             inhaltsdaten: {
               antraege: {
                 sachantraege,
-                nebenantraegeZinsen: nebenantraegeZinsen(
-                  datatypeE("Lorem ipsum").value,
-                ),
+                nebenantraegeZinsen: {
+                  inhalt: datatypeE("Lorem ipsum").value,
+                },
                 auswahlSonstigeAntraege: [
                   antragAufAnwaltskosten({
                     text: datatypeE(

@@ -9,7 +9,6 @@ import {
   type Organisation,
   type RAKanzlei,
   type RefRollennummer,
-  type Zinsen,
 } from "~/xjustiz-schemata/grunddatensatz/composites";
 import {
   type Gerichte,
@@ -228,21 +227,14 @@ export type AntraegeFuerZahlungsklage<NachrichtenScope> = {
     | {
         inhalt: DatatypeE;
         /**
-         * XJustiz-Tools currently accepts only an empty array here. Supplying
-         * a populated interest claim is rejected, even when its data is valid.
+         * XJustiz-Tools currently don't support Zinsansprüche for XJustiz
+         * standard version 3.6.2. Any Ansprüche must be expressed via the
+         * `inhalt` property for now.
          */
-        zinsanspruch: [] | [ZinsanspruchFuerZahlungsklage<NachrichtenScope>];
+        zinsanspruch?: undefined;
       };
   auswahlSonstigeAntraege?: SonstigerAntragFuerZahlungsklage<NachrichtenScope>[];
 };
-
-export type ZinsanspruchFuerZahlungsklage<NachrichtenScope> = {
-  refFortlaufendeNummer: Reference<
-    FortlaufendeNummer<NachrichtenScope, "Anspruch">
-  >;
-  zinsen: [Zinsen];
-};
-
 export type SonstigerAntragFuerZahlungsklage<NachrichtenScope> =
   | AntragAufAnwaltskosten<NachrichtenScope>
   | AntragAufVersaeumnisurteil
