@@ -71,8 +71,9 @@ declare const ZUGEHOERIGE_ROLLENBEZEICHNUNG: unique symbol;
  * ```typescript
  * withScope((scope) => {
  *   const rollennummer = createRollennummerGenerator(scope);
+ *   const rollennummerFuerKlaeger = rollennummer(Rollenbezeichnung.Klaeger);
  *   const rolle = {
- *     rollennummer: rollennummer.first(Rollenbezeichnung.Klaeger),
+ *     rollennummer: rollennummerFuerKlaeger,
  *     rollenbezeichnung: Rollenbezeichnung.Klaeger,
  *     // ...
  *   }

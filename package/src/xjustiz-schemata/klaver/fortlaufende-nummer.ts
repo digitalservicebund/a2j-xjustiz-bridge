@@ -59,8 +59,9 @@ export type ArtVonBezugselement = "Anspruch" | "Zinsanspruch";
  * ```typescript
  * withScope((scope) => {
  *   const fortlaufendeNummer = createFortlaufendeNummerGenerator(scope);
+ *   const fortlaufendeNummerFuerAnspruch = fortlaufendeNummer.first("Anspruch");
  *   const anspruch = {
- *     fortlaufendeNummer: fortlaufendeNummer.first("Anspruch"),
+ *     fortlaufendeNummer: fortlaufendeNummerFuerAnspruch,
  *     // ...
  *   }
  * })

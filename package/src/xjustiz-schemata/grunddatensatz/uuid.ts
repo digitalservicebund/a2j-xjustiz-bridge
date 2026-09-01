@@ -40,8 +40,9 @@ declare const TAG: unique symbol;
  * ```typescript
  * withScope((scope) => {
  *   const uuid = createUuidGenerator(scope);
+ *   const eigeneNachrichtenID = uuid.first(),
  *   const absender = {
- *     eigeneNachrichtenID: uuid.first(),
+ *     eigeneNachrichtenID,
  *     // ...
  *   }
  * })
