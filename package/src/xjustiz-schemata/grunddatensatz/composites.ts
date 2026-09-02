@@ -20,6 +20,7 @@ import { type Decimal } from "~/xjustiz-schemata/xml-schema-definition/decimal";
 import { type Reference } from "~/xjustiz-schemata/shared-kernel/identifiers";
 import { type Rollennummer } from "~/xjustiz-schemata/grunddatensatz/rollennummer";
 import { type UUID } from "~/xjustiz-schemata/grunddatensatz/uuid";
+import { geldbetrag } from "./ergonomics/geldbetrag"; // oxlint-disable-line no-unused-vars -- referenced by TSDoc
 
 export interface Nachrichtenkopf<NachrichtenScope> {
   xjustizVersion: "3.6.2";
@@ -136,6 +137,10 @@ export interface RefRollennummer<
   >;
 }
 
+/**
+ * Can be constructed ergonomically with the {@link geldbetrag} constructor
+ * function.
+ */
 export interface Geldbetrag {
   zahl: Double;
   auswahlWaehrung: {

@@ -7,6 +7,7 @@ import {
   type RefRollennummer,
   type Zinsen,
 } from "~/xjustiz-schemata/grunddatensatz/composites";
+import { parteivernehmung, zeuge } from "./ergonomics/beweis"; // oxlint-disable-line no-unused-vars -- referenced by TSDoc
 import { type BeweisNummer } from "~/xjustiz-schemata/klaver/beweis-nummer";
 import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatypeC";
 import { type DatatypeE } from "~/xjustiz-schemata/din-91379/datatypeE";
@@ -51,6 +52,10 @@ export interface SonstigerAntrag<NachrichtenScope> {
   };
 }
 
+/**
+ * Can be constructed ergonomically with the {@link zeuge} or
+ * {@link parteivernehmung} constructor functions.
+ */
 export interface Beweis<NachrichtenScope> {
   beweisNummer: BeweisNummer<NachrichtenScope>;
   auswahlBeweismittel:

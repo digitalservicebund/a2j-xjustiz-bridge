@@ -14,6 +14,11 @@ import {
   type Gerichte,
   type Rollenbezeichnung,
 } from "~/xjustiz-schemata/grunddatensatz/codelisten";
+import {
+  antragAufAnwaltskosten, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
+  antragAufVersaeumnisurteil, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
+  weitererAntrag, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
+} from "./ergonomics/sonstige-antraege";
 import { type Beweis } from "~/xjustiz-schemata/klaver/composites";
 import { type BeweisNummer } from "~/xjustiz-schemata/klaver/beweis-nummer";
 import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatypeC";
@@ -240,6 +245,10 @@ export type SonstigerAntragFuerZahlungsklage<NachrichtenScope> =
   | AntragAufVersaeumnisurteil
   | WeitererAntrag;
 
+/**
+ * Can be constructed ergonomically with the {@link antragAufAnwaltskosten}
+ * constructor function.
+ */
 export interface AntragAufAnwaltskosten<NachrichtenScope> {
   antragSonstige: {
     auswahlAntragSonstige: { sonstigerAntragTextform: DatatypeE };
@@ -247,6 +256,10 @@ export interface AntragAufAnwaltskosten<NachrichtenScope> {
   };
 }
 
+/**
+ * Can be constructed ergonomically with the {@link antragAufVersaeumnisurteil}
+ * constructor function.
+ */
 export interface AntragAufVersaeumnisurteil {
   antragSonstige: {
     auswahlAntragSonstige: {
@@ -255,6 +268,10 @@ export interface AntragAufVersaeumnisurteil {
   };
 }
 
+/**
+ * Can be constructed ergonomically with the {@link weitererAntrag} constructor
+ * function.
+ */
 export interface WeitererAntrag {
   antragSonstige: {
     auswahlAntragSonstige: { sonstigerAntragTextform: DatatypeE };

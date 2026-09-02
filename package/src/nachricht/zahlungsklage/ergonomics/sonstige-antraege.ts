@@ -115,7 +115,9 @@ if (import.meta.vitest) {
 
   // oxlint-disable-next-line max-lines-per-function
   describe("ergonomics for sonstige Antraege", async () => {
-    const { geldbetrag } = await import("~/ergonomics/geldbetrag");
+    const { geldbetrag } = await import(
+      "~/xjustiz-schemata/grunddatensatz/ergonomics"
+    );
     const { datatypeE } = await import(
       "~/xjustiz-schemata/din-91379/datatypeE"
     );

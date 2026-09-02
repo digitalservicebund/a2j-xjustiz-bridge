@@ -42,6 +42,7 @@ XJustiz-Bridge, read the [documentation overview](../README.md).
         - [Using the Standard Schema](#using-the-standard-schema)
         - [Using the Parsing Function Directly](#using-the-parsing-function-directly)
       - [Customizing Issue Messages](#customizing-issue-messages)
+      - [Operating Safely on Refined Type Instances](#operating-safely-on-refined-type-instances)
       - [Excursion - Deep Integrated Usage with Zod](#excursion---deeply-integrated-usage-with-zod)
     - [Working with Identifiers](#working-with-identifiers)
       - [Generating Identifiers](#generating-identifiers)
@@ -389,6 +390,32 @@ const compositionResult = zahlungsklage(
 );
 ```
 
+#### Using Ergonomic Shortcuts
+
+Because composing a full message can be so extensive and constructing all the
+composites by hand becomes tedious, there is the concept of ergonomic
+constructor functions. They provide convenient shortcuts to construct large
+chunks quicker. They directly address real-world use cases and provide sensible
+defaults, saving many lines of code.
+
+Each message profile exports an `ergonomic` namespace that can be imported. It
+contains all ergonomic functions that might be relevant to compose a message for
+this profile. Functions can be discovered on the namespace itself. Furthermore,
+composite types are documented with references to related ergonomic functions.
+
+```typescript
+import {
+  zahlungsklage,
+  ergonomics,
+} from "@digitalservicebund/xjustiz-bridge/zahlungsklage";
+
+zahlungsklage((scope) => {
+  const wertAnspruch = ergonomics.geldbetrag(891.5);
+  const versaeumnisurteil = ergonomics.antragAufVersaeumnisurteil();
+  // ...
+}, connectionParameters);
+```
+
 #### Refined Types and Input Validation
 
 The XJustiz standard defines a set of datatypes with certain restrictions. For
@@ -635,16 +662,11 @@ generator instance can be obtained using the provided scope token. Trying to
 create a generator for the same scope twice, results into the exact same instance.
 
 ```typescript
-zahlungsklage(
-  (scope) => {
-    const uuid = createUuidGenerator(scope);
-    // ...
-    const exactSameGenerator = createUuidGenerator(scope);
-  },
-  {
-    /* ... */
-  },
-);
+zahlungsklage((scope) => {
+  const uuid = createUuidGenerator(scope);
+  // ...
+  const exactSameGenerator = createUuidGenerator(scope);
+}, connectionParameters);
 ```
 
 Identifier generators produce a sorted sequence of unique instances for the
@@ -664,23 +686,18 @@ declared in. An advantage of the requirement to generate identifiers first is
 the possibility for forward referencing.
 
 ```typescript
-zahlungsklage(
-  (scope) => {
-    const uuid = createUuidGenerator(scope);
-    const eigeneNachrichtenID = uuid.first();
+zahlungsklage((scope) => {
+  const uuid = createUuidGenerator(scope);
+  const eigeneNachrichtenID = uuid.first();
 
-    const nachrichtenkopf = {
-      absender: { eigeneNachrichtenID },
-      // ...
-    };
-
-    const vortragsID = uuid.next(eigeneNachrichtenID);
+  const nachrichtenkopf = {
+    absender: { eigeneNachrichtenID },
     // ...
-  },
-  {
-    /* ... */
-  },
-);
+  };
+
+  const vortragsID = uuid.next(eigeneNachrichtenID);
+  // ...
+}, connectionParameters);
 ```
 
 ##### Identifiers with Additional Discriminator
@@ -696,34 +713,27 @@ In the following example, the `Rollennummer` identifier has an associated
 `Rollenbezeichnung` as discriminator.
 
 ```typescript
-zahlungsklage(
-  (scope) => {
-    const rollennummer = createRollennummerGenerator(scope);
-    const rollennummerFuerKlaeger = rollennummer.first(
-      Rollenbezeichnung.Klaeger,
-    );
+zahlungsklage((scope) => {
+  const rollennummer = createRollennummerGenerator(scope);
+  const rollennummerFuerKlaeger = rollennummer.first(Rollenbezeichnung.Klaeger);
 
-    const klaeger = {
-      rolle: [
-        {
-          rollennummer: rollennummerFuerKlaeger,
-          rollenbezeichnung: Rollenbezeichnung.Klaeger,
-        },
-      ],
-      // ...
-    };
-
-    const rollennummerFuerBeklagter = rollennummer.next(
-      rollennummerFuerKlaeger,
-      Rollenbezeichnung.Beklagter,
-    );
-
+  const klaeger = {
+    rolle: [
+      {
+        rollennummer: rollennummerFuerKlaeger,
+        rollenbezeichnung: Rollenbezeichnung.Klaeger,
+      },
+    ],
     // ...
-  },
-  {
-    /* ... */
-  },
-);
+  };
+
+  const rollennummerFuerBeklagter = rollennummer.next(
+    rollennummerFuerKlaeger,
+    Rollenbezeichnung.Beklagter,
+  );
+
+  // ...
+}, connectionParameters);
 ```
 
 ##### Referencing
@@ -737,38 +747,31 @@ a dangling reference. Therefore, make sure any referenced identifier is actually
 used for declaration too.
 
 ```typescript
-zahlungsklage(
-  (scope) => {
-    const rollennummer = createRollennummerGenerator(scope);
-    const rollennummerFuerKlaeger = rollennummer.first(
-      Rollenbezeichnung.Klaeger,
-    );
+zahlungsklage((scope) => {
+  const rollennummer = createRollennummerGenerator(scope);
+  const rollennummerFuerKlaeger = rollennummer.first(Rollenbezeichnung.Klaeger);
 
-    const klaeger = {
-      rolle: [
-        {
-          rollennummer: rollennummerFuerKlaeger,
-          rollenbezeichnung: Rollenbezeichnung.Klaeger,
-        },
-      ],
-      // ...
-    };
-
-    const gesetzlicherVertreter = {
-      rolle: [
-        {
-          referenz: [{ refRollennummer: reference(rollennummerFuerKlaeger) }],
-        },
-      ],
-      // ...
-    };
-
+  const klaeger = {
+    rolle: [
+      {
+        rollennummer: rollennummerFuerKlaeger,
+        rollenbezeichnung: Rollenbezeichnung.Klaeger,
+      },
+    ],
     // ...
-  },
-  {
-    /* ... */
-  },
-);
+  };
+
+  const gesetzlicherVertreter = {
+    rolle: [
+      {
+        referenz: [{ refRollennummer: reference(rollennummerFuerKlaeger) }],
+      },
+    ],
+    // ...
+  };
+
+  // ...
+}, connectionParameters);
 ```
 
 #### Using Codelisten
@@ -788,22 +791,17 @@ maps to `{ "code": "101" }`. `Rollenbezeichnung` is the type as well as the rela
 constant object map of the Codeliste.
 
 ```typescript
-zahlungsklage(
-  (scope) => {
-    const klaeger = {
-      rolle: [
-        {
-          rollenbezeichnung: Rollenbezeichnung.Klaeger,
-        },
-      ],
-      // ...
-    };
+zahlungsklage((scope) => {
+  const klaeger = {
+    rolle: [
+      {
+        rollenbezeichnung: Rollenbezeichnung.Klaeger,
+      },
+    ],
     // ...
-  },
-  {
-    /* ... */
-  },
-);
+  };
+  // ...
+}, connectionParameters);
 ```
 
 #### Accessing the Scope Type Directly
@@ -816,16 +814,11 @@ composites depend on the scope, it becomes necessary to access the scope type
 directly — carried by the scope token.
 
 ```typescript
-zahlungsklage(
-  <NachrichtenScope>(scope: ScopeToken<NachrichtenScope>) => {
-    const klaeger = {
-      // Full language support here.
-    } satisfies Klaeger<NachrichtenScope>;
-  },
-  {
-    /* ... */
-  },
-);
+zahlungsklage(<NachrichtenScope>(scope: ScopeToken<NachrichtenScope>) => {
+  const klaeger = {
+    // Full language support here.
+  } satisfies Klaeger<NachrichtenScope>;
+}, connectionParameters);
 ```
 
 It is important to use `satisfies` operator. Otherwise, the final verification

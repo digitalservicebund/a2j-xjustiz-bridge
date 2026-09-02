@@ -1,6 +1,9 @@
 export * from "./message-orchestrator";
 export type * from "./message-profile";
 
+// oxlint-disable-next-line oxc/no-barrel-file -- the intended structure for now
+export * as ergonomics from "./ergonomics";
+
 export {
   AntragCodeliste,
   Anspruchsart,

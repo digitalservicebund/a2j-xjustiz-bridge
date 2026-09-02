@@ -41,7 +41,7 @@ sandboxing
 oe
 ue
 lockfile
-discoverability
+[Dd]iscoverability
 German
 hook
 Pros
@@ -130,3 +130,6 @@ Verbraucherschutz
 Dockerode
 Beweismittel
 Parteivernehmung
+Grunddatensatz
+Klageverfahren
+namespace

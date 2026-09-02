@@ -232,9 +232,9 @@ tasks:
     deps:
       - setup:runtime-dependencies
       - check:types-in-code
-    sources:
-      - ./package/**/*
-      - exclude: ./package/dist
+    # sources:
+    #   - ./package/**/*
+    #   - exclude: ./package/dist
     dir: ./package
     cmd: pnpm exec tsdown
 

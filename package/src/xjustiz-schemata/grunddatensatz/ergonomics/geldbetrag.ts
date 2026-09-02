@@ -9,17 +9,6 @@ import { Waehrung } from "~/xjustiz-schemata/grunddatensatz/codelisten";
  * ```typescript
  * const betrag = geldbetrag(5_000);
  * ```
- * @output
- * ```json
- * {
- *   "zahl": 5000,
- *   "auswahlWaehrung": {
- *     "waehrung": {
- *       "code": "EUR"
- *     }
- *   }
- * }
- * ```
  */
 
 export function geldbetrag(zahl: Double): Geldbetrag {

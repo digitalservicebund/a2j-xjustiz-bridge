@@ -133,15 +133,7 @@ if (import.meta.vitest) {
     const { createFortlaufendeNummerGenerator } = await import(
       "~/xjustiz-schemata/klaver/fortlaufende-nummer"
     );
-    const { zeuge: createZeuge, parteivernehmung } = await import(
-      "~/ergonomics/beweis"
-    );
-    const {
-      antragAufAnwaltskosten,
-      antragAufVersaeumnisurteil,
-      weitererAntrag,
-    } = await import("~/ergonomics/sonstige-antraege");
-    const { geldbetrag } = await import("~/ergonomics/geldbetrag");
+    const { ergonomics } = await import("~/nachricht/zahlungsklage");
 
     // oxlint-disable-next-line max-lines-per-function
     it("is possible to create a valid example message", async () => {
@@ -336,14 +328,14 @@ if (import.meta.vitest) {
                   },
                 ],
                 anspruchsart: Anspruchsart.Zahlung,
-                wertAnspruch: geldbetrag(5000),
+                wertAnspruch: ergonomics.geldbetrag(5000),
               },
             ],
           } satisfies AntraegeFuerZahlungsklage<NachrichtenScope>["sachantraege"];
 
           const beweisNummer = createBeweisNummerGenerator(scope);
           const beweisNummerForZeuge = beweisNummer.first();
-          const beweisOfAZeuge = createZeuge(
+          const beweisOfAZeuge = ergonomics.zeuge(
             scope,
             beweisNummerForZeuge,
             rollennummerFuerZeuge,
@@ -352,7 +344,7 @@ if (import.meta.vitest) {
           const beweisNummerForParteivernehmung =
             beweisNummer.next(beweisNummerForZeuge);
 
-          const beweisOfAParteivernehmung = parteivernehmung(
+          const beweisOfAParteivernehmung = ergonomics.parteivernehmung(
             scope,
             beweisNummerForParteivernehmung,
             rollennummerKlaeger,
@@ -431,18 +423,18 @@ if (import.meta.vitest) {
                   inhalt: datatypeE("Lorem ipsum").value,
                 },
                 auswahlSonstigeAntraege: [
-                  antragAufAnwaltskosten(
+                  ergonomics.antragAufAnwaltskosten(
                     scope,
                     fortlaufendeNummerAnwaltskosten,
                     rollennummerKlaeger,
                     rollennummerBeklagter,
-                    geldbetrag(850.9),
+                    ergonomics.geldbetrag(850.9),
                     datatypeE(
                       "Die beklagte Partei traegt die aussergerichtlich angefallenen Anwaltskosten in Hoehe von 850.90 Euro.",
                     ).value,
                   ),
-                  antragAufVersaeumnisurteil(),
-                  weitererAntrag(datatypeE("Lorem ipsum").value),
+                  ergonomics.antragAufVersaeumnisurteil(),
+                  ergonomics.weitererAntrag(datatypeE("Lorem ipsum").value),
                 ],
               },
               beweis: [beweisOfAZeuge, beweisOfAParteivernehmung],
