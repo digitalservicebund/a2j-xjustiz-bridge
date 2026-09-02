@@ -267,6 +267,7 @@ tasks:
     deps:
       - check
       - test
+      - build
 
   verify:codebase-health:
     desc: verify health of full codebase for external dependencies impacts (e.g. vulnerabilities)
