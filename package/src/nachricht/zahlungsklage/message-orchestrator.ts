@@ -431,17 +431,18 @@ if (import.meta.vitest) {
                   inhalt: datatypeE("Lorem ipsum").value,
                 },
                 auswahlSonstigeAntraege: [
-                  antragAufAnwaltskosten({
-                    text: datatypeE(
+                  antragAufAnwaltskosten(
+                    scope,
+                    fortlaufendeNummerAnwaltskosten,
+                    rollennummerKlaeger,
+                    rollennummerBeklagter,
+                    geldbetrag(850.9),
+                    datatypeE(
                       "Die beklagte Partei traegt die aussergerichtlich angefallenen Anwaltskosten in Hoehe von 850.90 Euro.",
                     ).value,
-                    fortlaufendeNummer: fortlaufendeNummerAnwaltskosten,
-                    klaeger: rollennummerKlaeger,
-                    beklagter: rollennummerBeklagter,
-                    wertAnspruch: geldbetrag(850.9),
-                  }),
+                  ),
                   antragAufVersaeumnisurteil(),
-                  weitererAntrag(datatypeE("Weitere Antraege ...").value),
+                  weitererAntrag(datatypeE("Lorem ipsum").value),
                 ],
               },
               beweis: [beweisOfAZeuge, beweisOfAParteivernehmung],

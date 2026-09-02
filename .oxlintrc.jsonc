@@ -56,6 +56,7 @@
         ],
       },
     ], // Else it becomes painful in functional chains like .map().filter()
+    "eslint/max-params": ["error", { "max": 8 }], // Real world code can still be clean with more than 3 (default) parameters
     "eslint/no-restricted-imports": [
       "error",
       {
