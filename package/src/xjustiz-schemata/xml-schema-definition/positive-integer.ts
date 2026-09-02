@@ -8,7 +8,6 @@ import {
   defineRefinedType,
   isNumber,
 } from "~/xjustiz-schemata/shared-kernel/refined-types";
-import { type Arbitrary } from "fast-check";
 import { type DeepLiteralToPrimitive } from "~/metatypes";
 
 declare const TAG: unique symbol;
@@ -22,6 +21,9 @@ declare const TAG: unique symbol;
  * set (`{1,2,...}`).
  *
  * See the related {@link positiveInteger | refined type factory} for construction.
+ *
+ * Available operations that maintain the type:
+ *   - {@link increment}
  */
 export type PositiveInteger = number & {
   readonly [TAG]: "Use the `positiveInteger` factory to construct valid instances";
@@ -96,6 +98,16 @@ export const positiveInteger = defineRefinedType(
   parsePositiveInteger,
 );
 
+/**
+ * Increment {@link PositiveInteger} by one, while maintaining the invariants of
+ * the type.
+ *
+ * @example
+ * ```typescript
+ * const output = increment(positiveInteger(2).value);
+ * // 3 - still PositiveInteger no plain number
+ * ```
+ */
 export function increment(operand: PositiveInteger): PositiveInteger {
   // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
   return (operand + 1) as unknown as PositiveInteger;
@@ -369,7 +381,7 @@ if (import.meta.vitest) {
       });
     });
 
-    function arbitraryPositiveInteger(): Arbitrary<PositiveInteger> {
+    function arbitraryPositiveInteger() {
       return arbitraryInteger({ min: 1 })
         .map((input) => positiveInteger(input))
         .filter((result) => result.issues === undefined)

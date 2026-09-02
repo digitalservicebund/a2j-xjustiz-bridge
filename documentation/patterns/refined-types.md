@@ -279,6 +279,80 @@ then maintaining the invariants through a read-only tagged type constant. So the
 `Input` and `Output` type are not the same, properly expressed on the schema.
 Inputs get transformed into outputs - valid scalar values.
 
+### Operating on Refined Types
+
+Refined types are created by the intersection with a plain TypeScript type. This
+has also the advantage, that a refined type instance can be used everywhere the
+plain type is expected. For example, refined types based on a string can be used
+with any string operation. However, the output of the operation will loose the
+branding. That just makes sense. Even for operations which should theoretically
+maintain the invariants of the refined type, the compiler can't verify them.
+
+To allow operations on refined types, it is necessary to (re)implement them and
+assert the invariant or the compiler. Similar to the parse function. Because
+only the module that owns the refined type is allowed to assert the compiler
+that an instance is a valid for its type, these operations must be implemented
+within that module.
+
+That the invariant actually holds true must be tested properly, using
+property-based testing.
+
+```typescript
+function join(left: Slug, right: Sug): Slug {
+  // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
+  return `${left}-${right}` as unknown as Slug;
+}
+
+if (import.meta.vitest) {
+  const { describe, it, expect } = import.meta.vitest;
+
+  // oxlint-disable-next-line max-lines-per-function -- normal describe block
+  describe("slug", async () => {
+    const {
+      assert,
+      property,
+      string: arbitraryString,
+    } = await import("fast-check");
+
+    describe("join", () => {
+      it("inserts a dash between left and right slug", () => {
+        const output = join(slug("foo").value, slug("bar").value);
+        expect(output).toEqual("foo-bar");
+      });
+
+      it("produces only valid slugs as output that could be parsed again", () => {
+        assert(
+          property(arbitrarySlug(), arbitrarySlug(), (left, right) => {
+            const output = join(left, right);
+            expect(slug(output)).toStrictEqual({ value: output });
+          }),
+        );
+      });
+    });
+
+    function arbitrarySlug(): Arbitrary<Slug> {
+      return arbitraryString()
+        .map((input) => slug(input))
+        .filter((result) => result.issues === undefined)
+        .map((result) => result.value);
+    }
+  });
+}
+```
+
+Operations for a refined type should be listed in the documentation of the type
+for better discoverability.
+
+```typescript
+/**
+ * ...
+ *
+ * Available operations that maintain the type:
+ *   - {@link join}
+ */
+export type Slug = /* ... */
+```
+
 ### Testing
 
 Refined types should be covered by plain unit tests. The runtime and

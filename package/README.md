@@ -42,7 +42,7 @@ XJustiz-Bridge, read the [documentation overview](../README.md).
         - [Using the Standard Schema](#using-the-standard-schema)
         - [Using the Parsing Function Directly](#using-the-parsing-function-directly)
       - [Customizing Issue Messages](#customizing-issue-messages)
-      - [Excursion - Deep Integrated Usage with Zod](#excursion---deep-integrated-usage-with-zod)
+      - [Excursion - Deep Integrated Usage with Zod](#excursion---deeply-integrated-usage-with-zod)
     - [Working with Identifiers](#working-with-identifiers)
       - [Generating Identifiers](#generating-identifiers)
       - [Identifiers with Additional Discriminator](#identifiers-with-additional-discriminator)
@@ -544,7 +544,23 @@ const result = datatypeA(someInput);
 Notice that the customization does not apply to compile-time parsing. Parsing
 issues reported by the compiler only face developers and can't be changed.
 
-##### Excursion - Deep Integrated Usage with Zod
+##### Operating Safely on Refined Type Instances
+
+Because they way refined types are defined, their base type can be used
+directly. For example, a string based refined type can be used anywhere a string
+is expected. However, string based operations don't maintain the invariants and
+become plain strings on the output. The compiler can't know which operations are
+safe and which aren't. Therefore, to operate safely on refined type instances
+requires to use the operations provided by the respective type. Available
+operations can be discovered as part of the refined types documentation.
+
+For example, increment a `PositiveInteger` using the respective operation:
+
+```typescript
+const three = increment(positiveInteger(2).value); // Remains of type PositiveInteger
+```
+
+##### Excursion - Deeply Integrated Usage with Zod
 
 When using Zod as schema library (as the _Onlinedienste der Justiz_ do), it
 might be necessary to integrate more deeply with the refined types. While Zod

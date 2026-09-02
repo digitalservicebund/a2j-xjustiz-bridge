@@ -1,4 +1,4 @@
-export * from "./message-orchestrator"; // oxlint-disable-line no-barrel-file -- public API entrypoint
+export * from "./message-orchestrator";
 export type * from "./message-profile";
 
 export {
@@ -23,22 +23,27 @@ export {
 export {
   type DatatypeA,
   datatypeA,
+  join as joinDatatyeA,
 } from "~/xjustiz-schemata/din-91379/datatypeA";
 export {
   type DatatypeB,
   datatypeB,
+  join as joinDatatyeB,
 } from "~/xjustiz-schemata/din-91379/datatypeB";
 export {
   type DatatypeC,
   datatypeC,
+  join as joinDatatyeC,
 } from "~/xjustiz-schemata/din-91379/datatypeC";
 export {
   type DatatypeD,
   datatypeD,
+  join as joinDatatyeD,
 } from "~/xjustiz-schemata/din-91379/datatypeD";
 export {
   type DatatypeE,
   datatypeE,
+  join as joinDatatyeE,
 } from "~/xjustiz-schemata/din-91379/datatypeE";
 
 export {

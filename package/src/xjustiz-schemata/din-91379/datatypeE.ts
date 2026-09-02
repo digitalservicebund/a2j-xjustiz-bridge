@@ -22,6 +22,7 @@ import {
   type NichtBuchstabenN3,
   type NichtBuchstabenN4,
 } from "./schriftzeichengruppe";
+import { type DatatypeC } from "./datatypeC"; // oxlint-disable-line no-unused-vars -- referenced by TSDoc
 import { type DatatypeD } from "./datatypeD"; // oxlint-disable-line no-unused-vars -- referenced by TSDoc
 import { findInvalidCharacters } from "./unicode";
 import { transformXsdPatternToJavaScriptExpression } from "~/xjustiz-schemata/xml-schema-definition/restriction-pattern";
@@ -43,6 +44,9 @@ declare const TAG: unique symbol;
  * outside the DIN norm, such as Japanese or Arabic characters, are inadmissible.
  *
  * See the related {@link datatypeE | refined type factory} for construction.
+ *
+ * Available operations that maintain the type:
+ *   - {@link join}
  */
 export type DatatypeE = string & {
   readonly [TAG]: "Use the `datatypeE` factory to construct valid instances.";
@@ -125,6 +129,30 @@ type DatatypeECharacterIncomplete =
  */
 export const datatypeE = defineRefinedType(isString, parseDatatypeE);
 
+/**
+ * Adapted version of the default {@link Array.prototype.join} operation that
+ * maintains the invariants of {@link DatatypeE}.
+ *
+ * @example
+ * ```typescript
+ * const fullName = join(
+ *   datatypeE(" ").value,
+ *   datatypeE("Lorem").value,
+ *   datatypeE("ipsum").value,
+ *   datatypeE("dolor").value,
+ * );
+ * // "Lorem ipsum dolor" - still DatatypeE no plain string
+ * ```
+ */
+export function join(
+  separator: DatatypeE,
+  // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- false positive
+  ...segments: readonly DatatypeE[]
+): DatatypeE {
+  // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
+  return segments.join(separator) as unknown as DatatypeE;
+}
+
 /*
  * This is the original restriction pattern in the XML schema definition (XSD) of
  * DIN 91379 as delivered in the XJustiz specification bundle.
@@ -153,6 +181,7 @@ if (import.meta.vitest) {
       assert,
       property,
       string: arbitraryString,
+      array: arbitraryArray,
     } = await import("fast-check");
 
     // oxlint-disable-next-line max-lines-per-function -- normal describe block
@@ -289,6 +318,32 @@ if (import.meta.vitest) {
       });
     });
 
+    describe("join", () => {
+      it("correctly joins all segments with the given seperator", () => {
+        const output = join(
+          datatypeE(" ").value,
+          datatypeE("Lorem").value,
+          datatypeE("ipsum").value,
+          datatypeE("dolor").value,
+        );
+
+        expect(output).toEqual("Lorem ipsum dolor");
+      });
+
+      it("produces only valid DatatypeE outputs that could be parsed again", () => {
+        assert(
+          property(
+            arbitraryDatatypeE(),
+            arbitraryArray(arbitraryDatatypeE()),
+            (separator, segments) => {
+              const output = join(separator, ...segments);
+              expect(datatypeE(output)).toStrictEqual({ value: output });
+            },
+          ),
+        );
+      });
+    });
+
     /*
      * When this test case fails, make sure that:
      * - the original input XSD pattern has changed by intention (only by
@@ -303,5 +358,12 @@ if (import.meta.vitest) {
         `/\\^\\(\\?:\\[\\\\u0009-\\\\u000A\\]\\|\\\\u000D\\|\\[\\\\u0020-\\\\u007E\\]\\|\\[\\\\u00A0-\\\\u00AC\\]\\|\\[\\\\u00AE-\\\\u017E\\]\\|\\[\\\\u0187-\\\\u0188\\]\\|\\\\u018F\\|\\\\u0192\\|\\\\u0197\\|\\[\\\\u01A0-\\\\u01A1\\]\\|\\[\\\\u01AF-\\\\u01B0\\]\\|\\\\u01B7\\|\\[\\\\u01CD-\\\\u01DC\\]\\|\\[\\\\u01DE-\\\\u01DF\\]\\|\\[\\\\u01E2-\\\\u01F0\\]\\|\\[\\\\u01F4-\\\\u01F5\\]\\|\\[\\\\u01F8-\\\\u01FF\\]\\|\\[\\\\u0212-\\\\u0213\\]\\|\\[\\\\u0218-\\\\u021B\\]\\|\\[\\\\u021E-\\\\u021F\\]\\|\\[\\\\u0227-\\\\u0233\\]\\|\\\\u0259\\|\\\\u0268\\|\\\\u0292\\|\\\\u02B0\\|\\\\u02B3\\|\\[\\\\u02B9-\\\\u02BA\\]\\|\\[\\\\u02BE-\\\\u02BF\\]\\|\\\\u02C6\\|\\\\u02C8\\|\\\\u02CC\\|\\\\u02DC\\|\\\\u02E2\\|\\\\u0386\\|\\[\\\\u0388-\\\\u038A\\]\\|\\\\u038C\\|\\[\\\\u038E-\\\\u03A1\\]\\|\\[\\\\u03A3-\\\\u03CE\\]\\|\\\\u040D\\|\\[\\\\u0410-\\\\u042A\\]\\|\\\\u042C\\|\\[\\\\u042E-\\\\u044A\\]\\|\\\\u044C\\|\\[\\\\u044E-\\\\u044F\\]\\|\\\\u045D\\|\\\\u1D48\\|\\\\u1D57\\|\\[\\\\u1E02-\\\\u1E03\\]\\|\\[\\\\u1E06-\\\\u1E07\\]\\|\\[\\\\u1E0A-\\\\u1E11\\]\\|\\\\u1E17\\|\\[\\\\u1E1C-\\\\u1E2B\\]\\|\\[\\\\u1E2F-\\\\u1E37\\]\\|\\[\\\\u1E3A-\\\\u1E3B\\]\\|\\[\\\\u1E40-\\\\u1E49\\]\\|\\[\\\\u1E52-\\\\u1E5B\\]\\|\\[\\\\u1E5E-\\\\u1E63\\]\\|\\[\\\\u1E6A-\\\\u1E6F\\]\\|\\[\\\\u1E80-\\\\u1E87\\]\\|\\[\\\\u1E8C-\\\\u1E97\\]\\|\\\\u1E9E\\|\\[\\\\u1EA0-\\\\u1EF9\\]\\|\\[\\\\u2018-\\\\u201A\\]\\|\\[\\\\u201C-\\\\u201E\\]\\|\\[\\\\u2020-\\\\u2021\\]\\|\\\\u2026\\|\\\\u2030\\|\\[\\\\u2032-\\\\u2033\\]\\|\\[\\\\u2039-\\\\u203A\\]\\|\\\\u2070\\|\\[\\\\u2074-\\\\u2079\\]\\|\\[\\\\u207F-\\\\u2089\\]\\|\\\\u20AC\\|\\\\u2122\\|\\\\u221E\\|\\[\\\\u2264-\\\\u2265\\]\\|\\\\u0041\\\\u030B\\|\\\\u0043\\(\\?:\\\\u0300\\|\\\\u0304\\|\\\\u0306\\|\\\\u0308\\|\\\\u0315\\|\\\\u0323\\|\\\\u0326\\|\\\\u0328\\\\u0306\\)\\|\\\\u0044\\\\u0302\\|\\\\u0046\\(\\?:\\\\u0300\\|\\\\u0304\\)\\|\\\\u0047\\\\u0300\\|\\\\u0048\\(\\?:\\\\u0304\\|\\\\u0326\\|\\\\u0331\\)\\|\\\\u004A\\(\\?:\\\\u0301\\|\\\\u030C\\)\\|\\\\u004B\\(\\?:\\\\u0300\\|\\\\u0302\\|\\\\u0304\\|\\\\u0307\\|\\\\u0315\\|\\\\u031B\\|\\\\u0326\\|\\\\u035F\\\\u0048\\|\\\\u035F\\\\u0068\\)\\|\\\\u004C\\(\\?:\\\\u0302\\|\\\\u0325\\|\\\\u0325\\\\u0304\\|\\\\u0326\\)\\|\\\\u004D\\(\\?:\\\\u0300\\|\\\\u0302\\|\\\\u0306\\|\\\\u0310\\)\\|\\\\u004E\\(\\?:\\\\u0302\\|\\\\u0304\\|\\\\u0306\\|\\\\u0326\\)\\|\\\\u0050\\(\\?:\\\\u0300\\|\\\\u0304\\|\\\\u0315\\|\\\\u0323\\)\\|\\\\u0052\\(\\?:\\\\u0306\\|\\\\u0325\\|\\\\u0325\\\\u0304\\)\\|\\\\u0053\\(\\?:\\\\u0300\\|\\\\u0304\\|\\\\u031B\\\\u0304\\|\\\\u0331\\)\\|\\\\u0054\\(\\?:\\\\u0300\\|\\\\u0304\\|\\\\u0308\\|\\\\u0315\\|\\\\u031B\\)\\|\\\\u0055\\\\u0307\\|\\\\u005A\\(\\?:\\\\u0300\\|\\\\u0304\\|\\\\u0306\\|\\\\u0308\\|\\\\u0327\\)\\|\\\\u0061\\\\u030B\\|\\\\u0063\\(\\?:\\\\u0300\\|\\\\u0304\\|\\\\u0306\\|\\\\u0308\\|\\\\u0315\\|\\\\u0323\\|\\\\u0326\\|\\\\u0328\\\\u0306\\)\\|\\\\u0064\\\\u0302\\|\\\\u0066\\(\\?:\\\\u0300\\|\\\\u0304\\)\\|\\\\u0067\\\\u0300\\|\\\\u0068\\(\\?:\\\\u0304\\|\\\\u0326\\)\\|\\\\u006A\\\\u0301\\|\\\\u006B\\(\\?:\\\\u0300\\|\\\\u0302\\|\\\\u0304\\|\\\\u0307\\|\\\\u0315\\|\\\\u031B\\|\\\\u0326\\|\\\\u035F\\\\u0068\\)\\|\\\\u006C\\(\\?:\\\\u0302\\|\\\\u0325\\|\\\\u0325\\\\u0304\\|\\\\u0326\\)\\|\\\\u006D\\(\\?:\\\\u0300\\|\\\\u0302\\|\\\\u0306\\|\\\\u0310\\)\\|\\\\u006E\\(\\?:\\\\u0302\\|\\\\u0304\\|\\\\u0306\\|\\\\u0326\\)\\|\\\\u0070\\(\\?:\\\\u0300\\|\\\\u0304\\|\\\\u0315\\|\\\\u0323\\)\\|\\\\u0072\\(\\?:\\\\u0306\\|\\\\u0325\\|\\\\u0325\\\\u0304\\)\\|\\\\u0073\\(\\?:\\\\u0300\\|\\\\u0304\\|\\\\u031B\\\\u0304\\|\\\\u0331\\)\\|\\\\u0074\\(\\?:\\\\u0300\\|\\\\u0304\\|\\\\u0315\\|\\\\u031B\\)\\|\\\\u0075\\\\u0307\\|\\\\u007A\\(\\?:\\\\u0300\\|\\\\u0304\\|\\\\u0306\\|\\\\u0308\\|\\\\u0327\\)\\|\\\\u00C7\\\\u0306\\|\\\\u00DB\\\\u0304\\|\\\\u00E7\\\\u0306\\|\\\\u00FB\\\\u0304\\|\\\\u00FF\\\\u0301\\|\\\\u010C\\(\\?:\\\\u0315\\|\\\\u0323\\)\\|\\\\u010D\\(\\?:\\\\u0315\\|\\\\u0323\\)\\|\\\\u0113\\\\u030D\\|\\\\u012A\\\\u0301\\|\\\\u012B\\\\u0301\\|\\\\u014D\\\\u030D\\|\\\\u017D\\(\\?:\\\\u0326\\|\\\\u0327\\)\\|\\\\u017E\\(\\?:\\\\u0326\\|\\\\u0327\\)\\|\\\\u1E32\\\\u0304\\|\\\\u1E33\\\\u0304\\|\\\\u1E62\\\\u0304\\|\\\\u1E63\\\\u0304\\|\\\\u1E6C\\\\u0304\\|\\\\u1E6D\\\\u0304\\|\\\\u1EA0\\\\u0308\\|\\\\u1EA1\\\\u0308\\|\\\\u1ECC\\\\u0308\\|\\\\u1ECD\\\\u0308\\|\\\\u1EE4\\(\\?:\\\\u0304\\|\\\\u0308\\)\\|\\\\u1EE5\\(\\?:\\\\u0304\\|\\\\u0308\\)\\)\\*\\$/u`,
       );
     });
+
+    function arbitraryDatatypeE() {
+      return arbitraryString({ unit: "grapheme" })
+        .map((input) => datatypeE(input))
+        .filter((result) => result.issues === undefined)
+        .map((result) => result.value);
+    }
   });
 }
