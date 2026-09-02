@@ -15,7 +15,7 @@ import { type Reference } from "~/xjustiz-schemata/shared-kernel/identifiers";
 import { type Rollenbezeichnung } from "~/xjustiz-schemata/grunddatensatz/codelisten";
 import { type UUID } from "~/xjustiz-schemata/grunddatensatz/uuid";
 
-export type Antrag<NachrichtenScope> = {
+export interface Antrag<NachrichtenScope> {
   sachantraege?: {
     inhalt: DatatypeE;
     anspruch?: Anspruch<NachrichtenScope>[];
@@ -31,27 +31,27 @@ export type Antrag<NachrichtenScope> = {
     }[];
   };
   auswahlSonstigeAntraege?: SonstigerAntrag<NachrichtenScope>[];
-};
+}
 
-export type Anspruch<NachrichtenScope> = {
+export interface Anspruch<NachrichtenScope> {
   fortlaufendeNummer?: FortlaufendeNummer<NachrichtenScope, "Anspruch">;
   anspruchssteller?: RefRollennummer<NachrichtenScope>[];
   anspruchsgegner?: RefRollennummer<NachrichtenScope>[];
   anspruchsart?: Anspruchsart;
   wertAnspruch?: Geldbetrag;
   anspruchsgegenstand?: DatatypeC;
-};
+}
 
-export type SonstigerAntrag<NachrichtenScope> = {
+export interface SonstigerAntrag<NachrichtenScope> {
   antragSonstige: {
     auswahlAntragSonstige:
       | { antragWerteliste: AntragCodeliste }
       | { sonstigerAntragTextform: DatatypeE };
     anspruch?: Anspruch<NachrichtenScope>[];
   };
-};
+}
 
-export type Beweis<NachrichtenScope> = {
+export interface Beweis<NachrichtenScope> {
   beweisNummer: BeweisNummer<NachrichtenScope>;
   auswahlBeweismittel:
     | {
@@ -66,25 +66,25 @@ export type Beweis<NachrichtenScope> = {
           typeof Rollenbezeichnung.Klaeger | typeof Rollenbezeichnung.Beklagter
         >;
       };
-};
+}
 
-export type Ausfuehrungen<Nachrichtenscope> = {
+export interface Ausfuehrungen<Nachrichtenscope> {
   inhalt?: {
     tatsachenvortragSachverhaltsbeschreibung?: DatatypeC;
     rechtlicheWuerdigung?: DatatypeC;
   };
   refBeweisNummer?: Reference<BeweisNummer<Nachrichtenscope>>[];
-};
+}
 
-export type Vortrag<NachrichtenScope> = {
+export interface Vortrag<NachrichtenScope> {
   schlagwort: DatatypeC;
   vortragsID: UUID<NachrichtenScope>;
   ausfuehrungen: Ausfuehrungen<NachrichtenScope>;
   fremdeVortragsID?: UUID<NachrichtenScope>[];
-};
+}
 
-export type AuswahlBegruendetheit<NachrichtenScope> = {
+export interface AuswahlBegruendetheit<NachrichtenScope> {
   anderesKlageverfahren: {
     vortrag: Vortrag<NachrichtenScope>[];
   };
-};
+}

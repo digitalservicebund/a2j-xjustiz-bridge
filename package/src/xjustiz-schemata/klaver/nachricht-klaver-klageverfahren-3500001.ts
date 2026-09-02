@@ -9,7 +9,7 @@ import {
   type Nachrichtenkopf,
 } from "~/xjustiz-schemata/grunddatensatz/composites";
 
-export type NachrichtKlaverKlageverfahren3500001<NachrichtenScope> = {
+export interface NachrichtKlaverKlageverfahren3500001<NachrichtenScope> {
   nachrichtenkopf: Nachrichtenkopf<NachrichtenScope>;
   grunddaten: Grunddaten<NachrichtenScope>;
   inhaltsdaten: {
@@ -18,4 +18,4 @@ export type NachrichtKlaverKlageverfahren3500001<NachrichtenScope> = {
     sonstigeProzessualeAusfuehrungen?: Ausfuehrungen<NachrichtenScope>;
     auswahlBegruendetheit?: AuswahlBegruendetheit<NachrichtenScope>;
   };
-};
+}

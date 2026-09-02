@@ -21,7 +21,7 @@ import { type Reference } from "~/xjustiz-schemata/shared-kernel/identifiers";
 import { type Rollennummer } from "~/xjustiz-schemata/grunddatensatz/rollennummer";
 import { type UUID } from "~/xjustiz-schemata/grunddatensatz/uuid";
 
-export type Nachrichtenkopf<NachrichtenScope> = {
+export interface Nachrichtenkopf<NachrichtenScope> {
   xjustizVersion: "3.6.2";
   /*
    * This property is missing in the JSON schema definition, but included in
@@ -39,112 +39,112 @@ export type Nachrichtenkopf<NachrichtenScope> = {
     };
   };
   herstellerinformation: Herstellerinformation;
-};
+}
 
-export type Grunddaten<NachrichtenScope> = {
+export interface Grunddaten<NachrichtenScope> {
   verfahrensdaten?: {
     beteiligung?: (Beteiligung<NachrichtenScope> | undefined)[];
   };
-};
+}
 
-export type Kommunikationspartner = {
+export interface Kommunikationspartner {
   auswahlKommunikationspartner: { gericht: Gerichte } | { sonstige: DatatypeD };
-};
+}
 
-export type Herstellerinformation = {
+export interface Herstellerinformation {
   nameDesProdukts: DatatypeD;
   herstellerDesProdukts: DatatypeD;
   version: DatatypeC;
-};
+}
 
-export type Beteiligung<NachrichtenScope> = {
+export interface Beteiligung<NachrichtenScope> {
   rolle?: Rolle<NachrichtenScope>[];
   beteiligter: Beteiligter;
-};
+}
 
-export type Rolle<
+export interface Rolle<
   NachrichtenScope,
   ZugehoerigeRollenbezeichnung extends Rollenbezeichnung = Rollenbezeichnung,
-> = {
+> {
   rollennummer?: Rollennummer<NachrichtenScope, ZugehoerigeRollenbezeichnung>;
   rollenbezeichnung: ZugehoerigeRollenbezeichnung;
   geschaeftszeichen?: DatatypeC;
   referenz?: RefRollennummer<NachrichtenScope>[];
-};
+}
 
-export type Beteiligter = {
+export interface Beteiligter {
   auswahlBeteiligter:
     | { raKanzlei: RAKanzlei }
     | { natuerlichePerson: NatuerlichePerson }
     | { organisation: Organisation };
-};
+}
 
-export type NatuerlichePerson = {
+export interface NatuerlichePerson {
   vollerName: NameNatuerlichePerson;
   geschlecht?: Geschlecht;
   anschrift?: Anschrift[];
   beruf?: DatatypeC[];
   telekommunikation?: Kommunikation[];
   bankverbindung?: Bankverbindung[];
-};
+}
 
-export type RAKanzlei = {
+export interface RAKanzlei {
   bezeichnung: {
     bezeichnungAktuell: DatatypeD;
   };
   kanzleiform: Kanzleiform;
   anschrift?: Anschrift[];
   raImVerfahren?: NatuerlichePerson;
-};
+}
 
-export type Organisation = {
+export interface Organisation {
   bezeichnung: {
     bezeichnungAktuell: DatatypeD;
   };
   anschrift?: Anschrift[];
-};
+}
 
-export type NameNatuerlichePerson = {
+export interface NameNatuerlichePerson {
   vorname?: DatatypeA;
   titel?: DatatypeC;
   nachname: DatatypeA;
-};
+}
 
-export type Anschrift = {
+export interface Anschrift {
   strasse?: DatatypeB;
   hausnummer?: DatatypeB;
   postleitzahl?: DatatypeC;
   ort?: DatatypeB;
-};
+}
 
-export type Kommunikation = {
+export interface Kommunikation {
   telekommunikationsart: Telekommunikationsart;
   verbindung: DatatypeC;
-};
+}
 
-export type Bankverbindung = {
+export interface Bankverbindung {
   kontoinhaber?: DatatypeD;
   iban: DatatypeC;
-};
+}
 
-export type RefRollennummer<
+export interface RefRollennummer<
   NachrichtenScope,
   ZugehoerigeRollenbezeichnung extends Rollenbezeichnung = Rollenbezeichnung,
-> = {
+> {
   refRollennummer: Reference<
     Rollennummer<NachrichtenScope, ZugehoerigeRollenbezeichnung>
   >;
-};
+}
 
-export type Geldbetrag = {
+export interface Geldbetrag {
   zahl: Double;
   auswahlWaehrung: {
     waehrung: Waehrung;
   };
-};
+}
 
-export type Zinsen = {
+export interface Zinsen {
   zinssatz: Decimal;
   zinsmethode: Zinsmethode;
   zinsbeginn: Date;
-};
+}

@@ -117,7 +117,7 @@ export interface Klaeger<NachrichtenScope> {
   };
 }
 
-export type GesetzlicherVertreter<NachrichtenScope> = {
+export interface GesetzlicherVertreter<NachrichtenScope> {
   rolle: [
     {
       rollenbezeichnung: typeof Rollenbezeichnung.GesetzlicherVertreter;
@@ -132,13 +132,13 @@ export type GesetzlicherVertreter<NachrichtenScope> = {
       raKanzlei: RAKanzlei;
     };
   };
-};
+}
 
 export type Beklagter<NachrichtenScope> =
   | BeklagtePerson<NachrichtenScope>
   | BeklagteOrganisation<NachrichtenScope>;
 
-export type BeklagtePerson<NachrichtenScope> = {
+export interface BeklagtePerson<NachrichtenScope> {
   rolle: [
     {
       rollennummer: Rollennummer<
@@ -153,9 +153,9 @@ export type BeklagtePerson<NachrichtenScope> = {
       natuerlichePerson: NatuerlichePerson;
     };
   };
-};
+}
 
-export type BeklagteOrganisation<NachrichtenScope> = {
+export interface BeklagteOrganisation<NachrichtenScope> {
   rolle: [
     {
       rollennummer: Rollennummer<
@@ -170,9 +170,9 @@ export type BeklagteOrganisation<NachrichtenScope> = {
       organisation: Organisation;
     };
   };
-};
+}
 
-export type Prozessbevollmaechtiger<NachrichtenScope> = {
+export interface Prozessbevollmaechtiger<NachrichtenScope> {
   rolle: [
     {
       rollenbezeichnung: typeof Rollenbezeichnung.Prozessbevollmaechtiger;
@@ -186,9 +186,9 @@ export type Prozessbevollmaechtiger<NachrichtenScope> = {
       natuerlichePerson: NatuerlichePerson;
     };
   };
-};
+}
 
-export type Zeuge<NachrichtenScope> = {
+export interface Zeuge<NachrichtenScope> {
   rolle: [
     {
       rollennummer: Rollennummer<
@@ -203,9 +203,9 @@ export type Zeuge<NachrichtenScope> = {
       natuerlichePerson: NatuerlichePerson;
     };
   };
-};
+}
 
-export type AntraegeFuerZahlungsklage<NachrichtenScope> = {
+export interface AntraegeFuerZahlungsklage<NachrichtenScope> {
   sachantraege: {
     inhalt: DatatypeE;
     anspruch: [
@@ -234,34 +234,34 @@ export type AntraegeFuerZahlungsklage<NachrichtenScope> = {
         zinsanspruch?: undefined;
       };
   auswahlSonstigeAntraege?: SonstigerAntragFuerZahlungsklage<NachrichtenScope>[];
-};
+}
 export type SonstigerAntragFuerZahlungsklage<NachrichtenScope> =
   | AntragAufAnwaltskosten<NachrichtenScope>
   | AntragAufVersaeumnisurteil
   | WeitererAntrag;
 
-export type AntragAufAnwaltskosten<NachrichtenScope> = {
+export interface AntragAufAnwaltskosten<NachrichtenScope> {
   antragSonstige: {
     auswahlAntragSonstige: { sonstigerAntragTextform: DatatypeE };
     anspruch: [AnspruchFuerZahlungsklage<NachrichtenScope>];
   };
-};
+}
 
-export type AntragAufVersaeumnisurteil = {
+export interface AntragAufVersaeumnisurteil {
   antragSonstige: {
     auswahlAntragSonstige: {
       antragWerteliste: typeof AntragCodeliste.AntragAufVersaeumnisurteil;
     };
   };
-};
+}
 
-export type WeitererAntrag = {
+export interface WeitererAntrag {
   antragSonstige: {
     auswahlAntragSonstige: { sonstigerAntragTextform: DatatypeE };
   };
-};
+}
 
-export type AnspruchFuerZahlungsklage<NachrichtenScope> = {
+export interface AnspruchFuerZahlungsklage<NachrichtenScope> {
   fortlaufendeNummer: FortlaufendeNummer<NachrichtenScope, "Anspruch">;
   anspruchssteller: [
     RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Klaeger>,
@@ -271,31 +271,31 @@ export type AnspruchFuerZahlungsklage<NachrichtenScope> = {
   ];
   anspruchsart: typeof Anspruchsart.Zahlung;
   wertAnspruch: Geldbetrag;
-};
+}
 
-export type AusfuehrungenFuerZahlungsklage<NachrichtenScope> = {
+export interface AusfuehrungenFuerZahlungsklage<NachrichtenScope> {
   inhalt: {
     tatsachenvortragSachverhaltsbeschreibung: DatatypeC;
     rechtlicheWuerdigung?: DatatypeC;
   };
   refBeweisNummer: Reference<BeweisNummer<NachrichtenScope>>[];
-};
+}
 
-export type BegruendetheitFuerZahlungsklage<NachrichtenScope> = {
+export interface BegruendetheitFuerZahlungsklage<NachrichtenScope> {
   anderesKlageverfahren: {
     vortrag: [
       VortragZurBegruendetheitFuerZahlungsklage<NachrichtenScope>,
       ...VortragZurBegruendetheitFuerZahlungsklage<NachrichtenScope>[],
     ];
   };
-};
+}
 
-export type VortragZurBegruendetheitFuerZahlungsklage<NachrichtenScope> = {
+export interface VortragZurBegruendetheitFuerZahlungsklage<NachrichtenScope> {
   schlagwort: DatatypeC;
   vortragsID: UUID<NachrichtenScope>;
   ausfuehrungen: AusfuehrungenFuerZahlungsklage<NachrichtenScope>;
   fremdeVortragsID?: UUID<NachrichtenScope>[];
-};
+}
 
 if (import.meta.vitest) {
   const { describe, it, expectTypeOf } = import.meta.vitest;
