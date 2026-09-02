@@ -80,13 +80,9 @@ type Codeliste<Eintraege extends Codelisteneintraege> = {
  * The interface hides the runtime presentation and preserves the name of the
  * Codelisteneintrag.
  */
-interface Codelisteneintrag<Name extends string, Code extends string> {
-  /** @internal */
-  readonly [PHANTOM_NAME_KEY]: Name;
+export interface Codelisteneintrag<_Name extends string, Code extends string> {
   readonly code: Code;
 }
-
-declare const PHANTOM_NAME_KEY: unique symbol;
 
 if (import.meta.vitest) {
   const { describe, it, expect, expectTypeOf } = import.meta.vitest;
