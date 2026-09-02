@@ -12,6 +12,9 @@ export default {
     ...findEntriesForErgonomicModules(),
   },
   publint: true,
+  define: {
+    "import.meta.vitest": "undefined", // Strip in-source tests from output.
+  },
 } satisfies UserConfig;
 
 function findEntriesForErgonomicModules(): Record<string, string> {
