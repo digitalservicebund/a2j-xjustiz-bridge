@@ -236,7 +236,30 @@ tasks:
     #   - ./package/**/*
     #   - exclude: ./package/dist
     dir: ./package
-    cmd: pnpm exec tsdown
+    cmds:
+      - pnpm exec tsdown
+      - task: check:bundle-size
+
+  check:bundle-size:
+    desc: check that the bundled package stays below the configured size threshold
+    internal: true
+    deps: [setup:development-environment]
+    dir: ./package
+    vars:
+      MAX_BUNDLE_SIZE_KB: 500
+      BUNDLE_SIZE_KB:
+        # Measure dist in 1024-byte blocks and keep only the numeric size.
+        #
+        # du -s reports one summary line instead of listing every file.
+        # du -k reports the size in 1024-byte blocks.
+        # cut -f1 removes the path from du's tab-separated output.
+        #
+        # For example, "482\tdist" becomes "482".
+        sh: du -sk dist | cut -f1
+    preconditions:
+      - sh: test {{ .BUNDLE_SIZE_KB }} -le {{ .MAX_BUNDLE_SIZE_KB }}
+        msg: "Bundle size check failed: {{ .BUNDLE_SIZE_KB }} KB exceeds limit of {{ .MAX_BUNDLE_SIZE_KB }} KB"
+    cmd: 'echo "Bundle size check passed: {{ .BUNDLE_SIZE_KB }} KB (limit: {{ .MAX_BUNDLE_SIZE_KB }} KB)."'
 
   publish:
     desc: publish the library to the NPM package registry
