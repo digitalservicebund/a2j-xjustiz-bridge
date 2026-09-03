@@ -12,26 +12,26 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       ky:
-        specifier: ^2.0.2
+        specifier: ^2.1.0
         version: 2.1.0
     devDependencies:
       fast-check:
-        specifier: ^4.8.0
+        specifier: ^4.9.0
         version: 4.9.0
       publint:
-        specifier: ^0.3.21
+        specifier: ^0.3.24
         version: 0.3.24
       testcontainers:
         specifier: ^12.1.0
         version: 12.1.0
       tsdown:
-        specifier: ^0.22.0
+        specifier: ^0.22.14
         version: 0.22.14(publint@0.3.24)(typescript@7.0.2)
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
       vitest:
-        specifier: ^4.1.10
+        specifier: ^4.1.11
         version: 4.1.11(@types/node@26.4.1)(vite@8.1.0(@types/node@26.4.1)(yaml@2.9.0))
 
 packages:
