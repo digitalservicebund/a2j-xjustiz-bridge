@@ -12,6 +12,7 @@ import {
   type Waehrung,
   type Zinsmethode,
 } from "~/xjustiz-schemata/grunddatensatz/codelisten";
+import { geldbetrag, herstellerinformation } from "./ergonomics"; // oxlint-disable-line no-unused-vars -- referenced by TSDoc
 import { type DatatypeA } from "~/xjustiz-schemata/din-91379/datatypeA";
 import { type DatatypeB } from "~/xjustiz-schemata/din-91379/datatypeB";
 import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatypeC";
@@ -20,7 +21,6 @@ import { type Decimal } from "~/xjustiz-schemata/xml-schema-definition/decimal";
 import { type Reference } from "~/xjustiz-schemata/shared-kernel/identifiers";
 import { type Rollennummer } from "~/xjustiz-schemata/grunddatensatz/rollennummer";
 import { type UUID } from "~/xjustiz-schemata/grunddatensatz/uuid";
-import { geldbetrag } from "./ergonomics/geldbetrag"; // oxlint-disable-line no-unused-vars -- referenced by TSDoc
 
 export interface Nachrichtenkopf<NachrichtenScope> {
   xjustizVersion: "3.6.2";
@@ -52,9 +52,15 @@ export interface Kommunikationspartner {
   auswahlKommunikationspartner: { gericht: Gerichte } | { sonstige: DatatypeD };
 }
 
+/**
+ * The Herstellerinformationen are fixed agreed on with the Bundesministerium
+ * der Justiz und für Verbraucherschutz. The `version` is expected to be the one
+ * of the XJustiz-Bridge. It can be constructed ergonomically with the
+ * {@link herstellerinformation} constructor function.
+ */
 export interface Herstellerinformation {
-  nameDesProdukts: DatatypeD;
-  herstellerDesProdukts: DatatypeD;
+  nameDesProdukts: "Justizportal XJustiz Services"; // DatatypeD
+  herstellerDesProdukts: "Bundesministerium der Justiz und für Verbraucherschutz, ausgeführt durch DigitalService GmbH des Bundes"; // DatatypeD
   version: DatatypeC;
 }
 

@@ -399,11 +399,7 @@ if (import.meta.vitest) {
                 },
                 auswahlAktenzeichen: { aktenzeichenNeu: true },
               },
-              herstellerinformation: {
-                herstellerDesProdukts: datatypeD("Foo").value,
-                nameDesProdukts: datatypeD("Bar").value,
-                version: datatypeC("Baz").value,
-              },
+              herstellerinformation: ergonomics.herstellerinformation(),
             },
             grunddaten: {
               verfahrensdaten: {

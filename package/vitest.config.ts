@@ -1,9 +1,13 @@
 import { defineConfig } from "vitest/config";
+import package_ from "./package.json" with { type: "json" };
 
 // oxlint-disable-next-line no-default-export -- required by tsdown
 export default defineConfig({
   test: {
     watch: false,
+    env: {
+      PACKAGE_VERSION: JSON.stringify(package_.version),
+    },
     projects: [
       {
         resolve: {
