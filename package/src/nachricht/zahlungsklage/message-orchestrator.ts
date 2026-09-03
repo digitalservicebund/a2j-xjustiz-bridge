@@ -117,13 +117,8 @@ if (import.meta.vitest) {
     const { createRollennummerGenerator } = await import(
       "~/xjustiz-schemata/grunddatensatz/rollennummer"
     );
-    const {
-      Gerichte,
-      Geschlecht,
-      Kanzleiform,
-      Rollenbezeichnung,
-      Telekommunikationsart,
-    } = await import("~/xjustiz-schemata/grunddatensatz/codelisten");
+    const { Gerichte, Geschlecht, Kanzleiform, Rollenbezeichnung } =
+      await import("~/xjustiz-schemata/grunddatensatz/codelisten");
     const { Anspruchsart } = await import(
       "~/xjustiz-schemata/klaver/codelisten"
     );
@@ -170,15 +165,10 @@ if (import.meta.vitest) {
                     },
                   ],
                   telekommunikation: [
-                    {
-                      telekommunikationsart: Telekommunikationsart.Telefon,
-                      verbindung: datatypeC("01234567890").value,
-                    },
-                    {
-                      telekommunikationsart: Telekommunikationsart.EMail,
-                      verbindung: datatypeC("max.mustermann@mustermail.de")
-                        .value,
-                    },
+                    ergonomics.telefon(datatypeC("01234567890").value),
+                    ergonomics.email(
+                      datatypeC("max.mustermann@mustermail.de").value,
+                    ),
                   ],
                   bankverbindung: [
                     {
@@ -222,16 +212,10 @@ if (import.meta.vitest) {
                     geschlecht: Geschlecht.Weiblich,
                     beruf: [datatypeC("Rechtsanwaeltin").value],
                     telekommunikation: [
-                      {
-                        telekommunikationsart: Telekommunikationsart.Telefon,
-                        verbindung: datatypeC("01234567891").value,
-                      },
-                      {
-                        telekommunikationsart: Telekommunikationsart.EMail,
-                        verbindung: datatypeC(
-                          "erika.mustermann@kanzlei-mustermann.de",
-                        ).value,
-                      },
+                      ergonomics.telefon(datatypeC("01234567891").value),
+                      ergonomics.email(
+                        datatypeC("erika@kanzlei-mustermann.de").value,
+                      ),
                     ],
                   },
                 },

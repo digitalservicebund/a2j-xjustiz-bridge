@@ -12,7 +12,12 @@ import {
   type Waehrung,
   type Zinsmethode,
 } from "~/xjustiz-schemata/grunddatensatz/codelisten";
-import { geldbetrag, herstellerinformation } from "./ergonomics"; // oxlint-disable-line no-unused-vars -- referenced by TSDoc
+import {
+  email, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
+  geldbetrag, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
+  herstellerinformation, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
+  telefon, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
+} from "./ergonomics";
 import { type DatatypeA } from "~/xjustiz-schemata/din-91379/datatypeA";
 import { type DatatypeB } from "~/xjustiz-schemata/din-91379/datatypeB";
 import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatypeC";
@@ -124,6 +129,10 @@ export interface Anschrift {
   ort?: DatatypeB;
 }
 
+/**
+ * Can be constructed ergonomically with the {@link email} and {@link telefon}
+ * constructor functions.
+ */
 export interface Kommunikation {
   telekommunikationsart: Telekommunikationsart;
   verbindung: DatatypeC;
