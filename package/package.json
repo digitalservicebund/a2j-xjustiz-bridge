@@ -1,7 +1,7 @@
 {
   "$schema": "https://www.schemastore.org/package.json",
   "name": "@digitalservicebund/a2j-xjustiz-bridge",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "Assisted composition of XJustiz messages that are ensured to be valid.",
   "author": "Team Court Communication (Access to Justice) - DigitalService GmbH des Bundes",
   "license": "MIT",
