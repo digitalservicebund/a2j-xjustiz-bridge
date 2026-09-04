@@ -6,7 +6,6 @@ import {
   type WithIdentifierCapabilities,
   memorizeAsGenerator,
 } from "~/xjustiz-schemata/shared-kernel/identifiers";
-import { type Increment } from "~/metatypes";
 
 /**
  * Universally unique identifier — used to identify various different entities
@@ -64,11 +63,16 @@ function randomUUID(): UUIDValue {
   return globalThis.crypto.randomUUID() as UUIDValue;
 }
 
+/**
+ * **ATTENTION:**
+ * Incrementing ordinals for generated identifiers are currently turned off,
+ * because of technical limitations to enable dynamic input lists.
+ */
 export interface UuidGenerator<NachrichtenScope> {
-  first: () => UUID<NachrichtenScope, 0>;
+  first: () => UUID<NachrichtenScope /* Turned off: static Ordinal of 0 */>;
   next: <Ordinal extends number>(
     previous: UUID<NachrichtenScope, Ordinal>,
-  ) => UUID<NachrichtenScope, Increment<Ordinal>>;
+  ) => UUID<NachrichtenScope /* Turned off: Increment<Ordinal> */>;
 }
 
 if (import.meta.vitest) {

@@ -22,6 +22,9 @@ import {
   type XjustizToolsConnectionParameter,
   generateXjustizMessageXml,
 } from "~/generate-xml-document";
+import { type Beweis } from "~/xjustiz-schemata/klaver/composites";
+import { type DatatypeA } from "~/xjustiz-schemata/din-91379/datatypeA";
+import { type Rollennummer } from "~/xjustiz-schemata/grunddatensatz/rollennummer";
 
 /**
  * Message orchestrator to compose a Nachricht for a _Zahlungsklage_.
@@ -49,6 +52,13 @@ export function zahlungsklage(
 }
 
 /**
+ * **!!! WARNING !!!**
+ * Verification of constraints on a type-level is currently turned off due to
+ * technical limitations on dynamic input lists. You **MUST** take great care to
+ * not use the same identifier multiple times (uniqueness constraint) and include
+ * any referenced identifier declaration in the final message (referential
+ * integrity constraint). Until further updates, any violation passes silently.
+ *
  * Used as last step of composing a `Zahlungsklage` with the {@link zahlungsklage}
  * orchestrator to output a valid {@link VerifiedNachricht}. It will apply
  * multiple type-level computations to verify constraints like for identities or
@@ -132,291 +142,325 @@ if (import.meta.vitest) {
 
     // oxlint-disable-next-line max-lines-per-function
     it("is possible to create a valid example message", async () => {
-      const message = await zahlungsklage(
-        // oxlint-disable-next-line max-lines-per-function
-        <NachrichtenScope>(scope: ScopeToken<NachrichtenScope>) => {
-          const rollennummer = createRollennummerGenerator(scope);
-          const rollennummerKlaeger = rollennummer.first(
-            Rollenbezeichnung.Klaeger,
-          );
+      // oxlint-disable-next-line max-lines-per-function
+      function testComposeAMessage(
+        // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- false positive
+        dynamicZeugenData: { nachname: DatatypeA }[],
+      ) {
+        return zahlungsklage(
+          // oxlint-disable-next-line max-lines-per-function
+          <NachrichtenScope>(scope: ScopeToken<NachrichtenScope>) => {
+            const rollennummer = createRollennummerGenerator(scope);
+            const rollennummerKlaeger = rollennummer.first(
+              Rollenbezeichnung.Klaeger,
+            );
 
-          const klaeger = {
-            rolle: [
-              {
-                rollennummer: rollennummerKlaeger,
-                rollenbezeichnung: Rollenbezeichnung.Klaeger,
-              },
-            ],
-            beteiligter: {
-              auswahlBeteiligter: {
-                natuerlichePerson: {
-                  vollerName: {
-                    vorname: datatypeA("Max").value,
-                    titel: datatypeC("Dr.").value,
-                    nachname: datatypeA("Mustermann").value,
-                  },
-                  geschlecht: Geschlecht.Maennlich,
-                  anschrift: [
-                    {
-                      strasse: datatypeB("Musterstrasse").value,
-                      hausnummer: datatypeB("1").value,
-                      postleitzahl: datatypeC("12345").value,
-                      ort: datatypeB("Musterstadt").value,
-                    },
-                  ],
-                  telekommunikation: [
-                    ergonomics.telefon(datatypeC("01234567890").value),
-                    ergonomics.email(
-                      datatypeC("max.mustermann@mustermail.de").value,
-                    ),
-                  ],
-                  bankverbindung: [
-                    {
-                      kontoinhaber: datatypeD("Max Mustermann").value,
-                      iban: datatypeC("Bankverbindung").value,
-                    },
-                  ],
+            const klaeger = {
+              rolle: [
+                {
+                  rollennummer: rollennummerKlaeger,
+                  rollenbezeichnung: Rollenbezeichnung.Klaeger,
                 },
-              },
-            },
-          } satisfies Klaeger<NachrichtenScope>;
-
-          const gesetzlicherVertreter = {
-            rolle: [
-              {
-                rollenbezeichnung: Rollenbezeichnung.GesetzlicherVertreter,
-                geschaeftszeichen: datatypeC("KM-0042-2026").value,
-                referenz: [{ refRollennummer: reference(rollennummerKlaeger) }],
-              },
-            ],
-            beteiligter: {
-              auswahlBeteiligter: {
-                raKanzlei: {
-                  bezeichnung: {
-                    bezeichnungAktuell: datatypeD("Kanzlei Mustermann").value,
-                  },
-                  kanzleiform: Kanzleiform.Einzelanwalt,
-                  anschrift: [
-                    {
-                      strasse: datatypeB("Musterstrasse").value,
-                      hausnummer: datatypeB("2").value,
-                      postleitzahl: datatypeC("12345").value,
-                      ort: datatypeB("Musterstadt").value,
-                    },
-                  ],
-                  raImVerfahren: {
+              ],
+              beteiligter: {
+                auswahlBeteiligter: {
+                  natuerlichePerson: {
                     vollerName: {
-                      vorname: datatypeA("Erika").value,
+                      vorname: datatypeA("Max").value,
+                      titel: datatypeC("Dr.").value,
                       nachname: datatypeA("Mustermann").value,
                     },
-                    geschlecht: Geschlecht.Weiblich,
-                    beruf: [datatypeC("Rechtsanwaeltin").value],
+                    geschlecht: Geschlecht.Maennlich,
+                    anschrift: [
+                      {
+                        strasse: datatypeB("Musterstrasse").value,
+                        hausnummer: datatypeB("1").value,
+                        postleitzahl: datatypeC("12345").value,
+                        ort: datatypeB("Musterstadt").value,
+                      },
+                    ],
                     telekommunikation: [
-                      ergonomics.telefon(datatypeC("01234567891").value),
+                      ergonomics.telefon(datatypeC("01234567890").value),
                       ergonomics.email(
-                        datatypeC("erika@kanzlei-mustermann.de").value,
+                        datatypeC("max.mustermann@mustermail.de").value,
                       ),
+                    ],
+                    bankverbindung: [
+                      {
+                        kontoinhaber: datatypeD("Max Mustermann").value,
+                        iban: datatypeC("Bankverbindung").value,
+                      },
                     ],
                   },
                 },
               },
-            },
-          } satisfies GesetzlicherVertreter<NachrichtenScope>;
+            } satisfies Klaeger<NachrichtenScope>;
 
-          const rollennummerBeklagter = rollennummer.next(
-            rollennummerKlaeger,
-            Rollenbezeichnung.Beklagter,
-          );
-
-          const beklagter = {
-            rolle: [
-              {
-                rollennummer: rollennummerBeklagter,
-                rollenbezeichnung: Rollenbezeichnung.Beklagter,
-              },
-            ],
-            beteiligter: {
-              auswahlBeteiligter: {
-                organisation: {
-                  bezeichnung: {
-                    bezeichnungAktuell: datatypeD("Muster GmbH").value,
+            const gesetzlicherVertreter = {
+              rolle: [
+                {
+                  rollenbezeichnung: Rollenbezeichnung.GesetzlicherVertreter,
+                  geschaeftszeichen: datatypeC("KM-0042-2026").value,
+                  referenz: [
+                    { refRollennummer: reference(rollennummerKlaeger) },
+                  ],
+                },
+              ],
+              beteiligter: {
+                auswahlBeteiligter: {
+                  raKanzlei: {
+                    bezeichnung: {
+                      bezeichnungAktuell: datatypeD("Kanzlei Mustermann").value,
+                    },
+                    kanzleiform: Kanzleiform.Einzelanwalt,
+                    anschrift: [
+                      {
+                        strasse: datatypeB("Musterstrasse").value,
+                        hausnummer: datatypeB("2").value,
+                        postleitzahl: datatypeC("12345").value,
+                        ort: datatypeB("Musterstadt").value,
+                      },
+                    ],
+                    raImVerfahren: {
+                      vollerName: {
+                        vorname: datatypeA("Erika").value,
+                        nachname: datatypeA("Mustermann").value,
+                      },
+                      geschlecht: Geschlecht.Weiblich,
+                      beruf: [datatypeC("Rechtsanwaeltin").value],
+                      telekommunikation: [
+                        ergonomics.telefon(datatypeC("01234567891").value),
+                        ergonomics.email(
+                          datatypeC("erika@kanzlei-mustermann.de").value,
+                        ),
+                      ],
+                    },
                   },
-                  anschrift: [
+                },
+              },
+            } satisfies GesetzlicherVertreter<NachrichtenScope>;
+
+            const rollennummerBeklagter = rollennummer.next(
+              rollennummerKlaeger,
+              Rollenbezeichnung.Beklagter,
+            );
+
+            const beklagter = {
+              rolle: [
+                {
+                  rollennummer: rollennummerBeklagter,
+                  rollenbezeichnung: Rollenbezeichnung.Beklagter,
+                },
+              ],
+              beteiligter: {
+                auswahlBeteiligter: {
+                  organisation: {
+                    bezeichnung: {
+                      bezeichnungAktuell: datatypeD("Muster GmbH").value,
+                    },
+                    anschrift: [
+                      {
+                        strasse: datatypeB("Musterstrasse").value,
+                        hausnummer: datatypeB("3").value,
+                        postleitzahl: datatypeC("12345").value,
+                        ort: datatypeB("Musterstadt").value,
+                      },
+                    ],
+                  },
+                },
+              },
+            } satisfies Beklagter<NachrichtenScope>;
+
+            const prozessbevollmaechtiger = {
+              rolle: [
+                {
+                  rollenbezeichnung: Rollenbezeichnung.Prozessbevollmaechtiger,
+                  referenz: [
+                    { refRollennummer: reference(rollennummerBeklagter) },
+                  ],
+                },
+              ],
+              beteiligter: {
+                auswahlBeteiligter: {
+                  natuerlichePerson: {
+                    vollerName: { nachname: datatypeA("Mustermann").value },
+                  },
+                },
+              },
+            } satisfies Prozessbevollmaechtiger<NachrichtenScope>;
+
+            const beweisNummer = createBeweisNummerGenerator(scope);
+            let letzteBeweisNummerFuerZeugen = beweisNummer.first();
+            let letzteRollennummerFuerZeugen: Rollennummer<NachrichtenScope> =
+              rollennummerBeklagter;
+
+            const { zeugen, beweise } = dynamicZeugenData.reduce<{
+              zeugen: Zeuge<NachrichtenScope>[];
+              beweise: Beweis<NachrichtenScope>[];
+            }>(
+              (accumulator, { nachname }) => {
+                const rollennummerDesZeugen = rollennummer.next(
+                  letzteRollennummerFuerZeugen,
+                  Rollenbezeichnung.Zeuge,
+                );
+                letzteRollennummerFuerZeugen = rollennummerDesZeugen;
+
+                accumulator.zeugen.push({
+                  rolle: [
                     {
-                      strasse: datatypeB("Musterstrasse").value,
-                      hausnummer: datatypeB("3").value,
-                      postleitzahl: datatypeC("12345").value,
-                      ort: datatypeB("Musterstadt").value,
+                      rollennummer: rollennummerDesZeugen,
+                      rollenbezeichnung: Rollenbezeichnung.Zeuge,
                     },
                   ],
-                },
-              },
-            },
-          } satisfies Beklagter<NachrichtenScope>;
-
-          const prozessbevollmaechtiger = {
-            rolle: [
-              {
-                rollenbezeichnung: Rollenbezeichnung.Prozessbevollmaechtiger,
-                referenz: [
-                  { refRollennummer: reference(rollennummerBeklagter) },
-                ],
-              },
-            ],
-            beteiligter: {
-              auswahlBeteiligter: {
-                natuerlichePerson: {
-                  vollerName: { nachname: datatypeA("Mustermann").value },
-                },
-              },
-            },
-          } satisfies Prozessbevollmaechtiger<NachrichtenScope>;
-
-          const rollennummerFuerZeuge = rollennummer.next(
-            rollennummerBeklagter,
-            Rollenbezeichnung.Zeuge,
-          );
-
-          const zeuge = {
-            rolle: [
-              {
-                rollennummer: rollennummerFuerZeuge,
-                rollenbezeichnung: Rollenbezeichnung.Zeuge,
-              },
-            ],
-            beteiligter: {
-              auswahlBeteiligter: {
-                natuerlichePerson: {
-                  vollerName: { nachname: datatypeA("Beweismann").value },
-                },
-              },
-            },
-          } satisfies Zeuge<NachrichtenScope>;
-
-          const fortlaufendeNummer = createFortlaufendeNummerGenerator(scope);
-
-          const fortlaufendeNummerAnspruch =
-            fortlaufendeNummer.first("Anspruch");
-
-          const sachantraege = {
-            inhalt: datatypeE("Lorem ipsum").value,
-            anspruch: [
-              {
-                fortlaufendeNummer: fortlaufendeNummerAnspruch,
-                anspruchssteller: [
-                  { refRollennummer: reference(rollennummerKlaeger) },
-                ],
-                anspruchsgegner: [
-                  {
-                    refRollennummer: reference(rollennummerBeklagter),
+                  beteiligter: {
+                    auswahlBeteiligter: {
+                      natuerlichePerson: {
+                        vollerName: { nachname },
+                      },
+                    },
                   },
-                ],
-                anspruchsart: Anspruchsart.Zahlung,
-                wertAnspruch: ergonomics.geldbetrag(5000),
+                });
+
+                const beweisNummerDesZeugen = beweisNummer.next(
+                  letzteBeweisNummerFuerZeugen,
+                );
+                letzteBeweisNummerFuerZeugen = beweisNummerDesZeugen;
+
+                accumulator.beweise.push(
+                  ergonomics.zeuge(
+                    scope,
+                    beweisNummerDesZeugen,
+                    rollennummerDesZeugen,
+                  ),
+                );
+
+                return accumulator;
               },
-            ],
-          } satisfies AntraegeFuerZahlungsklage<NachrichtenScope>["sachantraege"];
+              { zeugen: [], beweise: [] },
+            );
 
-          const beweisNummer = createBeweisNummerGenerator(scope);
-          const beweisNummerForZeuge = beweisNummer.first();
-          const beweisOfAZeuge = ergonomics.zeuge(
-            scope,
-            beweisNummerForZeuge,
-            rollennummerFuerZeuge,
-          );
+            const fortlaufendeNummer = createFortlaufendeNummerGenerator(scope);
 
-          const beweisNummerForParteivernehmung =
-            beweisNummer.next(beweisNummerForZeuge);
+            const fortlaufendeNummerAnspruch =
+              fortlaufendeNummer.first("Anspruch");
 
-          const beweisOfAParteivernehmung = ergonomics.parteivernehmung(
-            scope,
-            beweisNummerForParteivernehmung,
-            rollennummerKlaeger,
-          );
+            const sachantraege = {
+              inhalt: datatypeE("Lorem ipsum").value,
+              anspruch: [
+                {
+                  fortlaufendeNummer: fortlaufendeNummerAnspruch,
+                  anspruchssteller: [
+                    { refRollennummer: reference(rollennummerKlaeger) },
+                  ],
+                  anspruchsgegner: [
+                    {
+                      refRollennummer: reference(rollennummerBeklagter),
+                    },
+                  ],
+                  anspruchsart: Anspruchsart.Zahlung,
+                  wertAnspruch: ergonomics.geldbetrag(5000),
+                },
+              ],
+            } satisfies AntraegeFuerZahlungsklage<NachrichtenScope>["sachantraege"];
 
-          const uuid = createUuidGenerator(scope);
-          const vortragsID = uuid.first();
+            const beweisNummerForParteivernehmung = beweisNummer.next(
+              letzteBeweisNummerFuerZeugen,
+            );
 
-          const begruendetheit = {
-            vortrag: [
-              {
-                schlagwort: datatypeC("Zahlungsanspruch").value,
-                vortragsID,
-                ausfuehrungen: {
-                  inhalt: {
-                    tatsachenvortragSachverhaltsbeschreibung: datatypeC(
-                      "Der Zahlungsanspruch besteht aus dem zugrunde liegenden Vertrag.",
-                    ).value,
+            const beweisOfAParteivernehmung = ergonomics.parteivernehmung(
+              scope,
+              beweisNummerForParteivernehmung,
+              rollennummerKlaeger,
+            );
+
+            const uuid = createUuidGenerator(scope);
+            const vortragsID = uuid.first();
+
+            const begruendetheit = {
+              vortrag: [
+                {
+                  schlagwort: datatypeC("Zahlungsanspruch").value,
+                  vortragsID,
+                  ausfuehrungen: {
+                    inhalt: {
+                      tatsachenvortragSachverhaltsbeschreibung: datatypeC(
+                        "Der Zahlungsanspruch besteht aus dem zugrunde liegenden Vertrag.",
+                      ).value,
+                    },
+                    refBeweisNummer: [
+                      reference(beweisNummerForParteivernehmung),
+                    ],
                   },
-                  refBeweisNummer: [
-                    reference(beweisNummerForZeuge),
-                    reference(beweisNummerForParteivernehmung),
+                },
+              ],
+            } satisfies BegruendetheitFuerZahlungsklage<NachrichtenScope>["anderesKlageverfahren"];
+
+            const eigeneNachrichtenID = uuid.next(vortragsID);
+
+            const nachrichtenkopf = ergonomics.nachrichtenkopf(
+              scope,
+              eigeneNachrichtenID,
+              klaeger,
+              Gerichte["ZZ Test-Bund"],
+            );
+
+            const fortlaufendeNummerAnwaltskosten = fortlaufendeNummer.next(
+              fortlaufendeNummerAnspruch,
+              "Anspruch",
+            );
+
+            return verifyZahlungsklage(scope, {
+              nachrichtenkopf,
+              grunddaten: {
+                verfahrensdaten: {
+                  beteiligung: [
+                    klaeger,
+                    gesetzlicherVertreter,
+                    beklagter,
+                    prozessbevollmaechtiger,
+                    ...zeugen,
                   ],
                 },
               },
-            ],
-          } satisfies BegruendetheitFuerZahlungsklage<NachrichtenScope>["anderesKlageverfahren"];
-
-          const eigeneNachrichtenID = uuid.next(vortragsID);
-
-          const nachrichtenkopf = ergonomics.nachrichtenkopf(
-            scope,
-            eigeneNachrichtenID,
-            klaeger,
-            Gerichte["ZZ Test-Bund"],
-          );
-
-          const fortlaufendeNummerAnwaltskosten = fortlaufendeNummer.next(
-            fortlaufendeNummerAnspruch,
-            "Anspruch",
-          );
-
-          return verifyZahlungsklage(scope, {
-            nachrichtenkopf,
-            grunddaten: {
-              verfahrensdaten: {
-                beteiligung: [
-                  klaeger,
-                  gesetzlicherVertreter,
-                  beklagter,
-                  prozessbevollmaechtiger,
-                  zeuge,
-                ],
-              },
-            },
-            inhaltsdaten: {
-              antraege: {
-                sachantraege,
-                nebenantraegeZinsen: {
-                  inhalt: datatypeE("Lorem ipsum").value,
+              inhaltsdaten: {
+                antraege: {
+                  sachantraege,
+                  nebenantraegeZinsen: {
+                    inhalt: datatypeE("Lorem ipsum").value,
+                  },
+                  auswahlSonstigeAntraege: [
+                    ergonomics.antragAufAnwaltskosten(
+                      scope,
+                      fortlaufendeNummerAnwaltskosten,
+                      rollennummerKlaeger,
+                      rollennummerBeklagter,
+                      ergonomics.geldbetrag(850.9),
+                      datatypeE(
+                        "Die beklagte Partei traegt die aussergerichtlich angefallenen Anwaltskosten in Hoehe von 850.90 Euro.",
+                      ).value,
+                    ),
+                    ergonomics.antragAufVersaeumnisurteil(),
+                    ergonomics.weitererAntrag(datatypeE("Lorem ipsum").value),
+                  ],
                 },
-                auswahlSonstigeAntraege: [
-                  ergonomics.antragAufAnwaltskosten(
-                    scope,
-                    fortlaufendeNummerAnwaltskosten,
-                    rollennummerKlaeger,
-                    rollennummerBeklagter,
-                    ergonomics.geldbetrag(850.9),
-                    datatypeE(
-                      "Die beklagte Partei traegt die aussergerichtlich angefallenen Anwaltskosten in Hoehe von 850.90 Euro.",
-                    ).value,
-                  ),
-                  ergonomics.antragAufVersaeumnisurteil(),
-                  ergonomics.weitererAntrag(datatypeE("Lorem ipsum").value),
-                ],
+                beweis: [...beweise, beweisOfAParteivernehmung],
+                auswahlBegruendetheit: {
+                  anderesKlageverfahren: begruendetheit,
+                },
               },
-              beweis: [beweisOfAZeuge, beweisOfAParteivernehmung],
-              auswahlBegruendetheit: {
-                anderesKlageverfahren: begruendetheit,
-              },
-            },
-          });
-        },
-        xjustizToolsConnectionParameter,
-      );
+            });
+          },
+          xjustizToolsConnectionParameter,
+        );
+      }
 
-      expect(message).toMatchObject({ ok: true });
-      expect(JSON.stringify(message)).toContain("<?xml version=");
+      const result = await testComposeAMessage([
+        { nachname: datatypeA("Musterfrau").value },
+        { nachname: datatypeA("Mustermann").value },
+      ]);
+
+      expect(result).toMatchObject({ ok: true });
+      expect(JSON.stringify(result)).toContain("<?xml version=");
     });
   });
 }

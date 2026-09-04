@@ -11,7 +11,6 @@ import {
   type ScopeToken,
   scopedSingleton,
 } from "~/xjustiz-schemata/shared-kernel/scoping";
-import { type Increment } from "~/metatypes";
 
 /**
  * Fortlaufende Nummern are positive integers that are continuously incremented.
@@ -90,10 +89,19 @@ const FortlaufendeNummerProducer: NonDistinctiveGenerator<FortlaufendeNummerValu
     next: (previous) => increment(previous) as FortlaufendeNummerValue,
   };
 
+/**
+ * **ATTENTION:**
+ * Incrementing ordinals for generated identifiers are currently turned off,
+ * because of technical limitations to enable dynamic input lists.
+ */
 interface FortlaufendeNummerGenerator<NachrichtenScope> {
   first: <Bezugselement extends ArtVonBezugselement>(
     bezugselement: Bezugselement,
-  ) => FortlaufendeNummer<NachrichtenScope, Bezugselement, 0>;
+  ) => FortlaufendeNummer<
+    NachrichtenScope,
+    Bezugselement
+    // Turned off: static Ordinal of 0
+  >;
 
   next: <Bezugselement extends ArtVonBezugselement, Ordinal extends number>(
     previous: FortlaufendeNummer<
@@ -102,7 +110,11 @@ interface FortlaufendeNummerGenerator<NachrichtenScope> {
       Ordinal
     >,
     bezugselement: Bezugselement,
-  ) => FortlaufendeNummer<NachrichtenScope, Bezugselement, Increment<Ordinal>>;
+  ) => FortlaufendeNummer<
+    NachrichtenScope,
+    Bezugselement
+    // Turned off: Increment<Ordinal>
+  >;
 }
 
 if (import.meta.vitest) {

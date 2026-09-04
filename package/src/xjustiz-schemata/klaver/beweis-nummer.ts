@@ -12,7 +12,6 @@ import {
   scopedSingleton,
 } from "~/xjustiz-schemata/shared-kernel/scoping";
 import { type Beweis } from "./composites"; // oxlint-disable-line no-unused-vars -- referenced by TSDoc
-import { type Increment } from "~/metatypes";
 
 /**
  * Beweis Nummern are positive integers to identity {@link Beweis}e. They are
@@ -75,12 +74,17 @@ const BeweisNummerProducer: NonDistinctiveGenerator<BeweisNummerValue> = {
   next: (previous) => increment(previous) as BeweisNummerValue,
 };
 
+/**
+ * **ATTENTION:**
+ * Incrementing ordinals for generated identifiers are currently turned off,
+ * because of technical limitations to enable dynamic input lists.
+ */
 interface BeweisNummerGenerator<NachrichtenScope> {
-  first: () => BeweisNummer<NachrichtenScope, 0>;
+  first: () => BeweisNummer<NachrichtenScope /* Turned off: static Ordinal of 0 */>;
 
   next: <Ordinal extends number>(
     previous: BeweisNummer<NachrichtenScope, Ordinal>,
-  ) => BeweisNummer<NachrichtenScope, Increment<Ordinal>>;
+  ) => BeweisNummer<NachrichtenScope /* Turned off: Increment<Ordinal> */>;
 }
 
 if (import.meta.vitest) {

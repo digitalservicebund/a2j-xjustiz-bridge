@@ -4,7 +4,6 @@ import {
   type IsCodeliste,
 } from "~/xjustiz-schemata/shared-kernel/codelisten";
 import { type IndicesOfTuple, type IsTuple } from "~/metatypes";
-import { type VerifyIdentityConstraints } from "~/xjustiz-schemata/shared-kernel/identifiers";
 
 /**
  * A Nachricht based on a `MessageProfile` that was successfully verified as
@@ -24,17 +23,25 @@ export type VerifiedNachricht<MessageProfile> = MessageProfile & {
 declare const TAG: unique symbol;
 
 /**
+ * **!!! WARNING !!!**
+ * Verification of constraints on a type-level is currently turned off due to
+ * technical limitations on dynamic input lists. You **MUST** take great care to
+ * not use the same identifier multiple times (uniqueness constraint) and include
+ * any referenced identifier declaration in the final message (referential
+ * integrity constraint). Until further updates, any violation passes silently.
+ *
  * Type-level verification of multiple constraints on `Nachricht`, based on the
  * related `MessageProfile`. The resolved type can either be a successfully
  * {@link VerifiedNachricht} or all the detected errors.
  */
-export type VerifiedNachrichtOrErrors<Nachricht, MessageProfile> =
-  | VerifyIdentityConstraints<Nachricht>
-  | VerifyNoExcessProperties<Nachricht, MessageProfile> extends infer Errors
-  ? [Errors] extends [never]
-    ? VerifiedNachricht<Nachricht>
-    : Errors
-  : never;
+export type VerifiedNachrichtOrErrors<Nachricht, _MessageProfile> =
+  VerifiedNachricht<Nachricht>;
+// | VerifyIdentityConstraints<Nachricht>
+// | VerifyNoExcessProperties<Nachricht, MessageProfile> extends infer Errors
+// ? [Errors] extends [never]
+//   ? VerifiedNachricht<Nachricht>
+//   : Errors
+// : never;
 
 export type ExcessPropertiesError<ExcessProperties> = TypeError &
   "Found properties in Nachricht not allowed by the message profile. Remove excess properties." & {
@@ -196,6 +203,8 @@ if (import.meta.vitest) {
       >().toEqualTypeOf<VerifiedNachricht<Nachricht>>();
     });
 
+    // oxlint-disable-next-line vitest/no-commented-out-tests
+    /* "Skip" type test due to turned off verification.
     it("resolves to type errors if issues are detected", () => {
       type MessageProfile = { foo: string };
       type Nachricht = { bar: string };
@@ -204,6 +213,7 @@ if (import.meta.vitest) {
         VerifiedNachrichtOrErrors<Nachricht, MessageProfile>
       >().toExtend<TypeError>();
     });
+    */
   });
 
   // oxlint-disable-next-line max-lines-per-function

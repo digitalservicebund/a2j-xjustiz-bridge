@@ -13,7 +13,6 @@ import {
 import {
   type Beteiligung, // oxlint-disable-line no-unused-vars -- reference by TSDoc
 } from "~/xjustiz-schemata/grunddatensatz/composites";
-import { type Increment } from "~/metatypes";
 import { type Rollenbezeichnung } from "~/xjustiz-schemata/grunddatensatz/codelisten";
 
 /**
@@ -103,10 +102,19 @@ function randomRollennummer(): RollennummerValue {
   }
 }
 
+/**
+ * **ATTENTION:**
+ * Incrementing ordinals for generated identifiers are currently turned off,
+ * because of technical limitations to enable dynamic input lists.
+ */
 interface RollennummerGenerator<NachrichtenScope> {
   first: <ZugehoerigeRollenbezeichnung extends Rollenbezeichnung>(
     zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung,
-  ) => Rollennummer<NachrichtenScope, ZugehoerigeRollenbezeichnung, 0>;
+  ) => Rollennummer<
+    NachrichtenScope,
+    ZugehoerigeRollenbezeichnung
+    // Turned off: static Ordinal of 0
+  >;
 
   next: <
     ZugehoerigeRollenbezeichnung extends Rollenbezeichnung,
@@ -116,8 +124,8 @@ interface RollennummerGenerator<NachrichtenScope> {
     zugehoerigeRollenbezeichnung: ZugehoerigeRollenbezeichnung,
   ) => Rollennummer<
     NachrichtenScope,
-    ZugehoerigeRollenbezeichnung,
-    Increment<Ordinal>
+    ZugehoerigeRollenbezeichnung
+    // Turned off: Increment<Ordinal>
   >;
 }
 
