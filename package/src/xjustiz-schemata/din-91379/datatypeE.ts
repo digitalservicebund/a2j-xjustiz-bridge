@@ -1,3 +1,4 @@
+// oxlint-disable max-lines -- tests take a lot of lines
 import {
   type ConsumeCharactersFrom,
   type DeepLiteralToPrimitive,
@@ -22,8 +23,10 @@ import {
   type NichtBuchstabenN3,
   type NichtBuchstabenN4,
 } from "./schriftzeichengruppe";
-import { type DatatypeC } from "./datatypeC"; // oxlint-disable-line no-unused-vars -- referenced by TSDoc
-import { type DatatypeD } from "./datatypeD"; // oxlint-disable-line no-unused-vars -- referenced by TSDoc
+import { type DatatypeA } from "./datatypeA";
+import { type DatatypeB } from "./datatypeB";
+import { type DatatypeC } from "./datatypeC";
+import { type DatatypeD } from "./datatypeD";
 import { findInvalidCharacters } from "./unicode";
 import { transformXsdPatternToJavaScriptExpression } from "~/xjustiz-schemata/xml-schema-definition/restriction-pattern";
 
@@ -131,26 +134,40 @@ export const datatypeE = defineRefinedType(isString, parseDatatypeE);
 
 /**
  * Adapted version of the default {@link Array.prototype.join} operation that
- * maintains the invariants of {@link DatatypeE}.
+ * maintains the invariants of {@link DatatypeE}. Also supports passing
+ * and mixing {@link DatatypeA}, {@link DatatypeB}, {@link DatatypeC} and
+ * {@link DatatypeD} values, as any of them is also a valid {@link DatatypeE}.
+ * Any `undefined` entry in `segments` is filtered automatically.
  *
  * @example
  * ```typescript
- * const fullName = join(
- *   datatypeE(" ").value,
- *   datatypeE("Lorem").value,
- *   datatypeE("ipsum").value,
- *   datatypeE("dolor").value,
+ * const output = join(
+ *   datatypeA(" ").value,
+ *   datatypeB("Lorem").value,
+ *   datatypeC("ipsum").value,
+ *   datatypeD("dolor").value,
+ *   undefined,
+ *   datatypeE("sit").value,
  * );
- * // "Lorem ipsum dolor" - still DatatypeE no plain string
+ * // "Lorem ipsum dolor sit" - still DatatypeE no plain string
  * ```
  */
 export function join(
-  separator: DatatypeE,
+  separator: DatatypeA | DatatypeB | DatatypeC | DatatypeD | DatatypeE,
   // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- false positive
-  ...segments: readonly DatatypeE[]
+  ...segments: readonly (
+    | DatatypeA
+    | DatatypeB
+    | DatatypeC
+    | DatatypeD
+    | DatatypeE
+    | undefined
+  )[]
 ): DatatypeE {
   // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
-  return segments.join(separator) as unknown as DatatypeE;
+  return segments
+    .filter((segment) => segment !== undefined)
+    .join(separator) as unknown as DatatypeE;
 }
 
 /*
@@ -180,9 +197,15 @@ if (import.meta.vitest) {
     const {
       assert,
       property,
+      oneof,
+      constant,
       string: arbitraryString,
       array: arbitraryArray,
     } = await import("fast-check");
+    const { datatypeA } = await import("./datatypeA");
+    const { datatypeB } = await import("./datatypeB");
+    const { datatypeC } = await import("./datatypeC");
+    const { datatypeD } = await import("./datatypeD");
 
     // oxlint-disable-next-line max-lines-per-function -- normal describe block
     describe("runtime parsing", () => {
@@ -319,22 +342,26 @@ if (import.meta.vitest) {
     });
 
     describe("join", () => {
-      it("correctly joins all segments with the given seperator", () => {
+      it("correctly joins all segments with the given seperator, filtering undefined segments", () => {
         const output = join(
-          datatypeE(" ").value,
-          datatypeE("Lorem").value,
-          datatypeE("ipsum").value,
-          datatypeE("dolor").value,
+          datatypeA(" ").value,
+          datatypeB("Lorem").value,
+          datatypeC("ipsum").value,
+          datatypeD("dolor").value,
+          undefined,
+          datatypeE("sit").value,
         );
 
-        expect(output).toEqual("Lorem ipsum dolor");
+        expect(output).toEqual("Lorem ipsum dolor sit");
       });
 
       it("produces only valid DatatypeE outputs that could be parsed again", () => {
         assert(
           property(
-            arbitraryDatatypeE(),
-            arbitraryArray(arbitraryDatatypeE()),
+            arbitraryDatatypeAOrBOrCOrDOrE(),
+            arbitraryArray(
+              oneof(arbitraryDatatypeAOrBOrCOrDOrE(), constant(undefined)), // oxlint-disable-line no-useless-undefined -- valid test case
+            ),
             (separator, segments) => {
               const output = join(separator, ...segments);
               expect(datatypeE(output)).toStrictEqual({ value: output });
@@ -359,11 +386,29 @@ if (import.meta.vitest) {
       );
     });
 
-    function arbitraryDatatypeE() {
-      return arbitraryString({ unit: "grapheme" })
-        .map((input) => datatypeE(input))
-        .filter((result) => result.issues === undefined)
-        .map((result) => result.value);
+    function arbitraryDatatypeAOrBOrCOrDOrE() {
+      function arbitraryDatatype(
+        // oxlint-disable-next-line prefer-readonly-parameter-types -- false positive
+        factory:
+          | typeof datatypeA
+          | typeof datatypeB
+          | typeof datatypeC
+          | typeof datatypeD
+          | typeof datatypeE,
+      ) {
+        return arbitraryString({ unit: "grapheme" })
+          .map((input) => factory(input))
+          .filter((result) => result.issues === undefined)
+          .map((result) => result.value);
+      }
+
+      return oneof(
+        arbitraryDatatype(datatypeA),
+        arbitraryDatatype(datatypeB),
+        arbitraryDatatype(datatypeC),
+        arbitraryDatatype(datatypeD),
+        arbitraryDatatype(datatypeE),
+      );
     }
   });
 }

@@ -17,7 +17,7 @@ import {
   type NichtBuchstabenN1,
   type NichtBuchstabenN2,
 } from "./schriftzeichengruppe";
-import { type DatatypeA } from "./datatypeA"; // oxlint-disable-line no-unused-vars -- referenced by TSDoc
+import { type DatatypeA } from "./datatypeA";
 import { findInvalidCharacters } from "./unicode";
 import { transformXsdPatternToJavaScriptExpression } from "~/xjustiz-schemata/xml-schema-definition/restriction-pattern";
 
@@ -109,26 +109,32 @@ export const datatypeB = defineRefinedType(isString, parseDatatypeB);
 
 /**
  * Adapted version of the default {@link Array.prototype.join} operation that
- * maintains the invariants of {@link DatatypeB}.
+ * maintains the invariants of {@link DatatypeB}. Also supports passing
+ * and mixing {@link DatatypeA} values, as any {@link DatentypA} is also a valid
+ * {@link DatatypeB}. Any `undefined` entry in `segments` is filtered
+ * automatically.
  *
  * @example
  * ```typescript
  * const fullAddress = join(
- *   datatypeB(" ").value,
+ *   datatypeA(" ").value,
  *   datatypeB("Musterstraße").value,
  *   datatypeB("1A").value,
+ *   undefined,
  *   datatypeB("Musterstadt").value,
  * );
  * // "Musterstraße 1A Musterstadt" - still DatatypeB no plain string
  * ```
  */
 export function join(
-  separator: DatatypeB,
+  separator: DatatypeA | DatatypeB,
   // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- false positive
-  ...segments: readonly DatatypeB[]
+  ...segments: readonly (DatatypeA | DatatypeB | undefined)[]
 ): DatatypeB {
   // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
-  return segments.join(separator) as unknown as DatatypeB;
+  return segments
+    .filter((segment) => segment !== undefined)
+    .join(separator) as unknown as DatatypeB;
 }
 
 /*
@@ -163,9 +169,12 @@ if (import.meta.vitest) {
     const {
       assert,
       property,
+      oneof,
+      constant,
       string: arbitraryString,
       array: arbitraryArray,
     } = await import("fast-check");
+    const { datatypeA } = await import("./datatypeA");
 
     // oxlint-disable-next-line max-lines-per-function -- normal describe block
     describe("runtime parsing", () => {
@@ -317,11 +326,12 @@ if (import.meta.vitest) {
     });
 
     describe("join", () => {
-      it("correctly joins all segments with the given seperator", () => {
+      it("correctly joins all segments with the given seperator, filtering undefined segments", () => {
         const output = join(
-          datatypeB(" ").value,
+          datatypeA(" ").value,
           datatypeB("Musterstraße").value,
           datatypeB("1A").value,
+          undefined,
           datatypeB("Musterstadt").value,
         );
         expect(output).toEqual("Musterstraße 1A Musterstadt");
@@ -330,8 +340,10 @@ if (import.meta.vitest) {
       it("produces only valid DatatypeB outputs that could be parsed again", () => {
         assert(
           property(
-            arbitraryDatatypeB(),
-            arbitraryArray(arbitraryDatatypeB()),
+            arbitraryDatatypeAOrB(),
+            arbitraryArray(
+              oneof(arbitraryDatatypeAOrB(), constant(undefined)), // oxlint-disable-line no-useless-undefined -- valid test case
+            ),
             (separator, segments) => {
               const output = join(separator, ...segments);
               expect(datatypeB(output)).toStrictEqual({ value: output });
@@ -356,11 +368,17 @@ if (import.meta.vitest) {
       );
     });
 
-    function arbitraryDatatypeB() {
-      return arbitraryString({ unit: "grapheme" })
-        .map((input) => datatypeB(input))
-        .filter((result) => result.issues === undefined)
-        .map((result) => result.value);
+    function arbitraryDatatypeAOrB() {
+      function arbitraryDatatype(
+        factory: typeof datatypeA | typeof datatypeB, // oxlint-disable-line prefer-readonly-parameter-types -- false positive
+      ) {
+        return arbitraryString({ unit: "grapheme" })
+          .map((input) => factory(input))
+          .filter((result) => result.issues === undefined)
+          .map((result) => result.value);
+      }
+
+      return oneof(arbitraryDatatype(datatypeA), arbitraryDatatype(datatypeB));
     }
   });
 }

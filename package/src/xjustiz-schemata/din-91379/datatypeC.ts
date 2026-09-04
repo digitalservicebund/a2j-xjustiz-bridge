@@ -19,7 +19,8 @@ import {
   type NichtBuchstabenN3,
   type NichtBuchstabenN4,
 } from "./schriftzeichengruppe";
-import { type DatatypeB } from "./datatypeB"; // oxlint-disable-line no-unused-vars -- referenced by TSDoc
+import { type DatatypeA } from "./datatypeA";
+import { type DatatypeB } from "./datatypeB";
 import { findInvalidCharacters } from "./unicode";
 import { transformXsdPatternToJavaScriptExpression } from "~/xjustiz-schemata/xml-schema-definition/restriction-pattern";
 
@@ -119,26 +120,32 @@ export const datatypeC = defineRefinedType(isString, parseDatatypeC);
 
 /**
  * Adapted version of the default {@link Array.prototype.join} operation that
- * maintains the invariants of {@link DatatypeC}.
+ * maintains the invariants of {@link DatatypeC}. Also supports passing
+ * and mixing {@link DatatypeA} and {@link DatatypeB} values, as any of them is
+ * also a valid {@link DatatypeC}. Any `undefined` entry in `segments` is
+ * filtered automatically.
  *
  * @example
  * ```typescript
- * const fullName = join(
- *   datatypeC(" ").value,
+ * const output = join(
+ *   datatypeA(" ").value,
  *   datatypeC("Lorem").value,
- *   datatypeC("ipsum").value,
+ *   datatypeB("ipsum").value,
+ *   undefined,
  *   datatypeC("dolor").value,
  * );
  * // "Lorem ipsum dolor" - still DatatypeC no plain string
  * ```
  */
 export function join(
-  separator: DatatypeC,
+  separator: DatatypeA | DatatypeB | DatatypeC,
   // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- false positive
-  ...segments: readonly DatatypeC[]
+  ...segments: readonly (DatatypeA | DatatypeB | DatatypeC | undefined)[]
 ): DatatypeC {
   // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
-  return segments.join(separator) as unknown as DatatypeC;
+  return segments
+    .filter((segment) => segment !== undefined)
+    .join(separator) as unknown as DatatypeC;
 }
 
 /*
@@ -169,9 +176,13 @@ if (import.meta.vitest) {
     const {
       assert,
       property,
+      oneof,
+      constant,
       string: arbitraryString,
       array: arbitraryArray,
     } = await import("fast-check");
+    const { datatypeA } = await import("./datatypeA");
+    const { datatypeB } = await import("./datatypeB");
 
     // oxlint-disable-next-line max-lines-per-function -- normal describe block
     describe("runtime parsing", () => {
@@ -323,11 +334,12 @@ if (import.meta.vitest) {
     });
 
     describe("join", () => {
-      it("correctly joins all segments with the given seperator", () => {
+      it("correctly joins all segments with the given seperator, filtering undefined segments", () => {
         const output = join(
-          datatypeC(" ").value,
+          datatypeA(" ").value,
           datatypeC("Lorem").value,
-          datatypeC("ipsum").value,
+          datatypeB("ipsum").value,
+          undefined,
           datatypeC("dolor").value,
         );
 
@@ -337,8 +349,10 @@ if (import.meta.vitest) {
       it("produces only valid DatatypeC outputs that could be parsed again", () => {
         assert(
           property(
-            arbitraryDatatypeC(),
-            arbitraryArray(arbitraryDatatypeC()),
+            arbitraryDatatypeAOrBOrC(),
+            arbitraryArray(
+              oneof(arbitraryDatatypeAOrBOrC(), constant(undefined)), // oxlint-disable-line no-useless-undefined -- valid test case
+            ),
             (separator, segments) => {
               const output = join(separator, ...segments);
               expect(datatypeC(output)).toStrictEqual({ value: output });
@@ -363,11 +377,21 @@ if (import.meta.vitest) {
       );
     });
 
-    function arbitraryDatatypeC() {
-      return arbitraryString({ unit: "grapheme" })
-        .map((input) => datatypeC(input))
-        .filter((result) => result.issues === undefined)
-        .map((result) => result.value);
+    function arbitraryDatatypeAOrBOrC() {
+      function arbitraryDatatype(
+        factory: typeof datatypeA | typeof datatypeB | typeof datatypeC, // oxlint-disable-line prefer-readonly-parameter-types -- false positive
+      ) {
+        return arbitraryString({ unit: "grapheme" })
+          .map((input) => factory(input))
+          .filter((result) => result.issues === undefined)
+          .map((result) => result.value);
+      }
+
+      return oneof(
+        arbitraryDatatype(datatypeA),
+        arbitraryDatatype(datatypeB),
+        arbitraryDatatype(datatypeC),
+      );
     }
   });
 }

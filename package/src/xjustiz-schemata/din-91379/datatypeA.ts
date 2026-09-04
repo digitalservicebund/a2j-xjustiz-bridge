@@ -113,14 +113,16 @@ export const datatypeA = defineRefinedType(isString, parseDatatypeA);
 
 /**
  * Adapted version of the default {@link Array.prototype.join} operation that
- * maintains the invariants of {@link DatatypeA}.
- *
+ * maintains the invariants of {@link DatatypeA}. Any `undefined` entry in
+ * `segments` is filtered automatically.
+
  * @example
  * ```typescript
  * const fullName = join(
  *   datatypeA(" ").value,
  *   datatypeA("Frau").value,
  *   datatypeA("Erika").value,
+ *   undefined,
  *   datatypeA("Musterfrau").value,
  * );
  * // "Frau Erika Musterfrau" - still DatatypeA no plain string
@@ -129,10 +131,12 @@ export const datatypeA = defineRefinedType(isString, parseDatatypeA);
 export function join(
   separator: DatatypeA,
   // oxlint-disable-next-line typescript/prefer-readonly-parameter-types -- false positive
-  ...segments: readonly DatatypeA[]
+  ...segments: readonly (DatatypeA | undefined)[]
 ): DatatypeA {
   // oxlint-disable-next-line no-unsafe-type-assertion -- explicit assertion for branding
-  return segments.join(separator) as unknown as DatatypeA;
+  return segments
+    .filter((segment) => segment !== undefined)
+    .join(separator) as unknown as DatatypeA;
 }
 
 /*
@@ -169,6 +173,8 @@ if (import.meta.vitest) {
     const {
       assert,
       property,
+      oneof,
+      constant,
       string: arbitraryString,
       array: arbitraryArray,
     } = await import("fast-check");
@@ -317,11 +323,12 @@ if (import.meta.vitest) {
     });
 
     describe("join", () => {
-      it("correctly joins all segments with the given seperator", () => {
+      it("correctly joins all segments with the given seperator, filtering undefined segments", () => {
         const output = join(
           datatypeA(" ").value,
           datatypeA("Frau").value,
           datatypeA("Erika").value,
+          undefined,
           datatypeA("Musterfrau").value,
         );
 
@@ -332,7 +339,9 @@ if (import.meta.vitest) {
         assert(
           property(
             arbitraryDatatypeA(),
-            arbitraryArray(arbitraryDatatypeA()),
+            arbitraryArray(
+              oneof(arbitraryDatatypeA(), constant(undefined)), // oxlint-disable-line no-useless-undefined -- valid test case
+            ),
             (separator, segments) => {
               const output = join(separator, ...segments);
               expect(datatypeA(output)).toStrictEqual({ value: output });
