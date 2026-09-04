@@ -1,4 +1,8 @@
 // oxlint-disable max-lines
+import {
+  type Codelisteneintrag,
+  type IsCodeliste,
+} from "~/xjustiz-schemata/shared-kernel/codelisten";
 import { type IndicesOfTuple, type IsTuple } from "~/metatypes";
 import { type VerifyIdentityConstraints } from "~/xjustiz-schemata/shared-kernel/identifiers";
 
@@ -45,15 +49,20 @@ type VerifyNoExcessProperties<Nachricht, MessageProfile> =
     : Unreachable;
 
 type FindExcessProperties<Nachricht, MessageProfile> =
-  HasMatchingVariantOfMessageProfileWithoutExcessProperties<
-    Nachricht,
-    MessageProfile
-  > extends true
-    ? AllGood
-    : Exclude<
-        FindExcessPropertiesAgainst<Nachricht, MessageProfile>,
-        StructuralIncompatibilityIssues
-      >;
+  // Improve performance by skipping potentially huge unions of Codelisten
+  IsCodeliste<MessageProfile> extends true
+    ? [Nachricht] extends [object]
+      ? Exclude<keyof Nachricht, keyof MessageProfile> // Potential excess property keys!
+      : StructuralIncompatibilityIssues
+    : HasMatchingVariantOfMessageProfileWithoutExcessProperties<
+          Nachricht,
+          MessageProfile
+        > extends true
+      ? AllGood
+      : Exclude<
+          FindExcessPropertiesAgainst<Nachricht, MessageProfile>,
+          StructuralIncompatibilityIssues
+        >;
 
 /**
  * A `MessageProfile` can define type unions on different levels in the
@@ -146,7 +155,7 @@ type FindExcessPropertiesBetweenObjects<
   Nachricht extends object,
   MessageProfile extends object,
 > =
-  | Exclude<keyof Nachricht, keyof MessageProfile> // Excess property keys!
+  | Exclude<keyof Nachricht, keyof MessageProfile> // Potential excess property keys!
   | FindExcessPropertiesInSharedKeys<Nachricht, MessageProfile>;
 
 type FindExcessPropertiesInSharedKeys<
@@ -395,6 +404,34 @@ if (import.meta.vitest) {
       it("finds excess for a Nachricht that does not match a union with undefined", () => {
         type MessageProfile = { foo: string | undefined };
         type Nachricht = { foo: string; excess: number };
+
+        expectTypeOf<
+          VerifyNoExcessProperties<Nachricht, MessageProfile>
+        >().toEqualTypeOf<ExcessPropertiesError<"excess">>();
+      });
+    });
+
+    describe("for message profiles with Codelisten", () => {
+      it("is all good for a Nachricht with matching Codeliste", () => {
+        type MessageProfile = {
+          something:
+            | Codelisteneintrag<"foo", "0">
+            | Codelisteneintrag<"bar", "1">;
+        };
+        type Nachricht = { something: Codelisteneintrag<"bar", "1"> };
+
+        expectTypeOf<
+          VerifyNoExcessProperties<Nachricht, MessageProfile>
+        >().toBeNever();
+      });
+
+      it("it finds excess properties for a Nachricht with non clean Codelisteneintrag", () => {
+        type MessageProfile = {
+          something:
+            | Codelisteneintrag<"foo", "0">
+            | Codelisteneintrag<"bar", "1">;
+        };
+        type Nachricht = { something: { code: "1"; excess: "bar" } };
 
         expectTypeOf<
           VerifyNoExcessProperties<Nachricht, MessageProfile>

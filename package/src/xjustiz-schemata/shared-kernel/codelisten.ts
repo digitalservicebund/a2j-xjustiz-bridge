@@ -67,6 +67,14 @@ type Codeliste<Eintraege extends Codelisteneintraege> = {
     : never;
 };
 
+export type IsCodeliste<MaybeCodeliste> = [MaybeCodeliste] extends [
+  Codelisteneintrag<string, string>,
+]
+  ? [keyof MaybeCodeliste] extends [keyof Codelisteneintrag<string, string>]
+    ? true
+    : false
+  : false;
+
 /**
  * Prettifies the display of Codelisteinträge, conserving the name to improve
  * comprehensibility.
@@ -87,6 +95,7 @@ export interface Codelisteneintrag<_Name extends string, Code extends string> {
 if (import.meta.vitest) {
   const { describe, it, expect, expectTypeOf } = import.meta.vitest;
 
+  // oxlint-disable-next-line max-lines-per-function
   describe("Codelisten", () => {
     it("wraps the Code of each Eintrag in an object", () => {
       const codeliste = defineCodeliste({
@@ -114,6 +123,62 @@ if (import.meta.vitest) {
         | Codelisteneintrag<"Weiblich", "2">
         | Codelisteneintrag<"Divers", "3">
       >();
+    });
+
+    // oxlint-disable-next-line max-lines-per-function
+    describe("is Codeliste", () => {
+      it("is true for a Codeliste with single Codelisteneintrag", () => {
+        expectTypeOf<
+          IsCodeliste<Codelisteneintrag<"foo", "0">>
+        >().toEqualTypeOf<true>();
+      });
+
+      it("is true for a Codeliste with multiple Codelisteneinträge", () => {
+        expectTypeOf<
+          IsCodeliste<
+            | Codelisteneintrag<"foo", "0">
+            | Codelisteneintrag<"bar", "1">
+            | Codelisteneintrag<"baz", "2">
+          >
+        >().toEqualTypeOf<true>();
+      });
+
+      it("is true for a Codeliste in plain object shape", () => {
+        expectTypeOf<
+          IsCodeliste<{ code: "0" } | { code: "1" }>
+        >().toEqualTypeOf<true>();
+      });
+
+      it("is false for an intersected Codeliste", () => {
+        expectTypeOf<
+          IsCodeliste<Codelisteneintrag<"foo", "0"> & { something: "else" }>
+        >().toEqualTypeOf<false>();
+      });
+
+      it("is false for a Codelisten similar object shape with additional properties", () => {
+        expectTypeOf<
+          IsCodeliste<{ code: "0"; name: "foo" } | { code: "1"; name: "bar" }>
+        >().toEqualTypeOf<false>();
+      });
+
+      it("is false for a union that doesn't include Codelisteneinträge only", () => {
+        expectTypeOf<
+          IsCodeliste<
+            | Codelisteneintrag<"foo", "0">
+            | { something: "else" }
+            | Codelisteneintrag<"baz", "2">
+          >
+        >().toEqualTypeOf<false>();
+      });
+
+      it("is false for various other plain types", () => {
+        expectTypeOf<IsCodeliste<string>>().toEqualTypeOf<false>();
+        expectTypeOf<IsCodeliste<number>>().toEqualTypeOf<false>();
+        expectTypeOf<IsCodeliste<boolean>>().toEqualTypeOf<false>();
+        expectTypeOf<IsCodeliste<symbol>>().toEqualTypeOf<false>();
+        expectTypeOf<IsCodeliste<object>>().toEqualTypeOf<false>();
+        expectTypeOf<IsCodeliste<string[]>>().toEqualTypeOf<false>();
+      });
     });
   });
 }
