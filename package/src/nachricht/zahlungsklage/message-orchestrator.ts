@@ -358,33 +358,21 @@ if (import.meta.vitest) {
           } satisfies BegruendetheitFuerZahlungsklage<NachrichtenScope>["anderesKlageverfahren"];
 
           const eigeneNachrichtenID = uuid.next(vortragsID);
+
+          const nachrichtenkopf = ergonomics.nachrichtenkopf(
+            scope,
+            eigeneNachrichtenID,
+            klaeger,
+            Gerichte["ZZ Test-Bund"],
+          );
+
           const fortlaufendeNummerAnwaltskosten = fortlaufendeNummer.next(
             fortlaufendeNummerAnspruch,
             "Anspruch",
           );
 
           return verifyZahlungsklage(scope, {
-            nachrichtenkopf: {
-              xjustizVersion: "3.6.2",
-              erstellungszeitpunkt: Temporal.Now.instant(),
-              absender: {
-                informationen: {
-                  auswahlKommunikationspartner: {
-                    sonstige: datatypeD("Herr Dr. Max Mustermann").value,
-                  },
-                },
-                eigeneNachrichtenID,
-              },
-              empfaenger: {
-                informationen: {
-                  auswahlKommunikationspartner: {
-                    gericht: Gerichte["ZZ Test-Bund"],
-                  },
-                },
-                auswahlAktenzeichen: { aktenzeichenNeu: true },
-              },
-              herstellerinformation: ergonomics.herstellerinformation(),
-            },
+            nachrichtenkopf,
             grunddaten: {
               verfahrensdaten: {
                 beteiligung: [

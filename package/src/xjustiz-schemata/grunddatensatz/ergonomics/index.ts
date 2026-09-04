@@ -1,3 +1,3 @@
 export * from "./geldbetrag";
+export * from "./herstellerinformation";
 export * from "./kommunikation";
-export * from "./nachrichtenkopf";

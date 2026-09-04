@@ -8,6 +8,7 @@ export default defineConfig({
     env: {
       PACKAGE_VERSION: JSON.stringify(package_.version),
     },
+    restoreMocks: true,
     projects: [
       {
         resolve: {
