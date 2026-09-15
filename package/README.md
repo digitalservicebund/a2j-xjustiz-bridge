@@ -314,7 +314,7 @@ const compositionResult = zahlungsklage(
     // See documentation section for identifiers
     const rollennummer = createRollennummerGenerator(scope);
     const rollennummerFuerKlaeger = rollennummer.first(
-      Rollenbezeichnung.Klaeger,
+      Rollenbezeichnung["Kläger(in)"],
     );
 
     const klaeger = {
@@ -322,7 +322,7 @@ const compositionResult = zahlungsklage(
         {
           rollennummer: rollennummerFuerKlaeger,
           // See documentation for Codelisten
-          rollenbezeichnung: Rollenbezeichnung.Klaeger,
+          rollenbezeichnung: Rollenbezeichnung["Kläger(in)"],
         },
       ],
       beteiligter: {
@@ -332,7 +332,7 @@ const compositionResult = zahlungsklage(
               // See documentation section for refined types
               nachname: datatypeA("Mustermann").value,
             },
-            geschlecht: Geschlecht.Weiblich,
+            geschlecht: Geschlecht.weiblich,
             anschrift: [
               {
                 strasse: datatypeB("Musterstrasse").value,
@@ -346,14 +346,14 @@ const compositionResult = zahlungsklage(
 
     const rollennummerFuerGesetzlichenVertreter = rollennummer.next(
       rollennummerFuerKlaeger,
-      Rollenbezeichnung.GesetzlicherVertreter,
+      Rollenbezeichnung["Gesetzliche(r) Vertreter(in)"],
     );
 
     const gesetzlicherVertreter = {
       rolle: [
         {
           rollennummer: rollennummerFuerGesetzlichenVertreter,
-          rollenbezeichnung: Rollenbezeichnung.GesetzlicherVertreter,
+          rollenbezeichnung: Rollenbezeichnung["Gesetzliche(r) Vertreter(in)"]
           geschaeftszeichen: datatypeC("KM-0042-2026").value,
           referenz: [{ refRollennummer: reference(rollennummerFuerKlaeger) }],
         },
@@ -715,13 +715,15 @@ In the following example, the `Rollennummer` identifier has an associated
 ```typescript
 zahlungsklage((scope) => {
   const rollennummer = createRollennummerGenerator(scope);
-  const rollennummerFuerKlaeger = rollennummer.first(Rollenbezeichnung.Klaeger);
+  const rollennummerFuerKlaeger = rollennummer.first(
+    Rollenbezeichnung["Kläger(in)"],
+  );
 
   const klaeger = {
     rolle: [
       {
         rollennummer: rollennummerFuerKlaeger,
-        rollenbezeichnung: Rollenbezeichnung.Klaeger,
+        rollenbezeichnung: Rollenbezeichnung["Kläger(in)"],
       },
     ],
     // ...
@@ -729,7 +731,7 @@ zahlungsklage((scope) => {
 
   const rollennummerFuerBeklagter = rollennummer.next(
     rollennummerFuerKlaeger,
-    Rollenbezeichnung.Beklagter,
+    Rollenbezeichnung["Beklagte(r)"],
   );
 
   // ...
@@ -749,13 +751,15 @@ used for declaration too.
 ```typescript
 zahlungsklage((scope) => {
   const rollennummer = createRollennummerGenerator(scope);
-  const rollennummerFuerKlaeger = rollennummer.first(Rollenbezeichnung.Klaeger);
+  const rollennummerFuerKlaeger = rollennummer.first(
+    Rollenbezeichnung["Kläger(in)"],
+  );
 
   const klaeger = {
     rolle: [
       {
         rollennummer: rollennummerFuerKlaeger,
-        rollenbezeichnung: Rollenbezeichnung.Klaeger,
+        rollenbezeichnung: Rollenbezeichnung["Kläger(in)"],
       },
     ],
     // ...
@@ -786,8 +790,8 @@ programming language. Though, their look and feel is similar.
 
 Codelisten are scalar values. During composition, their descriptive name is used
 primarily. The final message only includes the related code. For example,
-`Rollenbezeichnung` is a Codeliste. The Codelisteneintrag by the name `Klaeger`
-maps to `{ "code": "101" }`. `Rollenbezeichnung` is the type as well as the related
+`Rollenbezeichnung` is a Codeliste. The Codelisteneintrag for `Kläger(in)` maps
+to `{ "code": "101" }`. `Rollenbezeichnung` is the type as well as the related
 constant object map of the Codeliste.
 
 ```typescript
@@ -795,7 +799,7 @@ zahlungsklage((scope) => {
   const klaeger = {
     rolle: [
       {
-        rollenbezeichnung: Rollenbezeichnung.Klaeger,
+        rollenbezeichnung: Rollenbezeichnung["Kläger(in)"],
       },
     ],
     // ...
@@ -803,6 +807,11 @@ zahlungsklage((scope) => {
   // ...
 }, connectionParameters);
 ```
+
+Some Codelisten map directly to selective user inputs. Therefore, keys are
+based on the original descriptive field of a Codeliste. This allows them to be
+used directly in the user interface with user facing descriptions to select
+from.
 
 #### Accessing the Scope Type Directly
 
