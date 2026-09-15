@@ -8,6 +8,7 @@ import {
   type Geschlecht,
   type Kanzleiform,
   type Rollenbezeichnung,
+  type Staaten,
   type Telekommunikationsart,
   type Waehrung,
   type Zinsmethode,
@@ -127,6 +128,7 @@ export interface Anschrift {
   hausnummer?: DatatypeB;
   postleitzahl?: DatatypeC;
   ort?: DatatypeB;
+  staat?: Staaten;
 }
 
 /**

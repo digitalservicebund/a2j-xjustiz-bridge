@@ -18,6 +18,7 @@ export {
   Geschlecht,
   Kanzleiform,
   Rollenbezeichnung,
+  Staaten,
   Telekommunikationsart,
   Waehrung,
   Zinsmethode,

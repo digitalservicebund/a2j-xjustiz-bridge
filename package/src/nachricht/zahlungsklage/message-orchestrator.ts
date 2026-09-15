@@ -127,7 +127,7 @@ if (import.meta.vitest) {
     const { createRollennummerGenerator } = await import(
       "~/xjustiz-schemata/grunddatensatz/rollennummer"
     );
-    const { Gerichte, Geschlecht, Kanzleiform, Rollenbezeichnung } =
+    const { Gerichte, Geschlecht, Kanzleiform, Rollenbezeichnung, Staaten } =
       await import("~/xjustiz-schemata/grunddatensatz/codelisten");
     const { Anspruchsart } = await import(
       "~/xjustiz-schemata/klaver/codelisten"
@@ -177,6 +177,7 @@ if (import.meta.vitest) {
                         hausnummer: datatypeB("1").value,
                         postleitzahl: datatypeC("12345").value,
                         ort: datatypeB("Musterstadt").value,
+                        staat: Staaten.Deutschland,
                       },
                     ],
                     telekommunikation: [
