@@ -6,33 +6,33 @@ import {
 
 export type Geschlecht = InferCodeliste<typeof Geschlecht>;
 export const Geschlecht = defineCodeliste({
-  Unbekannt: "0",
-  Maennlich: "1",
-  Weiblich: "2",
-  Divers: "3",
-  Saechlich: "4",
+  unbekannt: "0",
+  männlich: "1",
+  weiblich: "2",
+  divers: "3",
+  sächlich: "4",
 });
 
 export type Kanzleiform = InferCodeliste<typeof Kanzleiform>;
 export const Kanzleiform = defineCodeliste({
   Einzelanwalt: "001",
-  Sozietaet: "002",
+  Sozietät: "002",
 });
 
 export type Rollenbezeichnung = InferCodeliste<typeof Rollenbezeichnung>;
 export const Rollenbezeichnung = defineCodeliste({
-  Beklagter: "028",
-  GesetzlicherVertreter: "088",
-  Klaeger: "101",
-  Prozessbevollmaechtiger: "132",
-  Zeuge: "202",
+  "Beklagte(r)": "028",
+  "Gesetzliche(r) Vertreter(in)": "088",
+  "Kläger(in)": "101",
+  "Prozessbevollmächtigte(r)": "132",
+  "Zeuge (Zeugin)": "202",
 });
 
 export type Telekommunikationsart = InferCodeliste<
   typeof Telekommunikationsart
 >;
 export const Telekommunikationsart = defineCodeliste({
-  EMail: "001",
+  "E-Mail": "001",
   Telefon: "007",
 });
 
@@ -43,19 +43,17 @@ export const Waehrung = defineCodeliste({
 
 export type Zinsmethode = InferCodeliste<typeof Zinsmethode>;
 export const Zinsmethode = defineCodeliste({
-  JaehrlicherZinssatzUeberBasiszins: "002",
+  "jährlicher Zinssatz Über Basiszins": "002",
 });
 
 export type Gerichte = InferCodeliste<typeof Gerichte>;
 
 /**
  * Full list of all Gerichte as of Code.GDS.Gericht version 3.7, without
- * obsolete ("aufgelöst") Codelisteneinträge. As exception, names have been left
- * untouched to improve compatibility and clarity.
+ * obsolete ("aufgelöst") Codelisteneinträge.
  *
  * For users of the "Orts- and Gerichtsverzeichnis":
- * They key name of an entry refers to the column called `Wert` in the
- * XRepository Codeliste. It matches the field `BEZEICHNUNG` in the
+ * The keys ("Wert") of a Codelisteneintrag matches the field `BEZEICHNUNG` in the
  * Gerichtsverzeichnis. The code values are equal to the `XJUSTIZID` field.
  */
 export const Gerichte = defineCodeliste({

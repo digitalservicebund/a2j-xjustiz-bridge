@@ -52,11 +52,11 @@ export function antragAufAnwaltskosten<
   const Nummer extends FortlaufendeNummer<NachrichtenScope, "Anspruch">,
   const RollennummerDesKlaegers extends Rollennummer<
     NachrichtenScope,
-    typeof Rollenbezeichnung.Klaeger
+    (typeof Rollenbezeichnung)["Kläger(in)"]
   >,
   const RollennummerDesBeklagten extends Rollennummer<
     NachrichtenScope,
-    typeof Rollenbezeichnung.Beklagter
+    (typeof Rollenbezeichnung)["Beklagte(r)"]
   >,
 >(
   _scope: ScopeToken<NachrichtenScope>,
@@ -91,7 +91,8 @@ export function antragAufVersaeumnisurteil(): AntragAufVersaeumnisurteil {
   return {
     antragSonstige: {
       auswahlAntragSonstige: {
-        antragWerteliste: AntragCodeliste.AntragAufVersaeumnisurteil,
+        antragWerteliste:
+          AntragCodeliste["Antrag auf Versäumnisurteil, § 331 Abs. 3 ZPO"],
       },
     },
   };
@@ -140,11 +141,11 @@ if (import.meta.vitest) {
       withScope((scope) => {
         const rollennummer = createRollennummerGenerator(scope);
         const rollennummerDesKlaegers = rollennummer.first(
-          Rollenbezeichnung.Klaeger,
+          Rollenbezeichnung["Kläger(in)"],
         );
         const rollennummerDesBeklagten = rollennummer.next(
           rollennummerDesKlaegers,
-          Rollenbezeichnung.Beklagter,
+          Rollenbezeichnung["Beklagte(r)"],
         );
         const fortlaufendeNummerForAnwaltskosten =
           createFortlaufendeNummerGenerator(scope).first("Anspruch");

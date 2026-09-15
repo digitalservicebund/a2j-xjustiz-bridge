@@ -84,15 +84,15 @@ function mapGeschlechtToAndrede(
 ): DatatypeD | undefined {
   switch (geschlecht) {
     case undefined:
-    case Geschlecht.Unbekannt:
-    case Geschlecht.Divers:
-    case Geschlecht.Saechlich: {
+    case Geschlecht.unbekannt:
+    case Geschlecht.divers:
+    case Geschlecht.sächlich: {
       return undefined;
     }
-    case Geschlecht.Maennlich: {
+    case Geschlecht.männlich: {
       return datatypeD("Herr").value;
     }
-    case Geschlecht.Weiblich: {
+    case Geschlecht.weiblich: {
       return datatypeD("Frau").value;
     }
     default: {
@@ -136,13 +136,13 @@ if (import.meta.vitest) {
         const eigeneNachrichtenID = uuid.first();
         const rollennummer = createRollennummerGenerator(scope);
         const rollennummerDesKlaegers = rollennummer.first(
-          Rollenbezeichnung.Klaeger,
+          Rollenbezeichnung["Kläger(in)"],
         );
         const klaeger = {
           rolle: [
             {
               rollennummer: rollennummerDesKlaegers,
-              rollenbezeichnung: Rollenbezeichnung.Klaeger,
+              rollenbezeichnung: Rollenbezeichnung["Kläger(in)"],
             },
           ],
           beteiligter: {
@@ -197,7 +197,7 @@ if (import.meta.vitest) {
         },
         {
           klaeger: {
-            geschlecht: Geschlecht.Divers,
+            geschlecht: Geschlecht.divers,
             vollerName: {
               vorname: datatypeA("Charlie").value,
               nachname: datatypeA("Musterperson").value,
@@ -207,7 +207,7 @@ if (import.meta.vitest) {
         },
         {
           klaeger: {
-            geschlecht: Geschlecht.Weiblich,
+            geschlecht: Geschlecht.weiblich,
             vollerName: {
               vorname: datatypeA("Erika").value,
               nachname: datatypeA("Musterfrau").value,
@@ -217,7 +217,7 @@ if (import.meta.vitest) {
         },
         {
           klaeger: {
-            geschlecht: Geschlecht.Maennlich,
+            geschlecht: Geschlecht.männlich,
             vollerName: {
               titel: datatypeC("Dr.").value,
               vorname: datatypeA("Max").value,
@@ -228,7 +228,7 @@ if (import.meta.vitest) {
         },
         {
           klaeger: {
-            geschlecht: Geschlecht.Maennlich,
+            geschlecht: Geschlecht.männlich,
             vollerName: {
               titel: datatypeC("\u000D").value,
               nachname: datatypeA("Mustermann").value,

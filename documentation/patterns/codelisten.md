@@ -7,39 +7,39 @@ Codelisten. These are basically fixed lists of possible code values with
 description — like an enumeration. Each Codelisteneintrag is identifies by its
 code. This is also the only part that is included in an XJustiz-Nachricht for
 transfer in the shape of `{ "code": "107" }` in JSON. Furthermore, each
-Codelisteneintrag usually has some descriptive field that is more human readable
-like Wert, Name, or Bezeichnung. For example, in the Codeliste for Geschlecht
-the code `2` has the Wert `weiblich`. Or in the Codeliste for Währung the code
-`EUR` has the Beschreibung `Euro`.
+Codelisteneintrag has some descriptive field that is more human readable
+like Wert or Name. For example, in the Codeliste for Geschlecht the code `2` has
+the Wert `weiblich`. Or in the Codeliste for Währung the code `EUR` has the
+Beschreibung `Euro`. The universal name by the underlying specification is
+Bezeichnung.
 
 When composing an XJustiz-Nachricht, Codelisten must be a restrictive type
 by the schema, but it should also be possible to provide values in a human
-readable format.
+readable format. Furthermore, some Codelisten map directly to selective input
+elements for users in a graphical user interface. It should be possible to use
+Codelisten directly for such purposes too.
 
 ## Solution
 
 Each Codeliste is represented as combination of a constant object mapping and
 a related type. The mapping has an entry per Codelisteneintrag
-The name of each entry should be based on a descriptive field that suits this
-purpose best (short, concise). The value becomes the code itself in the expected
-wrapper shape (`{ code: "107" }`). The related type is basically the union of
-all codes in the list.
+The key of each entry is the Beschreibung field that suits this purpose best
+(short, concise). The value becomes the code itself in the expected wrapper shape
+(`{ code: "107" }`). The related type is basically the union of all codes in the
+list.
 
-The mapping makes the Codeleisteneinträge accessible by descriptive name for
-application without having to know the codes. The data itself properly contains
-the actual code as expected by the schemata. Because a constant object is used,
-the type can be inferred by the compiler.
+The mapping makes the Codeleisteneinträge accessible by descriptive key for
+application without having to know the codes. This also allows them to be used
+directly for selective user inputs. The data itself properly contains the actual
+code as expected by the schemata. Because a constant object is used, the type
+can be inferred by the compiler.
 
-The names of Codelisteneinträge are in PascalCase, as it is idiomatic for
-enumerations. The chosen descriptive field of the respective Codeliste must be
-formatted for compliance. Fields like Wert are usually concise, but can still
-contain whitespaces, dashes, and other symbols not allowed as member name. After
-all, the name must only be just clear enough. [Design
-principles](../../DESIGN_PRINCIPLES.md#german-domain-language) for the German
-language in code apply — like transliterations. However, there might be
-exceptions where such formatting is harmful. In such cases plain strings can be
-used as keys. Though, this can affect users negatively, because they have to use
-the bracket notation then (`SomeCodelist["some name"]`).
+The Beschreibungen are taken unchanged from the original Codelisten. That
+sometimes requires to wrap them with quotation marks as proper strings, in case
+the Bezeichnung includes a character not allowed for identifiers in the
+programming language. For example, whitespace characters or parenthesis.
+Unfortunately, this creates some friction, because it requires the more verbose
+bracket notation for usage (e.g. `MyCodeliste["Some Bezeichnung"]`).
 
 While the codes for many Codelisten look like numbers, they are technically
 strings. This can't be simplified, because there are codes like `"012"`, which
@@ -57,12 +57,12 @@ An example looks like this:
 type Geschlecht = InferCodeliste<typeof Codeliste>;
 
 const Geschlecht = defineCodeliste({
-  Maennlich: "1",
-  Weiblich: "2",
-  Divers: "3",
+  männlich: "1",
+  weiblich: "2",
+  divers: "3",
 });
 
-const weiblich: { readonly code: "2" } = Geschlecht.Weiblich;
+const weiblich: { readonly code: "2" } = Geschlecht.weiblich;
 ```
 
 The types provided by the shared implementation try to maximize the developer

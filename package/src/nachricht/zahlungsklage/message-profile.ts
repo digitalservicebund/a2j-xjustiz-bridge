@@ -110,9 +110,9 @@ export interface Klaeger<NachrichtenScope> {
     {
       rollennummer: Rollennummer<
         NachrichtenScope,
-        typeof Rollenbezeichnung.Klaeger
+        (typeof Rollenbezeichnung)["Kläger(in)"]
       >;
-      rollenbezeichnung: typeof Rollenbezeichnung.Klaeger;
+      rollenbezeichnung: (typeof Rollenbezeichnung)["Kläger(in)"];
     },
   ];
   beteiligter: {
@@ -125,10 +125,13 @@ export interface Klaeger<NachrichtenScope> {
 export interface GesetzlicherVertreter<NachrichtenScope> {
   rolle: [
     {
-      rollenbezeichnung: typeof Rollenbezeichnung.GesetzlicherVertreter;
+      rollenbezeichnung: (typeof Rollenbezeichnung)["Gesetzliche(r) Vertreter(in)"];
       geschaeftszeichen?: DatatypeC;
       referenz: [
-        RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Klaeger>,
+        RefRollennummer<
+          NachrichtenScope,
+          (typeof Rollenbezeichnung)["Kläger(in)"]
+        >,
       ];
     },
   ];
@@ -148,9 +151,9 @@ export interface BeklagtePerson<NachrichtenScope> {
     {
       rollennummer: Rollennummer<
         NachrichtenScope,
-        typeof Rollenbezeichnung.Beklagter
+        (typeof Rollenbezeichnung)["Beklagte(r)"]
       >;
-      rollenbezeichnung: typeof Rollenbezeichnung.Beklagter;
+      rollenbezeichnung: (typeof Rollenbezeichnung)["Beklagte(r)"];
     },
   ];
   beteiligter: {
@@ -165,9 +168,9 @@ export interface BeklagteOrganisation<NachrichtenScope> {
     {
       rollennummer: Rollennummer<
         NachrichtenScope,
-        typeof Rollenbezeichnung.Beklagter
+        (typeof Rollenbezeichnung)["Beklagte(r)"]
       >;
-      rollenbezeichnung: typeof Rollenbezeichnung.Beklagter;
+      rollenbezeichnung: (typeof Rollenbezeichnung)["Beklagte(r)"];
     },
   ];
   beteiligter: {
@@ -180,9 +183,12 @@ export interface BeklagteOrganisation<NachrichtenScope> {
 export interface Prozessbevollmaechtiger<NachrichtenScope> {
   rolle: [
     {
-      rollenbezeichnung: typeof Rollenbezeichnung.Prozessbevollmaechtiger;
+      rollenbezeichnung: (typeof Rollenbezeichnung)["Prozessbevollmächtigte(r)"];
       referenz: [
-        RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Beklagter>,
+        RefRollennummer<
+          NachrichtenScope,
+          (typeof Rollenbezeichnung)["Beklagte(r)"]
+        >,
       ];
     },
   ];
@@ -198,9 +204,9 @@ export interface Zeuge<NachrichtenScope> {
     {
       rollennummer: Rollennummer<
         NachrichtenScope,
-        typeof Rollenbezeichnung.Zeuge
+        (typeof Rollenbezeichnung)["Zeuge (Zeugin)"]
       >;
-      rollenbezeichnung: typeof Rollenbezeichnung.Zeuge;
+      rollenbezeichnung: (typeof Rollenbezeichnung)["Zeuge (Zeugin)"];
     },
   ];
   beteiligter: {
@@ -217,10 +223,16 @@ export interface AntraegeFuerZahlungsklage<NachrichtenScope> {
       {
         fortlaufendeNummer: FortlaufendeNummer<NachrichtenScope, "Anspruch">;
         anspruchssteller: [
-          RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Klaeger>,
+          RefRollennummer<
+            NachrichtenScope,
+            (typeof Rollenbezeichnung)["Kläger(in)"]
+          >,
         ];
         anspruchsgegner: [
-          RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Beklagter>,
+          RefRollennummer<
+            NachrichtenScope,
+            (typeof Rollenbezeichnung)["Beklagte(r)"]
+          >,
         ];
         anspruchsart: typeof Anspruchsart.Zahlung;
         wertAnspruch: Geldbetrag;
@@ -263,7 +275,7 @@ export interface AntragAufAnwaltskosten<NachrichtenScope> {
 export interface AntragAufVersaeumnisurteil {
   antragSonstige: {
     auswahlAntragSonstige: {
-      antragWerteliste: typeof AntragCodeliste.AntragAufVersaeumnisurteil;
+      antragWerteliste: (typeof AntragCodeliste)["Antrag auf Versäumnisurteil, § 331 Abs. 3 ZPO"];
     };
   };
 }
@@ -281,10 +293,13 @@ export interface WeitererAntrag {
 export interface AnspruchFuerZahlungsklage<NachrichtenScope> {
   fortlaufendeNummer: FortlaufendeNummer<NachrichtenScope, "Anspruch">;
   anspruchssteller: [
-    RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Klaeger>,
+    RefRollennummer<NachrichtenScope, (typeof Rollenbezeichnung)["Kläger(in)"]>,
   ];
   anspruchsgegner: [
-    RefRollennummer<NachrichtenScope, typeof Rollenbezeichnung.Beklagter>,
+    RefRollennummer<
+      NachrichtenScope,
+      (typeof Rollenbezeichnung)["Beklagte(r)"]
+    >,
   ];
   anspruchsart: typeof Anspruchsart.Zahlung;
   wertAnspruch: Geldbetrag;

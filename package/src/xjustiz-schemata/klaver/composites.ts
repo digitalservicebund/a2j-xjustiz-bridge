@@ -62,13 +62,13 @@ export interface Beweis<NachrichtenScope> {
     | {
         zeugen: RefRollennummer<
           NachrichtenScope,
-          typeof Rollenbezeichnung.Zeuge
+          (typeof Rollenbezeichnung)["Zeuge (Zeugin)"]
         >;
       }
     | {
         parteivernehmung: RefRollennummer<
           NachrichtenScope,
-          typeof Rollenbezeichnung.Klaeger | typeof Rollenbezeichnung.Beklagter
+          (typeof Rollenbezeichnung)["Kläger(in)" | "Beklagte(r)"]
         >;
       };
 }

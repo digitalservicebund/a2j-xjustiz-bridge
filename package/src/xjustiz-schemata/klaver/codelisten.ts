@@ -10,5 +10,5 @@ export const Anspruchsart = defineCodeliste({
 
 export type AntragCodeliste = InferCodeliste<typeof AntragCodeliste>;
 export const AntragCodeliste = defineCodeliste({
-  AntragAufVersaeumnisurteil: "001",
+  "Antrag auf Versäumnisurteil, § 331 Abs. 3 ZPO": "001",
 });

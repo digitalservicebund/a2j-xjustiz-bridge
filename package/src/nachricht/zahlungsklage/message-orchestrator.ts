@@ -152,14 +152,14 @@ if (import.meta.vitest) {
           <NachrichtenScope>(scope: ScopeToken<NachrichtenScope>) => {
             const rollennummer = createRollennummerGenerator(scope);
             const rollennummerKlaeger = rollennummer.first(
-              Rollenbezeichnung.Klaeger,
+              Rollenbezeichnung["Kläger(in)"],
             );
 
             const klaeger = {
               rolle: [
                 {
                   rollennummer: rollennummerKlaeger,
-                  rollenbezeichnung: Rollenbezeichnung.Klaeger,
+                  rollenbezeichnung: Rollenbezeichnung["Kläger(in)"],
                 },
               ],
               beteiligter: {
@@ -170,7 +170,7 @@ if (import.meta.vitest) {
                       titel: datatypeC("Dr.").value,
                       nachname: datatypeA("Mustermann").value,
                     },
-                    geschlecht: Geschlecht.Maennlich,
+                    geschlecht: Geschlecht.männlich,
                     anschrift: [
                       {
                         strasse: datatypeB("Musterstrasse").value,
@@ -199,7 +199,8 @@ if (import.meta.vitest) {
             const gesetzlicherVertreter = {
               rolle: [
                 {
-                  rollenbezeichnung: Rollenbezeichnung.GesetzlicherVertreter,
+                  rollenbezeichnung:
+                    Rollenbezeichnung["Gesetzliche(r) Vertreter(in)"],
                   geschaeftszeichen: datatypeC("KM-0042-2026").value,
                   referenz: [
                     { refRollennummer: reference(rollennummerKlaeger) },
@@ -226,7 +227,7 @@ if (import.meta.vitest) {
                         vorname: datatypeA("Erika").value,
                         nachname: datatypeA("Mustermann").value,
                       },
-                      geschlecht: Geschlecht.Weiblich,
+                      geschlecht: Geschlecht.weiblich,
                       beruf: [datatypeC("Rechtsanwaeltin").value],
                       telekommunikation: [
                         ergonomics.telefon(datatypeC("01234567891").value),
@@ -242,14 +243,14 @@ if (import.meta.vitest) {
 
             const rollennummerBeklagter = rollennummer.next(
               rollennummerKlaeger,
-              Rollenbezeichnung.Beklagter,
+              Rollenbezeichnung["Beklagte(r)"],
             );
 
             const beklagter = {
               rolle: [
                 {
                   rollennummer: rollennummerBeklagter,
-                  rollenbezeichnung: Rollenbezeichnung.Beklagter,
+                  rollenbezeichnung: Rollenbezeichnung["Beklagte(r)"],
                 },
               ],
               beteiligter: {
@@ -274,7 +275,8 @@ if (import.meta.vitest) {
             const prozessbevollmaechtiger = {
               rolle: [
                 {
-                  rollenbezeichnung: Rollenbezeichnung.Prozessbevollmaechtiger,
+                  rollenbezeichnung:
+                    Rollenbezeichnung["Prozessbevollmächtigte(r)"],
                   referenz: [
                     { refRollennummer: reference(rollennummerBeklagter) },
                   ],
@@ -301,7 +303,7 @@ if (import.meta.vitest) {
               (accumulator, { nachname }) => {
                 const rollennummerDesZeugen = rollennummer.next(
                   letzteRollennummerFuerZeugen,
-                  Rollenbezeichnung.Zeuge,
+                  Rollenbezeichnung["Zeuge (Zeugin)"],
                 );
                 letzteRollennummerFuerZeugen = rollennummerDesZeugen;
 
@@ -309,7 +311,7 @@ if (import.meta.vitest) {
                   rolle: [
                     {
                       rollennummer: rollennummerDesZeugen,
-                      rollenbezeichnung: Rollenbezeichnung.Zeuge,
+                      rollenbezeichnung: Rollenbezeichnung["Zeuge (Zeugin)"],
                     },
                   ],
                   beteiligter: {

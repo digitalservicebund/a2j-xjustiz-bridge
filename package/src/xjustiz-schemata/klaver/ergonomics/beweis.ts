@@ -10,8 +10,8 @@ import { type ScopeToken } from "~/xjustiz-schemata/shared-kernel/scoping";
 
 /**
  * Constructs a {@link Beweis} with Zeugen as Beweismittel. The referenced
- * Beteiligung which acts as Zeuge must have {@link Rollenbezeichnung.Zeuge} as
- * one of their roles.
+ * Beteiligung which acts as Zeuge must have the matching
+ * {@link Rollenbezeichnung} as one of their roles.
  *
  * @example
  * ```typescript
@@ -34,7 +34,7 @@ export function zeuge<
   const Nummer extends BeweisNummer<NachrichtenScope>,
   const RollennummerDesZeugen extends Rollennummer<
     NachrichtenScope,
-    typeof Rollenbezeichnung.Zeuge
+    (typeof Rollenbezeichnung)["Zeuge (Zeugin)"]
   >,
 >(
   _scope: ScopeToken<NachrichtenScope>,
@@ -59,7 +59,7 @@ export function zeuge<
  * someMessageOrchestrator((scope) => {
  *   // Define the Beteiligung of the Partei to be interrogated.
  *   const rollennummer = createRollennummerGenerator(scope);
- *   const rollennummerDesKlaegers = rollennummer.first(Rollenbezeichnung.Klaeger);
+ *   const rollennummerDesKlaegers = rollennummer.first(Rollenbezeichnung["Kläger(in)"]);
  *   // ...
  *
  *   const beweisNummer = createBeweisNummerGenerator(scope);
@@ -79,7 +79,7 @@ export function parteivernehmung<
   const Nummer extends BeweisNummer<NachrichtenScope>,
   const RollennummerDerPartei extends Rollennummer<
     NachrichtenScope,
-    typeof Rollenbezeichnung.Klaeger | typeof Rollenbezeichnung.Beklagter
+    (typeof Rollenbezeichnung)["Kläger(in)" | "Beklagte(r)"]
   >,
 >(
   _scope: ScopeToken<NachrichtenScope>,
@@ -116,7 +116,7 @@ if (import.meta.vitest) {
       withScope((scope) => {
         const rollennummer = createRollennummerGenerator(scope);
         const rollennummerDesZeugen = rollennummer.first(
-          Rollenbezeichnung.Zeuge,
+          Rollenbezeichnung["Zeuge (Zeugin)"],
         );
         const beweisNummer = createBeweisNummerGenerator(scope);
         const beweisNummerForZeuge = beweisNummer.first();
@@ -148,7 +148,7 @@ if (import.meta.vitest) {
       withScope((scope) => {
         const rollennummer = createRollennummerGenerator(scope);
         const rollennummerDesKlaegers = rollennummer.first(
-          Rollenbezeichnung.Klaeger,
+          Rollenbezeichnung["Kläger(in)"],
         );
         const beweisNummer = createBeweisNummerGenerator(scope);
         const beweisNummerForParteivernehmung = beweisNummer.first();
