@@ -114,6 +114,16 @@ High level composed workflows to verify staged changes or for continuous
 integration pipelines.
 _Example:_ `verify:staged-changes`
 
+## Setup Task Dependencies
+
+Various tasks usually depend on certain setup tasks. Multiple tasks depend on
+the same setup. Therefore, setup tasks should always set the option `run: once`.
+Thereby, the same setup task will only run once before all other tasks that
+depend on it. The task orchestrator can properly resolves the task dependency
+graph. Without this option set, the same setup task will run multiple times,
+potentially concurrently, causing race issues. Especially when combined with
+caching, like having a `sources` option defined.
+
 ## Tasks Working on File Lists
 
 Tasks that `check` or `fix` something should read list of files from
