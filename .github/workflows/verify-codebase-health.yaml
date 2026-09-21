@@ -3,10 +3,17 @@ name: verify codebase health
 on:
   schedule:
     - cron: 0 0 * * * # nightly
+
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify-codebase-health:
+    name: Verify Codebase Health
     runs-on: ubuntu-latest
     steps:
       - name: checkout codebase
@@ -15,7 +22,7 @@ jobs:
           persist-credentials: false
 
       - name: log into container registry
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}

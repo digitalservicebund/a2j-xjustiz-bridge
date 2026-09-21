@@ -10,8 +10,14 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify-codebase-integrity:
+    name: Verify Codebase Integrity
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -60,7 +66,7 @@ jobs:
           key: style-packages-${{ hashFiles('.vale.ini') }}-v1
 
       - name: log into registry to access XJustiz-Tools service OCI image
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
