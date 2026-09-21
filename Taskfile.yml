@@ -192,7 +192,6 @@ tasks:
       FILES: '{{ .CLI_ARGS_LIST | join "\n" }}'
       FILTERED_FILES: '{{ regexFindAll "(?m)^\\.github/.*$" .FILES -1 | join " " }}'
     if: "{{ empty .FILES | or (not (empty .FILTERED_FILES)) }}"
-    cmd: zizmor --cache-dir ./.task/zizmor {{ .FILTERED_FILES | default "./" }}
     cmd: zizmor --quiet --cache-dir ./.task/zizmor {{ .FILTERED_FILES | default "./" }}
 
   fix:lint:continuous-integration-workflows:security:

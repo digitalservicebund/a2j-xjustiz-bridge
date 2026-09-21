@@ -6,7 +6,7 @@ updates:
     schedule:
       interval: "daily"
     cooldown:
-      default-days: 3
+      default-days: 7
     groups:
       patch-updates:
         update-types:
@@ -17,4 +17,4 @@ updates:
     schedule:
       interval: "daily"
     cooldown:
-      default-days: 3
+      default-days: 7
