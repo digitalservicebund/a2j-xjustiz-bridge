@@ -6,7 +6,6 @@ on:
 
 permissions:
   contents: read
-  packages: read
 jobs:
   verify-codebase-integrity:
     runs-on: ubuntu-latest
