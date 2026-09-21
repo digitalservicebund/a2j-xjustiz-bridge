@@ -117,15 +117,17 @@ tasks:
   check:lint:
     desc: check for semantic rules (supports list of files as argument)
     deps:
-      - check:lint:markdown
-      - check:lint:github-actions-workflows
       - check:lint:typescript
+      - check:lint:markdown
+      - check:lint:continuous-integration-workflows
+      - check:lint:continuous-integration-workflows:security
 
   fix:lint:
     desc: apply automated fixes for linting issues where possible (supports list of files as argument)
     deps:
-      - fix:lint:markdown
       - fix:lint:typescript
+      - fix:lint:markdown
+      - fix:lint:continuous-integration-workflows:security
 
   check:lint:typescript:
     desc: check TypeScript files for semantic rules (supports list of files as argument)
@@ -169,15 +171,41 @@ tasks:
     if: "{{ empty .FILES | or (not (empty .FILTERED_FILES)) }}"
     cmd: markdownlint-cli2 --fix '{{ .FILTERED_FILES | default .ALL_FILES }}'
 
-  check:lint:github-actions-workflows:
-    desc: check GitHub Actions workflows for semantic rules (supports list of files as argument)
+  check:lint:continuous-integration-workflows:
+    desc: check continuous integration workflows for semantic rules (supports list of files as argument)
     internal: true
     deps: [setup:development-environment]
     vars:
       FILES: '{{ .CLI_ARGS_LIST | join "\n" }}'
-      FILTERED_FILES: '{{ regexFindAll "(?m)^.github/workflows*$" .FILES -1 | join " " }}'
+      FILTERED_FILES: '{{ regexFindAll "(?m)^\\.github/workflows/.*$" .FILES -1 | join " " }}'
     if: "{{ empty .FILES | or (not (empty .FILTERED_FILES)) }}"
     cmd: actionlint {{ .FILTERED_FILES | default "" }}
+
+  check:lint:continuous-integration-workflows:security:
+    desc: check continuous integration workflows for security issues (supports list of files as argument)
+    internal: true
+    deps: [setup:development-environment]
+    env:
+      GITHUB_TOKEN:
+        sh: echo "${GITHUB_TOKEN:-$(gh auth token 2>/dev/null || true)}"
+    vars:
+      FILES: '{{ .CLI_ARGS_LIST | join "\n" }}'
+      FILTERED_FILES: '{{ regexFindAll "(?m)^\\.github/.*$" .FILES -1 | join " " }}'
+    if: "{{ empty .FILES | or (not (empty .FILTERED_FILES)) }}"
+    cmd: zizmor --cache-dir ./.task/zizmor {{ .FILTERED_FILES | default "./" }}
+    cmd: zizmor --quiet --cache-dir ./.task/zizmor {{ .FILTERED_FILES | default "./" }}
+
+  fix:lint:continuous-integration-workflows:security:
+    desc: apply automated fixed for security issues in continuous integration workflows where possible (supports list of files as argument)
+    internal: true
+    deps: [setup:development-environment]
+    vars:
+      GITHUB_TOKEN:
+        sh: echo "${GITHUB_TOKEN:-$(gh auth token 2>/dev/null || true)}"
+      FILES: '{{ .CLI_ARGS_LIST | join "\n" }}'
+      FILTERED_FILES: '{{ regexFindAll "(?m)^\\.github/.*$" .FILES -1 | join " " }}'
+    if: "{{ empty .FILES | or (not (empty .FILTERED_FILES)) }}"
+    cmd: zizmor --fix --cache-dir ./.task/zizmor {{ .FILTERED_FILES | default "./" }}
 
   check:spell-and-style:
     desc: check spelling and technical writing style in prose (supports list of files as argument)

@@ -12,18 +12,6 @@ composed tasks by the [central workflow orchestrator](./task.md), which are
 called by [GitHub Actions "workflows"](../../.github/workflows/) inside remote
 environments.
 
-## Referencing by Hashes
-
-For supply chain security, container images and remote actions are fully
-referenced by their hash. For convenience, the related version number is added
-as comment behind it.
-
-Example:
-
-```yaml
-uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-```
-
 ## Manual Cache Versioning
 
 All keys for our caches must be suffixed with a version number. The base key

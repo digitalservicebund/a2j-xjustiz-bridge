@@ -16,7 +16,8 @@
     "vscode-js-debug@1.117.0",
     "devbox@0.17.5",
     "tsgolint@0.24.0",
-    "trivy@0.72.0"
+    "trivy@0.72.0",
+    "zizmor@1.29.0"
   ],
   "env": {
     "DEVBOX_COREPACK_ENABLED": "true"
