@@ -80,6 +80,7 @@ tasks:
       - check:spell-and-style
       - check:link-validity
       - check:license
+      - check:file-and-directory-names
       - check:matching-devbox-versions
 
   fix:
@@ -205,7 +206,7 @@ tasks:
       FILES: '{{ .CLI_ARGS_LIST | join "\n" }}'
       FILTERED_FILES: '{{ regexFindAll "(?m)^\\.github/.*$" .FILES -1 | join " " }}'
     if: "{{ empty .FILES | or (not (empty .FILTERED_FILES)) }}"
-    cmd: zizmor --persona=pedantic --fix --cache-dir ./.task/zizmor {{ .FILTERED_FILES | default "./" }}
+    cmd: zizmor --persona=pedantic --quiet --fix --cache-dir ./.task/zizmor {{ .FILTERED_FILES | default "./" }}
 
   check:spell-and-style:
     desc: check spelling and technical writing style in prose (supports list of files as argument)
@@ -239,6 +240,11 @@ tasks:
     env:
       TRIVY_CACHE_DIR: ./.task/cache/trivy
     cmd: trivy fs --scanners vuln --exit-code 1 --include-dev-deps --severity HIGH,CRITICAL --quiet --table-mode detailed ./
+
+  check:file-and-directory-names:
+    desc: ensure all file and directory nt ciames follow the naming scheme (supports list of files as argument)
+    deps: [setup:development-environment]
+    cmd: ls_lint {{ .CLI_ARGS | default .ALL_PROJECT_FILES }}
 
   check:matching-devbox-versions:
     desc: check that the versions for Devbox match between `devbox.json` and GitHub Actions

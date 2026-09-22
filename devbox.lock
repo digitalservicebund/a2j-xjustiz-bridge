@@ -430,6 +430,54 @@
         }
       }
     },
+    "ls-lint@2.3.1": {
+      "last_modified": "2026-08-27T07:16:00Z",
+      "resolved": "github:NixOS/nixpkgs/c27cdad491a991b11ed731760aa2ef8db0cb0410#ls-lint",
+      "source": "devbox-search",
+      "version": "2.3.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/rx5iymaxizpgxs2j2y2g8rxg55qy5xja-ls-lint-2.3.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/rx5iymaxizpgxs2j2y2g8rxg55qy5xja-ls-lint-2.3.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/nnbycs9vllhkdv80waikx0awxxhbczz3-ls-lint-2.3.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/nnbycs9vllhkdv80waikx0awxxhbczz3-ls-lint-2.3.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/s9d3p2q95kjdq9qnwdi0fynw00p055p6-ls-lint-2.3.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/s9d3p2q95kjdq9qnwdi0fynw00p055p6-ls-lint-2.3.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/wj60yy13s9vssabbnsz77m2hzd46hy0n-ls-lint-2.3.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/wj60yy13s9vssabbnsz77m2hzd46hy0n-ls-lint-2.3.1"
+        }
+      }
+    },
     "lychee@0.23.0": {
       "last_modified": "2026-03-21T07:29:51Z",
       "resolved": "github:NixOS/nixpkgs/09061f748ee21f68a089cd5d91ec1859cd93d0be#lychee",

@@ -1,0 +1,16 @@
+ls:
+  .*: kebab-case
+  .dir: kebab-case
+
+ignore:
+  # Public Conventions:
+  - "**/README.md"
+  - AGENTS.md
+  - ARCHITECTURE.md
+  - CODE_OF_CONDUCT.md
+  - CONTRIBUTING.md
+  - DESIGN_PRINCIPLES.md
+  - GLOSSARY.md
+  - SECURITY.md
+  # Miscellaneous:
+  - Taskfile.yml # Expected file name by Task tool.
