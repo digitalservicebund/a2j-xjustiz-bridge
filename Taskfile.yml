@@ -231,14 +231,14 @@ tasks:
     deps: [setup:development-environment]
     env:
       TRIVY_CACHE_DIR: ./.task/cache/trivy
-    cmd: trivy fs --scanners license --exit-code 1 --include-dev-deps --severity HIGH,CRITICAL .
+    cmd: trivy fs --scanners license --quiet --exit-code 1 --include-dev-deps --severity HIGH,CRITICAL --quiet --table-mode detailed ./
 
   check:vulnerability:
     desc: scan the codebase for vulnerabilities using Trivy
     deps: [setup:development-environment]
     env:
       TRIVY_CACHE_DIR: ./.task/cache/trivy
-    cmd: trivy fs --scanners vuln --exit-code 1 --include-dev-deps --severity HIGH,CRITICAL .
+    cmd: trivy fs --scanners vuln --exit-code 1 --include-dev-deps --severity HIGH,CRITICAL --quiet --table-mode detailed ./
 
   check:matching-devbox-versions:
     desc: check that the versions for Devbox match between `devbox.json` and GitHub Actions

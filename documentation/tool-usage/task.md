@@ -124,6 +124,15 @@ graph. Without this option set, the same setup task will run multiple times,
 potentially concurrently, causing race issues. Especially when combined with
 caching, like having a `sources` option defined.
 
+## Keep Check Tasks Silent
+
+The main `check` task is one of the most important ones. It groups a big chunk
+of static analysis tools as part of the quality assurance. Too much output
+creates noise, that makes it troublesome to see the actual issues. In case
+everything is alright, this task should be silent. Only issues are reported.
+This requires to find the correct parameters of a tool to tweak its output. In
+rare cases, custom scripting in the tasks definition is necessary.
+
 ## Tasks Working on File Lists
 
 Tasks that `check` or `fix` something should read list of files from
