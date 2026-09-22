@@ -21,7 +21,9 @@ within the development environment.
 This requires to have a local Nix setup. The recommended way is to use
 the universal [nix-installer](https://github.com/DeterminateSystems/nix-installer).
 Notice that Nix is not a single binary but has a substantial footprint onto your
-system. However, it is highly recommended.
+system. However, it is highly recommended. Afterward, Devbox itself must be
+installed. Make sure to have a [matching
+version](#ensure-matching-devbox-versions).
 
 For single shot execution, the `devbox run <something>` command can be used. It
 will automatically install everything missing and runs the given command inside
@@ -81,7 +83,25 @@ this includes tooling that requires certain privileges by the operation system
 like for container runtimes. The shell to interpret commands belongs to this
 scope as well for now, but is up for discussion as common source of frustration.
 
-## Use Exact Versions
+## Ensure Matching Devbox Versions
+
+To improve compatibility, we try to fix the Devbox version. Therefore, Devbox
+itself gets installed into the development environment as well. Hence, the to
+use version is "documented" in the `devbox.json` file. It is also the version
+that will be used within an active development environment. Thereby, any
+modifications to the environment should always be applied from within it.
+However, there is a bootstrap problem. The first initial installation requires
+a machine local installation outside the environment. Furthermore, the same
+installation is required to activate the development environment. It is the
+responsibility of each contributor to have matching version installed on their
+machine.
+
+Furthermore, Devbox will be installed to the machines provided by the
+[continuous integration service](./github-actions.md). The versions must match
+to ensure integrity and reproducibility. A custom quality assurance check
+automatically detects drift.
+
+## Use Exact Package Versions
 
 Instead of adding packages with an implicit "latest" version, specify an exact
 version. For example, instead of just `devbox add git`, run `devbox add

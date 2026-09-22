@@ -80,6 +80,7 @@ tasks:
       - check:spell-and-style
       - check:link-validity
       - check:license
+      - check:matching-devbox-versions
 
   fix:
     desc: fix issues that can be automatically resolved like for formatting (supports list of files as argument)
@@ -238,6 +239,26 @@ tasks:
     env:
       TRIVY_CACHE_DIR: ./.task/cache/trivy
     cmd: trivy fs --scanners vuln --exit-code 1 --include-dev-deps --severity HIGH,CRITICAL .
+
+  check:matching-devbox-versions:
+    desc: check that the versions for Devbox match between `devbox.json` and GitHub Actions
+    deps: [setup:development-environment]
+    vars:
+      DEVBOX_VERSION:
+        sh: jq --raw-output '.packages[] | select(test("^devbox@")) | split("@")[1]' ./devbox.json
+    cmd: |
+      FILES_WITH_MISMATCHING_VERSION="$(yq --no-doc '
+          .jobs.*.steps[]
+          | select(.uses? | test("devbox-install-action"))
+          | select(.with."devbox-version" != "{{ .DEVBOX_VERSION }}")
+          | filename
+        ' .github/**/*.yaml)"
+
+      if [[ "$FILES_WITH_MISMATCHING_VERSION" != "" ]]; then
+        >&2 echo "ERROR - Incorrect Devbox version used for GitHub Actions in the following files (expected '{{ .DEVBOX_VERSION }}'):"
+        >&2 echo "$FILES_WITH_MISMATCHING_VERSION:"
+        exit 1
+      fi
 
   test:
     desc: run executable test suites to dynamically test business logic etc.
