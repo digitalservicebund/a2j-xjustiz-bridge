@@ -1,7 +1,7 @@
 import {
   type DatatypeC,
   datatypeC,
-} from "~/xjustiz-schemata/din-91379/datatypeC";
+} from "~/xjustiz-schemata/din-91379/datatype-c";
 import {
   type ScopeToken,
   scopedSingleton,

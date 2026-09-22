@@ -11,7 +11,7 @@ import {
   type Reference,
   reference,
 } from "~/xjustiz-schemata/shared-kernel/identifiers";
-import { type DatatypeE } from "~/xjustiz-schemata/din-91379/datatypeE";
+import { type DatatypeE } from "~/xjustiz-schemata/din-91379/datatype-e";
 import { type DeepReadonly } from "~/metatypes";
 import { type FortlaufendeNummer } from "~/xjustiz-schemata/klaver/fortlaufende-nummer";
 import { type Geldbetrag } from "~/xjustiz-schemata/grunddatensatz/composites";
@@ -120,7 +120,7 @@ if (import.meta.vitest) {
       "~/xjustiz-schemata/grunddatensatz/ergonomics"
     );
     const { datatypeE } = await import(
-      "~/xjustiz-schemata/din-91379/datatypeE"
+      "~/xjustiz-schemata/din-91379/datatype-e"
     );
     const { withScope } = await import(
       "~/xjustiz-schemata/shared-kernel/scoping"

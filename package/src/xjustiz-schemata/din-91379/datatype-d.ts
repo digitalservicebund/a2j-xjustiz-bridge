@@ -20,8 +20,8 @@ import {
   type NichtBuchstabenN2,
   type NichtBuchstabenN3,
 } from "./schriftzeichengruppe";
-import { type DatatypeA } from "./datatypeA";
-import { type DatatypeB } from "./datatypeB";
+import { type DatatypeA } from "./datatype-a";
+import { type DatatypeB } from "./datatype-b";
 import { findInvalidCharacters } from "./unicode";
 import { transformXsdPatternToJavaScriptExpression } from "~/xjustiz-schemata/xml-schema-definition/restriction-pattern";
 
@@ -184,8 +184,8 @@ if (import.meta.vitest) {
       string: arbitraryString,
       array: arbitraryArray,
     } = await import("fast-check");
-    const { datatypeA } = await import("./datatypeA");
-    const { datatypeB } = await import("./datatypeB");
+    const { datatypeA } = await import("./datatype-a");
+    const { datatypeB } = await import("./datatype-b");
 
     // oxlint-disable-next-line max-lines-per-function -- normal describe block
     describe("runtime parsing", () => {

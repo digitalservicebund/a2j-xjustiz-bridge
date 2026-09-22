@@ -18,10 +18,10 @@ if (import.meta.vitest) {
 
   describe("nachrichtenkopf ergonomics", async () => {
     const { datatypeC } = await import(
-      "~/xjustiz-schemata/din-91379/datatypeC"
+      "~/xjustiz-schemata/din-91379/datatype-c"
     );
     const { datatypeD } = await import(
-      "~/xjustiz-schemata/din-91379/datatypeD"
+      "~/xjustiz-schemata/din-91379/datatype-d"
     );
 
     it("has the Herstellerinformationen with correct DIN 91379 types", () => {

@@ -21,9 +21,9 @@ import {
 } from "./ergonomics/sonstige-antraege";
 import { type Beweis } from "~/xjustiz-schemata/klaver/composites";
 import { type BeweisNummer } from "~/xjustiz-schemata/klaver/beweis-nummer";
-import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatypeC";
-import { type DatatypeD } from "~/xjustiz-schemata/din-91379/datatypeD";
-import { type DatatypeE } from "~/xjustiz-schemata/din-91379/datatypeE";
+import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatype-c";
+import { type DatatypeD } from "~/xjustiz-schemata/din-91379/datatype-d";
+import { type DatatypeE } from "~/xjustiz-schemata/din-91379/datatype-e";
 import { type DateTime } from "~/xjustiz-schemata/xml-schema-definition/scalars";
 import { type FortlaufendeNummer } from "~/xjustiz-schemata/klaver/fortlaufende-nummer";
 import { type NachrichtKlaverKlageverfahren3500001 } from "~/xjustiz-schemata/klaver/nachricht-klaver-klageverfahren-3500001";

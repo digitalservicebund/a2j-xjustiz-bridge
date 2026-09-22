@@ -2,7 +2,7 @@ import {
   type DatatypeD,
   datatypeD,
   join,
-} from "~/xjustiz-schemata/din-91379/datatypeD";
+} from "~/xjustiz-schemata/din-91379/datatype-d";
 import {
   type Gerichte,
   Geschlecht,
@@ -11,7 +11,7 @@ import {
   type Klaeger,
   type NachrichtenkopfFuerZahlungsklage,
 } from "~/nachricht/zahlungsklage/message-profile";
-import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatypeC";
+import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatype-c";
 import { type NatuerlichePerson } from "~/xjustiz-schemata/grunddatensatz/composites";
 import { type ScopeToken } from "~/xjustiz-schemata/shared-kernel/scoping";
 import { type UUID } from "~/xjustiz-schemata/grunddatensatz/uuid";
@@ -107,10 +107,10 @@ if (import.meta.vitest) {
   // oxlint-disable-next-line max-lines-per-function
   describe("Nachrichtenkopf ergonomics", async () => {
     const { datatypeA } = await import(
-      "~/xjustiz-schemata/din-91379/datatypeA"
+      "~/xjustiz-schemata/din-91379/datatype-a"
     );
     const { datatypeC } = await import(
-      "~/xjustiz-schemata/din-91379/datatypeC"
+      "~/xjustiz-schemata/din-91379/datatype-c"
     );
     const { withScope } = await import(
       "~/xjustiz-schemata/shared-kernel/scoping"

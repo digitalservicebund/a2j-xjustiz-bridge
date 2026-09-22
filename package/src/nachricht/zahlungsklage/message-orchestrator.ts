@@ -23,7 +23,7 @@ import {
   generateXjustizMessageXml,
 } from "~/generate-xml-document";
 import { type Beweis } from "~/xjustiz-schemata/klaver/composites";
-import { type DatatypeA } from "~/xjustiz-schemata/din-91379/datatypeA";
+import { type DatatypeA } from "~/xjustiz-schemata/din-91379/datatype-a";
 import { type Rollennummer } from "~/xjustiz-schemata/grunddatensatz/rollennummer";
 
 /**
@@ -107,19 +107,19 @@ if (import.meta.vitest) {
       "~/xjustiz-schemata/shared-kernel/identifiers"
     );
     const { datatypeA } = await import(
-      "~/xjustiz-schemata/din-91379/datatypeA"
+      "~/xjustiz-schemata/din-91379/datatype-a"
     );
     const { datatypeB } = await import(
-      "~/xjustiz-schemata/din-91379/datatypeB"
+      "~/xjustiz-schemata/din-91379/datatype-b"
     );
     const { datatypeC } = await import(
-      "~/xjustiz-schemata/din-91379/datatypeC"
+      "~/xjustiz-schemata/din-91379/datatype-c"
     );
     const { datatypeD } = await import(
-      "~/xjustiz-schemata/din-91379/datatypeD"
+      "~/xjustiz-schemata/din-91379/datatype-d"
     );
     const { datatypeE } = await import(
-      "~/xjustiz-schemata/din-91379/datatypeE"
+      "~/xjustiz-schemata/din-91379/datatype-e"
     );
     const { createUuidGenerator } = await import(
       "~/xjustiz-schemata/grunddatensatz/uuid"

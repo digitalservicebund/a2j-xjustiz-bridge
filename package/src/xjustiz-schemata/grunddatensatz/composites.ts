@@ -19,10 +19,10 @@ import {
   herstellerinformation, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
   telefon, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
 } from "./ergonomics";
-import { type DatatypeA } from "~/xjustiz-schemata/din-91379/datatypeA";
-import { type DatatypeB } from "~/xjustiz-schemata/din-91379/datatypeB";
-import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatypeC";
-import { type DatatypeD } from "~/xjustiz-schemata/din-91379/datatypeD";
+import { type DatatypeA } from "~/xjustiz-schemata/din-91379/datatype-a";
+import { type DatatypeB } from "~/xjustiz-schemata/din-91379/datatype-b";
+import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatype-c";
+import { type DatatypeD } from "~/xjustiz-schemata/din-91379/datatype-d";
 import { type Decimal } from "~/xjustiz-schemata/xml-schema-definition/decimal";
 import { type Reference } from "~/xjustiz-schemata/shared-kernel/identifiers";
 import { type Rollennummer } from "~/xjustiz-schemata/grunddatensatz/rollennummer";

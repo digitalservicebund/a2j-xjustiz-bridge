@@ -9,8 +9,8 @@ import {
 } from "~/xjustiz-schemata/grunddatensatz/composites";
 import { parteivernehmung, zeuge } from "./ergonomics/beweis"; // oxlint-disable-line no-unused-vars -- referenced by TSDoc
 import { type BeweisNummer } from "~/xjustiz-schemata/klaver/beweis-nummer";
-import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatypeC";
-import { type DatatypeE } from "~/xjustiz-schemata/din-91379/datatypeE";
+import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatype-c";
+import { type DatatypeE } from "~/xjustiz-schemata/din-91379/datatype-e";
 import { type FortlaufendeNummer } from "~/xjustiz-schemata/klaver/fortlaufende-nummer";
 import { type Reference } from "~/xjustiz-schemata/shared-kernel/identifiers";
 import { type Rollenbezeichnung } from "~/xjustiz-schemata/grunddatensatz/codelisten";

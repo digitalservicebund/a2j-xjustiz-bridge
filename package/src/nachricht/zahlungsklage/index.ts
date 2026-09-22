@@ -28,27 +28,27 @@ export {
   type DatatypeA,
   datatypeA,
   join as joinDatatyeA,
-} from "~/xjustiz-schemata/din-91379/datatypeA";
+} from "~/xjustiz-schemata/din-91379/datatype-a";
 export {
   type DatatypeB,
   datatypeB,
   join as joinDatatyeB,
-} from "~/xjustiz-schemata/din-91379/datatypeB";
+} from "~/xjustiz-schemata/din-91379/datatype-b";
 export {
   type DatatypeC,
   datatypeC,
   join as joinDatatyeC,
-} from "~/xjustiz-schemata/din-91379/datatypeC";
+} from "~/xjustiz-schemata/din-91379/datatype-c";
 export {
   type DatatypeD,
   datatypeD,
   join as joinDatatyeD,
-} from "~/xjustiz-schemata/din-91379/datatypeD";
+} from "~/xjustiz-schemata/din-91379/datatype-d";
 export {
   type DatatypeE,
   datatypeE,
   join as joinDatatyeE,
-} from "~/xjustiz-schemata/din-91379/datatypeE";
+} from "~/xjustiz-schemata/din-91379/datatype-e";
 
 export {
   type Decimal,
