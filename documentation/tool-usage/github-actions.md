@@ -40,3 +40,14 @@ restore-keys: runtime-dependencies-
 ```
 
 The prefix must only match caches with the same content and purpose.
+
+## Concurrency Rules
+
+It is recommended to always define a concurrency rule for each workflow. Because
+one workflow can call another, it is necessary to use explicit `group` names. In
+exact, avoid using `${{ github.workflow }}` for the group name. Because child
+workflows inherit this variable, resulting into the exact same name as the
+parent workflow. In consequence, the child workflow cancels the parent workflow
+or puts itself into a ghost queue. Instead, just "copy" the original name of the
+workflow literally to the group name. If they get out-of-sync its not a direct
+issues.
