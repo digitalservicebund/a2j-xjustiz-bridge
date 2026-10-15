@@ -80,6 +80,7 @@ tasks:
       - check:spell-and-style
       - check:link-validity
       - check:license
+      - check:vulnerability
       - check:file-and-directory-names
       - check:matching-devbox-versions
 
