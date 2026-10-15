@@ -356,9 +356,9 @@ tasks:
     preconditions:
       - sh: test -z '{{ .CLI_ARGS }}'
         msg: "no list of files must be provided as command-line argument"
-    cmds:
-      - task: check:link-validity
-      - task: check:vulnerability
+    deps:
+      - check:link-validity
+      - check:vulnerability
 
 vars:
   # For tools that are not capable to properly discover files, respecting
