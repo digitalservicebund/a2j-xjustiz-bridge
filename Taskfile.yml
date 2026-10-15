@@ -233,7 +233,7 @@ tasks:
     deps: [setup:development-environment]
     env:
       TRIVY_CACHE_DIR: ./.task/cache/trivy
-    cmd: trivy fs --scanners license --quiet --exit-code 1 --include-dev-deps --severity HIGH,CRITICAL --quiet --table-mode detailed ./
+    cmd: trivy fs --scanners license --exit-code 1 --include-dev-deps --severity HIGH,CRITICAL --quiet --table-mode detailed ./
 
   check:vulnerability:
     desc: scan the codebase for vulnerabilities using Trivy
