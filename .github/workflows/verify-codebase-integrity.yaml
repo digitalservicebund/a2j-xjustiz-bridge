@@ -103,3 +103,10 @@ jobs:
         env:
           DEBUG: testcontainers*
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: send failure notification to Slack
+        uses: digitalservicebund/notify-on-failure-gha@b8fdda76a38fa8e94cf623ebdd03e4570bc4ceb0 # v1.9.0
+        if: ${{ failure() }}
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ vars.SLACK_CHANNEL_ID }}
