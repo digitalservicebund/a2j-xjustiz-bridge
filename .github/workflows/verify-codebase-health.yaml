@@ -41,21 +41,21 @@ jobs:
         run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
 
       - name: load cache for link validation checks
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ./.lycheecache
           key: cache-lychee-${{ steps.date.outputs.date }}-v1
           restore-keys: cache-lychee-
 
       - name: load cache for vulnerability audit database
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ./.task/cache/trivy
           key: cache-trivy-${{ steps.date.outputs.date }}-v1
           restore-keys: cache-trivy-
 
       - name: load cache for XJustiz Tools image
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ./.task/cache/xjustiz-tools-image.tar
           key: cache-xjustiz-tools-image-${{ steps.date.outputs.date }}-v2
