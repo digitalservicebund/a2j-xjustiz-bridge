@@ -7,6 +7,8 @@ on:
       XJUSTIZ_TOOLS_IMAGE_PAT:
         required: true
         description: Access token to download the private OCI image of the XJustiz-Tools.
+      SLACK_BOT_TOKEN:
+        required: true
 
 permissions:
   contents: read
