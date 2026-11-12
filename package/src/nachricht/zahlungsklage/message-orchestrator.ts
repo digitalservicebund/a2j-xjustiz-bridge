@@ -416,6 +416,12 @@ if (import.meta.vitest) {
               nachrichtenkopf,
               grunddaten: {
                 verfahrensdaten: {
+                  instanzdaten: [
+                    ergonomics.instanzdaten(
+                      Gerichte["ZZ Test-Bund"],
+                      datatypeC("Schadensersatz").value,
+                    ),
+                  ],
                   beteiligung: [
                     klaeger,
                     gesetzlicherVertreter,

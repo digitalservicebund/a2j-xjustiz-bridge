@@ -5,6 +5,7 @@ import {
 import {
   type Geldbetrag,
   type Herstellerinformation,
+  type Instanzdaten,
   type NatuerlichePerson,
   type Organisation,
   type RAKanzlei,
@@ -77,6 +78,7 @@ export interface NachrichtenkopfFuerZahlungsklage<NachrichtenScope> {
 
 export interface GrunddatenFuerZahlungsklage<NachrichtenScope> {
   verfahrensdaten: {
+    instanzdaten?: Instanzdaten[];
     beteiligung:
       | [
           Klaeger<NachrichtenScope>,

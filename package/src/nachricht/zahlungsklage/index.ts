@@ -35,12 +35,15 @@ export {
 export {
   type Anschrift,
   type Bankverbindung,
+  type Behoerde,
   type Geldbetrag,
+  type Instanzdaten,
   type Kommunikation,
   type NatuerlichePerson,
   type Organisation,
   type RAKanzlei,
   type RefRollennummer,
+  type Verfahrensgegenstand,
 } from "~/xjustiz-schemata/grunddatensatz/composites";
 
 export {

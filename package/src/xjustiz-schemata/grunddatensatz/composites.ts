@@ -50,6 +50,7 @@ export interface Nachrichtenkopf<NachrichtenScope> {
 
 export interface Grunddaten<NachrichtenScope> {
   verfahrensdaten?: {
+    instanzdaten?: Instanzdaten[];
     beteiligung?: (Beteiligung<NachrichtenScope> | undefined)[];
   };
 }
@@ -68,6 +69,17 @@ export interface Herstellerinformation {
   nameDesProdukts: "Justizportal XJustiz Services"; // DatatypeD
   herstellerDesProdukts: "Bundesministerium der Justiz und für Verbraucherschutz, ausgeführt durch DigitalService GmbH des Bundes"; // DatatypeD
   version: DatatypeC;
+}
+
+export interface Instanzdaten {
+  auswahlInstanzbehoerde: Behoerde;
+  verfahrensgegenstand?: Verfahrensgegenstand[];
+}
+
+export type Behoerde = { gericht: Gerichte };
+
+export interface Verfahrensgegenstand {
+  gegenstand: DatatypeC;
 }
 
 export interface Beteiligung<NachrichtenScope> {
