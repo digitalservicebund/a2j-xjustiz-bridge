@@ -18,8 +18,10 @@ import {
 import {
   antragAufAnwaltskosten, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
   antragAufVersaeumnisurteil, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
+  instanzdaten, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
+  nachrichtenkopf, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
   weitererAntrag, // oxlint-disable-line no-unused-vars -- referenced by TSDoc
-} from "./ergonomics/sonstige-antraege";
+} from "./ergonomics";
 import { type Beweis } from "~/xjustiz-schemata/klaver/composites";
 import { type BeweisNummer } from "~/xjustiz-schemata/klaver/beweis-nummer";
 import { type DatatypeC } from "~/xjustiz-schemata/din-91379/datatype-c";
@@ -56,6 +58,10 @@ export interface Zahlungsklage<NachrichtenScope> {
   };
 }
 
+/**
+ * Can be constructed ergonomically with the {@link nachrichtenkopf}
+ * constructor function.
+ */
 export interface NachrichtenkopfFuerZahlungsklage<NachrichtenScope> {
   xjustizVersion: "3.6.2";
   erstellungszeitpunkt: DateTime;
@@ -78,6 +84,10 @@ export interface NachrichtenkopfFuerZahlungsklage<NachrichtenScope> {
 
 export interface GrunddatenFuerZahlungsklage<NachrichtenScope> {
   verfahrensdaten: {
+    /**
+     * Can be constructed ergonomically with the {@link instanzdaten}
+     * constructor function.
+     */
     instanzdaten?: Instanzdaten[];
     beteiligung:
       | [
