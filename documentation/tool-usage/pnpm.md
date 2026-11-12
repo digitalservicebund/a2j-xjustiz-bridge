@@ -9,11 +9,10 @@ development environment](./devbox.md).
 ## Installation
 
 Pnpm itself is only indirectly managed by the development environment of the
-repository. We follow the recommended way of using the [plugin by
-Devbox](https://www.jetify.com/docs/devbox/devbox-examples/languages/nodejs#adding-yarn-npm-or-pnpm-as-your-node-package-manager%E2%80%8B)
-for NodeJS with [Corepack](https://github.com/nodejs/corepack) to actually
-manage the platform specific package manager - in our case pnpm. Therefore, we
-specify and enforce the version inside the [`package.json`](../../package/package.json)
+repository. We follow the recommended way of using the plugin by Devbox for
+NodeJS with [Corepack](https://github.com/nodejs/corepack) to actually manage
+the platform specific package manager - in our case pnpm. Therefore, we specify
+and enforce the version inside the [`package.json`](../../package/package.json)
 with the `packageManager` and `engines` properties. This will automatically take
 effect when installing the development environment or on the next pnpm usage.
 
