@@ -5,7 +5,6 @@ import {
   type Beklagter,
   type GesetzlicherVertreter,
   type Klaeger,
-  type Prozessbevollmaechtiger,
   type Zahlungsklage,
   type Zeuge,
 } from "~/nachricht/zahlungsklage/message-profile";
@@ -127,8 +126,9 @@ if (import.meta.vitest) {
     const { createRollennummerGenerator } = await import(
       "~/xjustiz-schemata/grunddatensatz/rollennummer"
     );
-    const { Gerichte, Geschlecht, Kanzleiform, Rollenbezeichnung, Staaten } =
-      await import("~/xjustiz-schemata/grunddatensatz/codelisten");
+    const { Gerichte, Geschlecht, Rollenbezeichnung, Staaten } = await import(
+      "~/xjustiz-schemata/grunddatensatz/codelisten"
+    );
     const { Anspruchsart } = await import(
       "~/xjustiz-schemata/klaver/codelisten"
     );
@@ -197,51 +197,6 @@ if (import.meta.vitest) {
               },
             } satisfies Klaeger<NachrichtenScope>;
 
-            const gesetzlicherVertreter = {
-              rolle: [
-                {
-                  rollenbezeichnung:
-                    Rollenbezeichnung["Gesetzliche(r) Vertreter(in)"],
-                  geschaeftszeichen: datatypeC("KM-0042-2026").value,
-                  referenz: [
-                    { refRollennummer: reference(rollennummerKlaeger) },
-                  ],
-                },
-              ],
-              beteiligter: {
-                auswahlBeteiligter: {
-                  raKanzlei: {
-                    bezeichnung: {
-                      bezeichnungAktuell: datatypeD("Kanzlei Mustermann").value,
-                    },
-                    kanzleiform: Kanzleiform.Einzelanwalt,
-                    anschrift: [
-                      {
-                        strasse: datatypeB("Musterstrasse").value,
-                        hausnummer: datatypeB("2").value,
-                        postleitzahl: datatypeC("12345").value,
-                        ort: datatypeB("Musterstadt").value,
-                      },
-                    ],
-                    raImVerfahren: {
-                      vollerName: {
-                        vorname: datatypeA("Erika").value,
-                        nachname: datatypeA("Mustermann").value,
-                      },
-                      geschlecht: Geschlecht.weiblich,
-                      beruf: [datatypeC("Rechtsanwaeltin").value],
-                      telekommunikation: [
-                        ergonomics.telefon(datatypeC("01234567891").value),
-                        ergonomics.email(
-                          datatypeC("erika@kanzlei-mustermann.de").value,
-                        ),
-                      ],
-                    },
-                  },
-                },
-              },
-            } satisfies GesetzlicherVertreter<NachrichtenScope>;
-
             const rollennummerBeklagter = rollennummer.next(
               rollennummerKlaeger,
               Rollenbezeichnung["Beklagte(r)"],
@@ -273,11 +228,11 @@ if (import.meta.vitest) {
               },
             } satisfies Beklagter<NachrichtenScope>;
 
-            const prozessbevollmaechtiger = {
+            const gesetzlicherVertreter = {
               rolle: [
                 {
                   rollenbezeichnung:
-                    Rollenbezeichnung["Prozessbevollmächtigte(r)"],
+                    Rollenbezeichnung["Gesetzliche(r) Vertreter(in)"],
                   referenz: [
                     { refRollennummer: reference(rollennummerBeklagter) },
                   ],
@@ -290,7 +245,7 @@ if (import.meta.vitest) {
                   },
                 },
               },
-            } satisfies Prozessbevollmaechtiger<NachrichtenScope>;
+            } satisfies GesetzlicherVertreter<NachrichtenScope>;
 
             const beweisNummer = createBeweisNummerGenerator(scope);
             let letzteBeweisNummerFuerZeugen = beweisNummer.first();
@@ -424,9 +379,8 @@ if (import.meta.vitest) {
                   ],
                   beteiligung: [
                     klaeger,
-                    gesetzlicherVertreter,
                     beklagter,
-                    prozessbevollmaechtiger,
+                    gesetzlicherVertreter,
                     ...zeugen,
                   ],
                 },

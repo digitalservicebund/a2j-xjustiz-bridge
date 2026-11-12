@@ -8,7 +8,6 @@ import {
   type Instanzdaten,
   type NatuerlichePerson,
   type Organisation,
-  type RAKanzlei,
   type RefRollennummer,
 } from "~/xjustiz-schemata/grunddatensatz/composites";
 import {
@@ -97,21 +96,8 @@ export interface GrunddatenFuerZahlungsklage<NachrichtenScope> {
         ]
       | [
           Klaeger<NachrichtenScope>,
+          Beklagter<NachrichtenScope>,
           GesetzlicherVertreter<NachrichtenScope>,
-          Beklagter<NachrichtenScope>,
-          ...Zeuge<NachrichtenScope>[],
-        ]
-      | [
-          Klaeger<NachrichtenScope>,
-          Beklagter<NachrichtenScope>,
-          Prozessbevollmaechtiger<NachrichtenScope>,
-          ...Zeuge<NachrichtenScope>[],
-        ]
-      | [
-          Klaeger<NachrichtenScope>,
-          GesetzlicherVertreter<NachrichtenScope>,
-          Beklagter<NachrichtenScope>,
-          Prozessbevollmaechtiger<NachrichtenScope>,
           ...Zeuge<NachrichtenScope>[],
         ];
   };
@@ -130,26 +116,6 @@ export interface Klaeger<NachrichtenScope> {
   beteiligter: {
     auswahlBeteiligter: {
       natuerlichePerson: NatuerlichePerson;
-    };
-  };
-}
-
-export interface GesetzlicherVertreter<NachrichtenScope> {
-  rolle: [
-    {
-      rollenbezeichnung: (typeof Rollenbezeichnung)["Gesetzliche(r) Vertreter(in)"];
-      geschaeftszeichen?: DatatypeC;
-      referenz: [
-        RefRollennummer<
-          NachrichtenScope,
-          (typeof Rollenbezeichnung)["Kläger(in)"]
-        >,
-      ];
-    },
-  ];
-  beteiligter: {
-    auswahlBeteiligter: {
-      raKanzlei: RAKanzlei;
     };
   };
 }
@@ -192,10 +158,10 @@ export interface BeklagteOrganisation<NachrichtenScope> {
   };
 }
 
-export interface Prozessbevollmaechtiger<NachrichtenScope> {
+export interface GesetzlicherVertreter<NachrichtenScope> {
   rolle: [
     {
-      rollenbezeichnung: (typeof Rollenbezeichnung)["Prozessbevollmächtigte(r)"];
+      rollenbezeichnung: (typeof Rollenbezeichnung)["Gesetzliche(r) Vertreter(in)"];
       referenz: [
         RefRollennummer<
           NachrichtenScope,
