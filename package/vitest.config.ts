@@ -6,7 +6,7 @@ export default defineConfig({
   test: {
     watch: false,
     env: {
-      PACKAGE_VERSION: JSON.stringify(package_.version),
+      PACKAGE_VERSION: package_.version,
     },
     restoreMocks: true,
     projects: [

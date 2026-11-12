@@ -10,7 +10,7 @@ export default {
   },
   publint: true,
   env: {
-    PACKAGE_VERSION: JSON.stringify(package_.version),
+    PACKAGE_VERSION: package_.version,
   },
   define: {
     "import.meta.vitest": "undefined", // Strip in-source tests from output.
