@@ -139,3 +139,4 @@ Vorname
 rebase(d?)
 camelCase
 Verfahrensgegenstand
+Proselint

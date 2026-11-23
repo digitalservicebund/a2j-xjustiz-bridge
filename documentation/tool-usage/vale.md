@@ -14,6 +14,21 @@ community bundles that can be downloaded by Vale. This happens automatically
 using the [workflow orchestrator](./task.md) on relevant tasks and when run
 `task setup` initially.
 
+## Pinning Package Versions
+
+In the configuration files, external packages can be added just by their name.
+However, this always install the latest version automatically. Updates happen
+unpredictably and uncoordinated. Therefore, we also pin package versions, as we
+do for other dependencies too. To do so, it is necessary to use the URL for the
+ZIP archive of the respective release. Something Vale would do implicitly in
+background otherwise.
+
+For example, to add version 0.3.4 of the Proselint package in the `vale.ini`:
+
+```ini
+Packages = https://github.com/vale-cli/proselint/releases/download/v0.3.4/proselint.zip, other-package
+```
+
 ## Ignoring External Style Packages
 
 Vale mixes local and external styles into a single directory. It is not possible
